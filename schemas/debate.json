@@ -1,0 +1,326 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://theology-graph.local/schemas/debate.json",
+  "title": "Debate Transcript",
+  "description": "Structured record of an adversarial debate between differing hermeneutic traditions regarding an atomic theological claim.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A unique identifier for the debate run (e.g., 'romans-3-24-dikaioo-debate-1')."
+    },
+    "claim_id": {
+      "type": "string",
+      "description": "The unique identifier of the atomic claim being debated."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "completed",
+        "abandoned"
+      ],
+      "description": "The current state of the debate script execution."
+    },
+    "terminal_state": {
+      "description": "How the debate ended. Null if ongoing.",
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "concession",
+            "impasse",
+            "consensus"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Execution metadata for reproducibility tracking.",
+      "properties": {
+        "random_seed": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The random seed used for this debate run's agents."
+        },
+        "system_prompts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "The exact system prompts used to initialize each agent role."
+        }
+      }
+    },
+    "participants": {
+      "type": "object",
+      "properties": {
+        "proponent": {
+          "type": "object",
+          "properties": {
+            "profile_id": {
+              "type": "string",
+              "description": "The hermeneutic profile supporting the claim."
+            },
+            "seed_arguments": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Quotes or primary source reasoning initially fed to the proponent."
+            }
+          },
+          "required": [
+            "profile_id",
+            "seed_arguments"
+          ]
+        },
+        "opponents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "profile_id": {
+                "type": "string",
+                "description": "The hermeneutic profile opposing the claim."
+              },
+              "seed_arguments": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Quotes or primary source reasoning initially fed to the opponent."
+              }
+            },
+            "required": [
+              "profile_id",
+              "seed_arguments"
+            ]
+          }
+        }
+      },
+      "required": [
+        "proponent",
+        "opponents"
+      ]
+    },
+    "rounds": {
+      "type": "array",
+      "description": "A sequential collection of debate rounds. Checkpointed per round.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "round_number": {
+            "type": "integer"
+          },
+          "moves": {
+            "type": "array",
+            "description": "All agent utterances and referee rulings in this round, including rejected attempts.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "move_id": {
+                  "type": "string"
+                },
+                "agent_role": {
+                  "type": "string",
+                  "enum": [
+                    "proponent",
+                    "opponent",
+                    "red_team"
+                  ],
+                  "description": "Which role is attempting the move."
+                },
+                "profile_id": {
+                  "description": "The specific profile driving this move. Null for the red team.",
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "author_model": {
+                  "type": "string",
+                  "description": "The specific LLM used for this turn (e.g., anthropic/claude-opus-4.6)."
+                },
+                "intent": {
+                  "type": "string",
+                  "enum": [
+                    "argue",
+                    "concede",
+                    "declare_impasse",
+                    "red_team_attack"
+                  ],
+                  "description": "The declared mechanical intent of the move."
+                },
+                "content": {
+                  "type": "string",
+                  "description": "The raw prose argument or maneuver made by the agent."
+                },
+                "citations": {
+                  "type": "array",
+                  "description": "Explicit citations to scripture or historical sources extracted from the content.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_type": {
+                        "type": "string",
+                        "enum": [
+                          "scripture",
+                          "historical"
+                        ]
+                      },
+                      "reference": {
+                        "type": "string",
+                        "description": "Specific canonical reference or source locater."
+                      },
+                      "text_quoted": {
+                        "type": "string",
+                        "description": "The actual quoted segment in context."
+                      },
+                      "original_language": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "hebrew",
+                              "aramaic",
+                              "greek"
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "source_type",
+                      "reference"
+                    ]
+                  }
+                },
+                "referee_ruling": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "author_model": {
+                          "type": "string",
+                          "description": "The model that assessed the move."
+                        },
+                        "decision": {
+                          "type": "string",
+                          "enum": [
+                            "accepted",
+                            "rejected"
+                          ]
+                        },
+                        "feedback": {
+                          "type": "string",
+                          "description": "Reasoning for rejection, or general observations if accepted."
+                        },
+                        "smuggled_priors_detected": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Any hidden assumptions logged by the referee (used for periodic audits)."
+                        },
+                        "centroid_collapse_detected": {
+                          "type": "boolean",
+                          "description": "True if the referee flagged generic, consensus-appealing phrasing rather than grounded textual arguments."
+                        },
+                        "rule_violations": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "smuggled_prior",
+                              "strawman",
+                              "ignored_evidence",
+                              "missing_citation",
+                              "invented_citation",
+                              "centroid_collapse",
+                              "out_of_character"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "author_model",
+                        "decision",
+                        "feedback"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "The rule-checking referee's decision on this specific move. Null if pending."
+                }
+              },
+              "required": [
+                "move_id",
+                "agent_role",
+                "author_model",
+                "intent",
+                "content",
+                "citations",
+                "referee_ruling"
+              ]
+            }
+          }
+        },
+        "required": [
+          "round_number",
+          "moves"
+        ]
+      }
+    },
+    "version_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "commit_sha": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "author_model": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "commit_sha",
+          "timestamp",
+          "author_model"
+        ]
+      }
+    }
+  },
+  "required": [
+    "id",
+    "claim_id",
+    "status",
+    "terminal_state",
+    "participants",
+    "rounds",
+    "version_history"
+  ]
+}
