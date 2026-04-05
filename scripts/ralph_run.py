@@ -20,32 +20,28 @@ BRAVE_SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
 DEFAULT_MODEL = "anthropic/claude-sonnet-4.6"
 MAX_TOOL_ITERATIONS = 30
 MAX_TOOL_OUTPUT_CHARS = 50_000
+MAX_RUN_COST_USD = 1.00  # Hard cap: abort if estimated spend exceeds this
 
 MIN_CONTEXT_LENGTH = 128_000
 
-# Providers to include in model rotation. Models are auto-discovered from
-# OpenRouter — the top model per provider (by completion price) is selected,
-# ensuring we always pick frontier-tier models without manual updates.
-ELIGIBLE_PROVIDERS = {"anthropic", "google", "openai", "qwen", "x-ai", "mistralai", "deepseek", "meta-llama"}
+# Maximum completion price per token — filters out models where even a
+# modest response would blow the per-run budget.
+# At $1 budget and ~20k output tokens, that's $0.00005/token max.
+MAX_COMPLETION_PRICE = 0.00005
 
-# Minimum completion price per token — filters out tiny/free models.
-# $0.000001 per token ≈ $1/M tokens, which excludes hobby-tier models.
-MIN_COMPLETION_PRICE = 0.000001
-
-# Maximum completion price per token — filters out absurdly expensive models
-# like o1-pro ($600/Mtok). $0.00003 per token ≈ $30/M tokens.
-MAX_COMPLETION_PRICE = 0.00003
-
-# Substrings that indicate legacy, preview, or specialized models to skip.
-MODEL_EXCLUDE_PATTERNS = {
-    "o1-pro", "o1-mini", "o1:", "deep-research", "audio", "image",
-    "turbo-preview", "1106-preview", "2024-05-13", "2024-08-06",
-    "2024-11-20", ":extended", "search-preview", "gpt-4-turbo",
-    "gpt-4o", "customtools", "pixtral",
+# Providers we trust for autonomous theological research. The agent picks
+# freely within this set — no per-provider ranking or limit.
+ELIGIBLE_PROVIDERS = {
+    "anthropic", "google", "openai", "qwen", "x-ai", "mistralai",
+    "deepseek", "meta-llama", "cohere", "amazon",
 }
 
-# Maximum number of models to keep per provider.
-MODELS_PER_PROVIDER = 2
+# Model IDs containing these substrings are excluded (specialized, not
+# general-purpose reasoning models).
+MODEL_EXCLUDE_PATTERNS = {
+    "audio", "image", "vision", "-vl-", "guard", "embed", "safeguard",
+    ":extended", "custom",
+}
 
 # Read-only git subcommands the agent is allowed to run.
 GIT_ALLOWED_SUBCOMMANDS = {"log", "diff", "show", "blame", "ls-files", "shortlog", "status", "rev-parse"}
@@ -416,12 +412,11 @@ def write_next_model_to_state(model_id: str):
         state_path.write_text(f"next_model: {model_id}\n", encoding="utf-8")
 
 
-def fetch_available_models(api_key: str) -> list[str]:
-    """Auto-discover frontier models from OpenRouter.
+def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
+    """Fetch all qualifying models from OpenRouter.
 
-    Fetches the full model catalog, filters to eligible providers with
-    sufficient context length and pricing, then picks the top models
-    per provider by completion price (higher price = more capable).
+    Returns (model_ids, pricing_map) where pricing_map maps model_id to
+    {"prompt": float, "completion": float} per-token prices.
     """
     import requests
 
@@ -430,46 +425,37 @@ def fetch_available_models(api_key: str) -> list[str]:
     resp.raise_for_status()
     all_models = resp.json().get("data", [])
 
-    # Group qualifying models by provider
-    by_provider: dict[str, list[tuple[float, str]]] = {}
+    valid = []
+    pricing_map = {}
     for m in all_models:
         model_id = m.get("id", "")
-        provider = get_provider(model_id)
-        if provider not in ELIGIBLE_PROVIDERS:
+
+        if get_provider(model_id) not in ELIGIBLE_PROVIDERS:
             continue
         if m.get("context_length", 0) < MIN_CONTEXT_LENGTH:
             continue
+        if model_id.endswith(":free"):
+            continue
 
-        # Parse completion price — skip free/unknown models
         pricing = m.get("pricing", {})
         try:
+            prompt_price = float(pricing.get("prompt", "0"))
             completion_price = float(pricing.get("completion", "0"))
         except (ValueError, TypeError):
             continue
-        if completion_price < MIN_COMPLETION_PRICE:
-            continue
-        if completion_price > MAX_COMPLETION_PRICE:
+        if completion_price <= 0 or completion_price > MAX_COMPLETION_PRICE:
             continue
 
-        # Skip free-tier, legacy, and specialized models
-        if model_id.endswith(":free"):
-            continue
         if any(pat in model_id for pat in MODEL_EXCLUDE_PATTERNS):
             continue
 
-        by_provider.setdefault(provider, []).append((completion_price, model_id))
+        valid.append(model_id)
+        pricing_map[model_id] = {"prompt": prompt_price, "completion": completion_price}
 
-    # Pick top N models per provider (sorted by price descending = most capable first)
-    valid = []
-    for provider in sorted(by_provider):
-        ranked = sorted(by_provider[provider], reverse=True)
-        top = [model_id for _, model_id in ranked[:MODELS_PER_PROVIDER]]
-        valid.extend(top)
-
-    print(f"  Auto-discovered {len(valid)} eligible models across {len(by_provider)} providers:")
-    for mid in valid:
-        print(f"    - {mid}")
-    return valid
+    valid.sort()
+    providers = {get_provider(m) for m in valid}
+    print(f"  Available models: {len(valid)} across {len(providers)} providers")
+    return valid, pricing_map
 
 
 def pick_fallback_model(available_models: list[str], current_provider: str) -> str:
@@ -523,10 +509,14 @@ def gather_state_summary() -> str:
 # ---------------------------------------------------------------------------
 
 
-def call_openrouter_with_tools(messages: list, model: str, api_key: str, tools: list) -> tuple[str, str, list]:
+def call_openrouter_with_tools(
+    messages: list, model: str, api_key: str, tools: list,
+    prompt_price: float, completion_price: float,
+) -> tuple[str, str, list, float]:
     """
     Call OpenRouter in a loop, executing tool calls until the model produces
-    a final text response. Returns (final_content, finish_reason, tool_call_log).
+    a final text response. Tracks estimated cost and aborts if MAX_RUN_COST_USD
+    is exceeded. Returns (final_content, finish_reason, tool_call_log, total_cost).
     """
     import requests
 
@@ -538,6 +528,7 @@ def call_openrouter_with_tools(messages: list, model: str, api_key: str, tools: 
     }
 
     tool_call_log = []
+    total_cost = 0.0
 
     for iteration in range(MAX_TOOL_ITERATIONS):
         payload = {
@@ -547,7 +538,7 @@ def call_openrouter_with_tools(messages: list, model: str, api_key: str, tools: 
             "max_tokens": 64000,
         }
 
-        print(f"  API call #{iteration + 1} (messages: {len(messages)})...")
+        print(f"  API call #{iteration + 1} (messages: {len(messages)}, cost so far: ${total_cost:.4f})...")
         resp = requests.post(OPENROUTER_URL, json=payload, headers=headers, timeout=600)
         resp.raise_for_status()
 
@@ -555,6 +546,21 @@ def call_openrouter_with_tools(messages: list, model: str, api_key: str, tools: 
         choice = data["choices"][0]
         finish_reason = choice.get("finish_reason", "unknown")
         message = choice["message"]
+
+        # Track cost from usage stats if provided
+        usage = data.get("usage", {})
+        prompt_tokens = usage.get("prompt_tokens", 0)
+        completion_tokens = usage.get("completion_tokens", 0)
+        call_cost = (prompt_tokens * prompt_price) + (completion_tokens * completion_price)
+        total_cost += call_cost
+        print(f"    tokens: {prompt_tokens} in / {completion_tokens} out = ${call_cost:.4f} (total: ${total_cost:.4f})")
+
+        # Budget check
+        if total_cost >= MAX_RUN_COST_USD:
+            print(f"  BUDGET CAP: ${total_cost:.4f} >= ${MAX_RUN_COST_USD:.2f}. Stopping.")
+            content = message.get("content", "")
+            messages.append(message)
+            return content, "budget_exceeded", tool_call_log, total_cost
 
         # Append the assistant message to conversation history
         messages.append(message)
@@ -573,16 +579,13 @@ def call_openrouter_with_tools(messages: list, model: str, api_key: str, tools: 
                 except json.JSONDecodeError:
                     fn_args = {}
 
-                # Log
                 args_summary = fn_args_raw[:200] if isinstance(fn_args_raw, str) else json.dumps(fn_args)[:200]
                 print(f"    -> {fn_name}({args_summary})")
 
-                # Execute
                 result = execute_tool(fn_name, fn_args)
                 result_preview = result[:200] + "..." if len(result) > 200 else result
                 print(f"       <- {len(result)} chars: {result_preview}")
 
-                # Record in log
                 tool_call_log.append({
                     "iteration": iteration + 1,
                     "tool": fn_name,
@@ -591,28 +594,26 @@ def call_openrouter_with_tools(messages: list, model: str, api_key: str, tools: 
                     "result_preview": result[:500],
                 })
 
-                # Append tool result to conversation
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tc_id,
                     "content": result,
                 })
 
-            continue  # Loop back for the model's next response
+            continue
 
-        # No tool calls — this is the final response
+        # No tool calls — final response
         content = message.get("content", "")
         print(f"  Final response: {len(content)} chars, finish_reason: {finish_reason}")
 
         if finish_reason == "length":
             print("  WARNING: Response was truncated (hit max_tokens limit).")
 
-        return content, finish_reason, tool_call_log
+        return content, finish_reason, tool_call_log, total_cost
 
-    # Exhausted iterations
     print(f"  WARNING: Hit max tool iterations ({MAX_TOOL_ITERATIONS}).")
     last_content = messages[-1].get("content", "") if messages else ""
-    return last_content, "max_iterations", tool_call_log
+    return last_content, "max_iterations", tool_call_log, total_cost
 
 
 # ---------------------------------------------------------------------------
@@ -808,9 +809,14 @@ def main():
 
     # --- Fetch available models for rotation ---
     print("Fetching available models from OpenRouter...")
-    available_models = fetch_available_models(api_key)
+    available_models, pricing_map = fetch_available_models(api_key)
     eligible_next = [m for m in available_models if get_provider(m) != current_provider]
     models_list_text = "\n".join(f"  - {m}" for m in eligible_next) if eligible_next else "  (none available)"
+
+    # Look up pricing for current model (default to conservative estimate)
+    model_pricing = pricing_map.get(model, {"prompt": 0.000003, "completion": 0.000015})
+    print(f"  Model pricing: ${model_pricing['prompt']*1e6:.2f}/Mtok in, ${model_pricing['completion']*1e6:.2f}/Mtok out")
+    print(f"  Budget cap: ${MAX_RUN_COST_USD:.2f}")
 
     # --- Build initial prompt ---
     project_md = read_project_md()
@@ -821,6 +827,10 @@ def main():
         f"# Current Repository State\n\n{state_summary}\n\n"
         f"# Current Model\n\nYou are running as: `{model}` (provider: {current_provider})\n\n"
         f"# Available Models for NEXT_MODEL (different provider only)\n\n"
+        f"Pick the model you think is best suited for the next iteration's work. "
+        f"It MUST be from a different provider than `{current_provider}`. "
+        f"Consider the model's strengths (reasoning, coding, long context) relative "
+        f"to what the next step in the project requires.\n\n"
         f"{models_list_text}\n\n"
         f"Proceed per the instructions in PROJECT.md."
         f"{RESPONSE_FORMAT}"
@@ -831,11 +841,14 @@ def main():
 
     messages = [{"role": "user", "content": prompt}]
 
-    response, finish_reason, tool_call_log = call_openrouter_with_tools(
+    response, finish_reason, tool_call_log, total_cost = call_openrouter_with_tools(
         messages, model, api_key, TOOL_DEFINITIONS,
+        prompt_price=model_pricing["prompt"],
+        completion_price=model_pricing["completion"],
     )
 
     print(f"Tool calls made: {len(tool_call_log)}")
+    print(f"Total cost: ${total_cost:.4f}")
 
     warnings = []
 
@@ -843,6 +856,11 @@ def main():
     truncated = finish_reason == "length"
     if truncated:
         warnings.append("Response was truncated (hit max_tokens). File changes skipped.")
+
+    # Check for budget exceeded
+    if finish_reason == "budget_exceeded":
+        warnings.append(f"Run hit the ${MAX_RUN_COST_USD:.2f} budget cap at ${total_cost:.4f}. Response may be incomplete.")
+        truncated = True  # Treat as truncated — don't apply partial changes
 
     # Check for tool loop exhaustion
     if finish_reason == "max_iterations":
