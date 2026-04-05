@@ -67,7 +67,7 @@ jobs:
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "Ralph run failed — ${{ github.repository }}"
           to: dennis@mayk.eu
-          from: Ralph Bot <${{ secrets.SMTP_USERNAME }}>
+          from: Ralph Bot <dev@opusrationalis.org>
           body: |
             Ralph run failed on ${{ github.repository }}.
 

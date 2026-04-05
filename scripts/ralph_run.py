@@ -721,7 +721,7 @@ def send_alert_email(subject: str, body: str):
 
     msg = MIMEText(body)
     msg["Subject"] = subject
-    msg["From"] = f"Ralph Bot <{smtp_user}>"
+    msg["From"] = "Ralph Bot <dev@opusrationalis.org>"
     msg["To"] = ALERT_EMAIL
 
     try:
