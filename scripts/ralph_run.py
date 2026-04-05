@@ -32,6 +32,18 @@ ELIGIBLE_PROVIDERS = {"anthropic", "google", "openai", "qwen", "x-ai", "mistrala
 # $0.000001 per token ≈ $1/M tokens, which excludes hobby-tier models.
 MIN_COMPLETION_PRICE = 0.000001
 
+# Maximum completion price per token — filters out absurdly expensive models
+# like o1-pro ($600/Mtok). $0.00003 per token ≈ $30/M tokens.
+MAX_COMPLETION_PRICE = 0.00003
+
+# Substrings that indicate legacy, preview, or specialized models to skip.
+MODEL_EXCLUDE_PATTERNS = {
+    "o1-pro", "o1-mini", "o1:", "deep-research", "audio", "image",
+    "turbo-preview", "1106-preview", "2024-05-13", "2024-08-06",
+    "2024-11-20", ":extended", "search-preview", "gpt-4-turbo",
+    "gpt-4o", "customtools", "pixtral",
+}
+
 # Maximum number of models to keep per provider.
 MODELS_PER_PROVIDER = 2
 
@@ -436,9 +448,13 @@ def fetch_available_models(api_key: str) -> list[str]:
             continue
         if completion_price < MIN_COMPLETION_PRICE:
             continue
+        if completion_price > MAX_COMPLETION_PRICE:
+            continue
 
-        # Skip models with ":free" suffix (rate-limited, unreliable for agentic use)
+        # Skip free-tier, legacy, and specialized models
         if model_id.endswith(":free"):
+            continue
+        if any(pat in model_id for pat in MODEL_EXCLUDE_PATTERNS):
             continue
 
         by_provider.setdefault(provider, []).append((completion_price, model_id))

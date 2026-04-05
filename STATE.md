@@ -36,4 +36,4 @@ Draft the JSON schema for Resolution Trees (`schemas/resolution_tree.json`). Thi
 - Schema definitions valid: PASS (`schemas/claim.json`, `schemas/profile.json`, `schemas/debate.json` complete)
 - Site builds from `main`: PASS (trivially — `.gitkeep` only)
 
-next_model: openai/o1-pro
+next_model: openai/gpt-5.4
