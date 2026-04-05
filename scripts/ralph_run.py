@@ -8,7 +8,7 @@ import random
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -36,12 +36,6 @@ ELIGIBLE_PROVIDERS = {
     "deepseek", "meta-llama", "cohere", "amazon",
 }
 
-# Model IDs containing these substrings are excluded (specialized, not
-# general-purpose reasoning models).
-MODEL_EXCLUDE_PATTERNS = {
-    "audio", "image", "vision", "-vl-", "guard", "embed", "safeguard",
-    ":extended", "custom",
-}
 
 # Read-only git subcommands the agent is allowed to run.
 GIT_ALLOWED_SUBCOMMANDS = {"log", "diff", "show", "blame", "ls-files", "shortlog", "status", "rev-parse"}
@@ -421,7 +415,11 @@ def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
     import requests
 
     headers = {"Authorization": f"Bearer {api_key}"}
-    resp = requests.get(OPENROUTER_MODELS_URL, headers=headers, timeout=30)
+    resp = requests.get(
+        OPENROUTER_MODELS_URL,
+        params={"supported_parameters": "tools", "output_modalities": "text"},
+        headers=headers, timeout=30,
+    )
     resp.raise_for_status()
     all_models = resp.json().get("data", [])
 
@@ -446,8 +444,15 @@ def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
         if completion_price <= 0 or completion_price > MAX_COMPLETION_PRICE:
             continue
 
-        if any(pat in model_id for pat in MODEL_EXCLUDE_PATTERNS):
-            continue
+        # Skip models that are about to expire (within 30 days)
+        expiration = m.get("expiration_date")
+        if expiration:
+            try:
+                exp_date = datetime.fromisoformat(expiration.replace("Z", "+00:00"))
+                if exp_date < datetime.now(timezone.utc) + timedelta(days=30):
+                    continue
+            except (ValueError, TypeError):
+                pass
 
         valid.append(model_id)
         pricing_map[model_id] = {"prompt": prompt_price, "completion": completion_price}
@@ -547,13 +552,21 @@ def call_openrouter_with_tools(
         finish_reason = choice.get("finish_reason", "unknown")
         message = choice["message"]
 
-        # Track cost from usage stats if provided
+        # Track cost — use API usage stats, fall back to character-based estimate
         usage = data.get("usage", {})
         prompt_tokens = usage.get("prompt_tokens", 0)
         completion_tokens = usage.get("completion_tokens", 0)
-        call_cost = (prompt_tokens * prompt_price) + (completion_tokens * completion_price)
+        if prompt_tokens == 0 and completion_tokens == 0:
+            # Estimate: ~4 chars per token
+            est_prompt = sum(len(json.dumps(m)) for m in messages) // 4
+            est_completion = len(json.dumps(message)) // 4
+            call_cost = (est_prompt * prompt_price) + (est_completion * completion_price)
+            print(f"    tokens (estimated): ~{est_prompt} in / ~{est_completion} out = ${call_cost:.4f}")
+        else:
+            call_cost = (prompt_tokens * prompt_price) + (completion_tokens * completion_price)
+            print(f"    tokens: {prompt_tokens} in / {completion_tokens} out = ${call_cost:.4f}")
         total_cost += call_cost
-        print(f"    tokens: {prompt_tokens} in / {completion_tokens} out = ${call_cost:.4f} (total: ${total_cost:.4f})")
+        print(f"    running total: ${total_cost:.4f}")
 
         # Budget check
         if total_cost >= MAX_RUN_COST_USD:
@@ -649,9 +662,27 @@ def parse_ralph_block(response: str):
     return commit_subject, commit_body, next_model, files, deletes
 
 
+# Paths the agent is never allowed to write or delete.
+PROTECTED_PATHS = {"scripts/", ".github/", "PROJECT.md", ".gitignore"}
+
+
+def _is_protected(rel_path: str) -> bool:
+    """Check if a path is in the protected set."""
+    for p in PROTECTED_PATHS:
+        if p.endswith("/"):
+            if rel_path.startswith(p) or rel_path == p.rstrip("/"):
+                return True
+        elif rel_path == p:
+            return True
+    return False
+
+
 def apply_changes(files, deletes):
     changed = []
     for rel_path, content in files:
+        if _is_protected(rel_path):
+            print(f"  BLOCKED: write to protected path '{rel_path}'")
+            continue
         full = REPO_ROOT / rel_path
         full.parent.mkdir(parents=True, exist_ok=True)
         full.write_text(content, encoding="utf-8")
@@ -659,6 +690,9 @@ def apply_changes(files, deletes):
         print(f"  wrote: {rel_path}")
 
     for rel_path in deletes:
+        if _is_protected(rel_path):
+            print(f"  BLOCKED: delete of protected path '{rel_path}'")
+            continue
         full = REPO_ROOT / rel_path
         if full.exists():
             full.unlink()
@@ -810,6 +844,18 @@ def main():
     # --- Fetch available models for rotation ---
     print("Fetching available models from OpenRouter...")
     available_models, pricing_map = fetch_available_models(api_key)
+
+    # Validate selected model is actually available
+    if model not in pricing_map:
+        print(f"  WARNING: Model '{model}' not found on OpenRouter. Falling back to default.")
+        model = DEFAULT_MODEL
+        current_provider = get_provider(model)
+        if model not in pricing_map:
+            print(f"  ERROR: Default model '{model}' also not found. Using first available.")
+            model = available_models[0] if available_models else DEFAULT_MODEL
+            current_provider = get_provider(model)
+        print(f"  Using: {model}")
+
     eligible_next = [m for m in available_models if get_provider(m) != current_provider]
     models_list_text = "\n".join(f"  - {m}" for m in eligible_next) if eligible_next else "  (none available)"
 
