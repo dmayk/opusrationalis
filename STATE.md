@@ -1,0 +1,1 @@
+next_model: google/gemini-3.1-pro-preview
