@@ -20,7 +20,7 @@ BRAVE_SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
 DEFAULT_MODEL = "anthropic/claude-sonnet-4.6"
 MAX_TOOL_ITERATIONS = 30
 MAX_TOOL_OUTPUT_CHARS = 50_000
-MAX_RUN_COST_USD = 1.00  # Hard cap: abort if estimated spend exceeds this
+MAX_RUN_COST_USD = 0.80  # Hard cap: abort if estimated spend exceeds this
 
 MIN_CONTEXT_LENGTH = 128_000
 
@@ -558,8 +558,8 @@ def call_openrouter_with_tools(
         completion_tokens = usage.get("completion_tokens", 0)
         if prompt_tokens == 0 and completion_tokens == 0:
             # Estimate: ~4 chars per token
-            est_prompt = sum(len(json.dumps(m)) for m in messages) // 4
-            est_completion = len(json.dumps(message)) // 4
+            est_prompt = sum(len(json.dumps(m)) for m in messages) // 3
+            est_completion = len(json.dumps(message)) // 3
             call_cost = (est_prompt * prompt_price) + (est_completion * completion_price)
             print(f"    tokens (estimated): ~{est_prompt} in / ~{est_completion} out = ${call_cost:.4f}")
         else:
@@ -851,14 +851,21 @@ def main():
     print("Fetching available models from OpenRouter...")
     available_models, pricing_map = fetch_available_models(api_key)
 
+    # Bail out if no models are available at all
+    if not available_models:
+        msg = "No qualifying models found on OpenRouter. Cannot proceed."
+        print(f"  ERROR: {msg}", file=sys.stderr)
+        send_alert_email("Ralph FATAL — no models available", msg)
+        sys.exit(1)
+
     # Validate selected model is actually available
     if model not in pricing_map:
         print(f"  WARNING: Model '{model}' not found on OpenRouter. Falling back to default.")
         model = DEFAULT_MODEL
         current_provider = get_provider(model)
         if model not in pricing_map:
-            print(f"  ERROR: Default model '{model}' also not found. Using first available.")
-            model = available_models[0] if available_models else DEFAULT_MODEL
+            print(f"  WARNING: Default model also not found. Using first available.")
+            model = available_models[0]
             current_provider = get_provider(model)
         print(f"  Using: {model}")
 
