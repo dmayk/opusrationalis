@@ -1,0 +1,410 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://theology-graph.local/schemas/profile.json",
+  "title": "Hermeneutic Profile",
+  "description": "A structured declaration of the interpretive priors a reader brings to the text. Profiles represent historical traditions or user-defined positions. Every conclusion in the doctrine graph is conditioned on at least one profile.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A unique, URL-safe identifier for the profile (e.g., 'reformed-westminster', 'catholic-tridentine', 'eastern-orthodox-chalcedonian')."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name (e.g., 'Reformed (Westminster)')."
+    },
+    "tradition": {
+      "type": "string",
+      "description": "The broad historical tradition this profile represents (e.g., 'Reformed', 'Roman Catholic', 'Eastern Orthodox', 'Lutheran', 'Anabaptist', 'Wesleyan', 'Anglican', 'user-defined')."
+    },
+    "description": {
+      "type": "string",
+      "description": "A brief prose summary of the profile's distinctive hermeneutical posture, for human readers."
+    },
+    "canon": {
+      "type": "object",
+      "description": "Which books are treated as canonical scripture.",
+      "properties": {
+        "tradition": {
+          "type": "string",
+          "enum": [
+            "tanakh",
+            "protestant",
+            "catholic-trent",
+            "eastern-orthodox",
+            "ethiopian-orthodox",
+            "other"
+          ],
+          "description": "The canonical collection recognized by this profile."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Any qualifications — e.g., status of deuterocanonicals as 'profitable but not doctrine-establishing' (Anglican Article VI), or specific books included/excluded beyond the named tradition."
+        }
+      },
+      "required": ["tradition"]
+    },
+    "text_base": {
+      "type": "object",
+      "description": "Which text editions are treated as primary and secondary witnesses.",
+      "properties": {
+        "ot_primary": {
+          "type": "string",
+          "enum": [
+            "masoretic-bhs",
+            "masoretic-bhq",
+            "septuagint-rahlfs",
+            "septuagint-goettingen",
+            "vulgate",
+            "peshitta",
+            "other"
+          ],
+          "description": "The primary Old Testament text edition."
+        },
+        "ot_secondary": {
+          "type": "array",
+          "description": "Secondary OT text editions consulted.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "masoretic-bhs",
+              "masoretic-bhq",
+              "septuagint-rahlfs",
+              "septuagint-goettingen",
+              "vulgate",
+              "peshitta",
+              "dead-sea-scrolls",
+              "targumim",
+              "other"
+            ]
+          }
+        },
+        "nt_primary": {
+          "type": "string",
+          "enum": [
+            "na28",
+            "na29",
+            "byzantine-majority",
+            "textus-receptus",
+            "vulgate",
+            "peshitta",
+            "other"
+          ],
+          "description": "The primary New Testament text edition."
+        },
+        "nt_secondary": {
+          "type": "array",
+          "description": "Secondary NT text editions consulted.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "na28",
+              "na29",
+              "byzantine-majority",
+              "textus-receptus",
+              "vulgate",
+              "peshitta",
+              "other"
+            ]
+          }
+        },
+        "variant_positions": {
+          "type": "array",
+          "description": "Explicit positions on specific textual variants that matter doctrinally.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "reference": {
+                "type": "string",
+                "description": "The passage containing the variant (e.g., '1 John 5:7-8', 'Mark 16:9-20', 'John 7:53-8:11')."
+              },
+              "variant_name": {
+                "type": "string",
+                "description": "A short identifier for the variant (e.g., 'comma-johanneum', 'longer-ending-mark', 'pericope-adulterae')."
+              },
+              "position": {
+                "type": "string",
+                "enum": ["authentic", "secondary", "interpolation", "uncertain", "other"],
+                "description": "This profile's stance on the variant's authenticity."
+              },
+              "notes": {
+                "type": "string"
+              }
+            },
+            "required": ["reference", "variant_name", "position"]
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "General notes on text-base approach — e.g., 'LXX preferred where NT authors quote it'."
+        }
+      },
+      "required": ["ot_primary", "nt_primary"]
+    },
+    "authority_model": {
+      "type": "object",
+      "description": "How scripture relates to other sources of authority.",
+      "properties": {
+        "position": {
+          "type": "string",
+          "enum": [
+            "sola-scriptura",
+            "prima-scriptura",
+            "scripture-and-tradition",
+            "scripture-tradition-magisterium",
+            "wesleyan-quadrilateral",
+            "other"
+          ],
+          "description": "The core authority model."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Qualifications — e.g., how 'tradition' is defined (apostolic oral tradition vs. ecclesiastical tradition), or the role of reason and experience in the Wesleyan model."
+        }
+      },
+      "required": ["position"]
+    },
+    "interpretive_method": {
+      "type": "object",
+      "description": "The exegetical methods employed, in priority order.",
+      "properties": {
+        "primary": {
+          "type": "string",
+          "enum": [
+            "historical-grammatical",
+            "historical-critical",
+            "typological",
+            "canonical",
+            "redemptive-historical",
+            "literary",
+            "fourfold-sense",
+            "theoria",
+            "other"
+          ],
+          "description": "The primary exegetical method."
+        },
+        "secondary": {
+          "type": "array",
+          "description": "Additional methods employed, in order of weight.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "historical-grammatical",
+              "historical-critical",
+              "typological",
+              "canonical",
+              "redemptive-historical",
+              "literary",
+              "fourfold-sense",
+              "theoria",
+              "other"
+            ]
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "How the methods interact — e.g., 'typological readings are grounded in and constrained by the historical-grammatical sense' (Reformed), or 'the spiritual sense never contradicts the literal' (Aquinas)."
+        }
+      },
+      "required": ["primary"]
+    },
+    "rule_of_faith": {
+      "type": "object",
+      "description": "Which creeds, confessions, and conciliar definitions function as interpretive guardrails.",
+      "properties": {
+        "creeds": {
+          "type": "array",
+          "description": "Ecumenical creeds affirmed.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "apostles",
+              "nicene-325",
+              "nicene-constantinopolitan-381",
+              "chalcedonian-451",
+              "athanasian",
+              "other"
+            ]
+          }
+        },
+        "confessions": {
+          "type": "array",
+          "description": "Tradition-specific confessional documents that function as binding or normative.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The confession name (e.g., 'Westminster Confession of Faith', 'Canons and Decrees of Trent', 'Book of Concord', 'Thirty-Nine Articles', 'Schleitheim Confession')."
+              },
+              "authority_level": {
+                "type": "string",
+                "enum": ["binding", "normative", "instructive", "historical-reference"],
+                "description": "How much weight this confession carries: binding (must not contradict), normative (strong presumption), instructive (informative but defeasible), historical-reference (context only)."
+              }
+            },
+            "required": ["name", "authority_level"]
+          }
+        },
+        "councils": {
+          "type": "array",
+          "description": "Ecumenical councils recognized as authoritative.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Council name (e.g., 'Nicaea I', 'Constantinople I', 'Ephesus', 'Chalcedon', 'Constantinople II', 'Constantinople III', 'Nicaea II', 'Trent', 'Vatican I', 'Vatican II')."
+              },
+              "authority_level": {
+                "type": "string",
+                "enum": ["binding", "normative", "instructive", "historical-reference"]
+              }
+            },
+            "required": ["name", "authority_level"]
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "How the rule of faith functions — e.g., 'Scripture is norma normans, confessions are norma normata' (Lutheran), or 'The Magisterium is the authentic interpreter of Scripture' (Catholic)."
+        }
+      },
+      "required": ["creeds"]
+    },
+    "testament_relation": {
+      "type": "object",
+      "description": "How the Old and New Testaments relate to each other.",
+      "properties": {
+        "position": {
+          "type": "string",
+          "enum": [
+            "covenantal",
+            "dispensational",
+            "new-covenant",
+            "progressive-covenantal",
+            "promise-fulfillment",
+            "other"
+          ],
+          "description": "The governing framework for OT-NT relations."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Qualifications — e.g., within covenantal theology, whether the covenant of works is affirmed, how the Mosaic covenant relates to the Abrahamic."
+        }
+      },
+      "required": ["position"]
+    },
+    "inspiration_model": {
+      "type": "object",
+      "description": "The view of how Scripture was inspired and what that entails.",
+      "properties": {
+        "position": {
+          "type": "string",
+          "enum": [
+            "verbal-plenary",
+            "dynamic",
+            "dictation",
+            "infallible-faith-and-practice",
+            "neo-orthodox-encounter",
+            "other"
+          ],
+          "description": "The model of inspiration."
+        },
+        "inerrancy": {
+          "type": ["string", "null"],
+          "enum": ["strict-inerrancy", "limited-inerrancy", "infallibility", "none", null],
+          "description": "If applicable, the inerrancy position. Null if the tradition does not frame the question in these terms."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Qualifications — e.g., 'inerrancy applies to autographs, not copies' (Chicago Statement), or 'the Church precedes and authenticates Scripture' (Orthodox)."
+        }
+      },
+      "required": ["position"]
+    },
+    "clarity_hierarchy": {
+      "type": "object",
+      "description": "How apparent tensions between passages are resolved — which texts are treated as controlling for which doctrinal domains.",
+      "properties": {
+        "general_principle": {
+          "type": "string",
+          "description": "The overarching interpretive principle for passage tensions — e.g., 'analogy of faith: clearer passages interpret less clear ones' (Reformed), 'the rule of faith as received in Tradition guides interpretation' (Catholic/Orthodox), 'the New Testament is the interpretive key to the Old' (most Christian traditions)."
+        },
+        "specific_priorities": {
+          "type": "array",
+          "description": "Explicit priority rules for specific doctrinal tensions. Each rule declares which passage(s) or corpus controls the reading when tension arises.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": "string",
+                "description": "The doctrinal domain where the tension arises (e.g., 'justification', 'perseverance', 'law-and-gospel', 'divine-sovereignty-and-human-agency')."
+              },
+              "controlling_passages": {
+                "type": "array",
+                "description": "Passages or corpora treated as primary/controlling in this domain.",
+                "items": { "type": "string" }
+              },
+              "subordinate_passages": {
+                "type": "array",
+                "description": "Passages or corpora whose reading is shaped by the controlling passages.",
+                "items": { "type": "string" }
+              },
+              "rationale": {
+                "type": "string",
+                "description": "Why this priority order holds under this profile's hermeneutic."
+              }
+            },
+            "required": ["domain", "controlling_passages", "subordinate_passages"]
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": ["general_principle"]
+    },
+    "version_history": {
+      "type": "array",
+      "description": "Chronological record of modifications to this profile.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "commit_sha": {
+            "type": "string",
+            "description": "The git commit SHA where this version was recorded."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of the change."
+          },
+          "note": {
+            "type": "string",
+            "description": "What changed in this version."
+          },
+          "author_model": {
+            "type": "string",
+            "description": "The model that authored this version."
+          }
+        },
+        "required": ["commit_sha", "timestamp", "author_model"]
+      }
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "tradition",
+    "description",
+    "canon",
+    "text_base",
+    "authority_model",
+    "interpretive_method",
+    "rule_of_faith",
+    "testament_relation",
+    "inspiration_model",
+    "clarity_hierarchy",
+    "version_history"
+  ]
+}
