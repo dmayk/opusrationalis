@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://theology-graph.local/schemas/claim.json",
+  "title": "Atomic Claim",
+  "description": "A narrow, falsifiable theological claim that can be argued from source texts.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A unique, URL-safe identifier for the claim (e.g., romans-3-24-dikaioo-forensic)."
+    },
+    "statement": {
+      "type": "string",
+      "description": "The precise proposition being interrogated."
+    },
+    "passages": {
+      "type": "array",
+      "description": "Relevant verses in original languages and translations.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Standardized canonical reference (e.g., Rom 3:24)."
+          },
+          "original_text": {
+            "type": "string"
+          },
+          "original_language": {
+            "type": "string",
+            "enum": ["hebrew", "aramaic", "greek"]
+          },
+          "translations": {
+            "type": "object",
+            "description": "Keyed by translation identifier (e.g., 'esv', 'vulgate').",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["reference"]
+      }
+    },
+    "profile_dependency": {
+      "type": ["string", "null"],
+      "description": "Identifier of the hermeneutic profile this resolution depends on, or null if universally stable across all profiles."
+    },
+    "debate_history": {
+      "type": "array",
+      "description": "Pointers to debate transcripts concerning this claim.",
+      "items": {
+        "type": "string",
+        "description": "Path or URI to the debate transcript."
+      }
+    },
+    "resolution_status": {
+      "type": "string",
+      "enum": ["unresolved", "impasse", "resolved", "conditionally_resolved"],
+      "description": "Current state of the debate on this claim."
+    },
+    "stability_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Frequency of the same resolution across independent reseedings."
+    },
+    "contestation_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Measure of the quantity and quality of surviving counter-arguments."
+    },
+    "version_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "commit_sha": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "note": { "type": "string" },
+          "author_model": { "type": "string" }
+        },
+        "required": ["commit_sha", "timestamp", "author_model"]
+      }
+    }
+  },
+  "required": [
+    "id",
+    "statement",
+    "passages",
+    "profile_dependency",
+    "debate_history",
+    "resolution_status",
+    "stability_score",
+    "contestation_score",
+    "version_history"
+  ]
+}
