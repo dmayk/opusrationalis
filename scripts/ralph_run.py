@@ -224,7 +224,15 @@ def call_openrouter(prompt: str, model: str, api_key: str) -> str:
     resp.raise_for_status()
 
     data = resp.json()
-    return data["choices"][0]["message"]["content"]
+    choice = data["choices"][0]
+    finish_reason = choice.get("finish_reason", "unknown")
+    content = choice["message"]["content"]
+
+    if finish_reason == "length":
+        print("  WARNING: Response was truncated (hit max_tokens limit).")
+        print("  File changes will be skipped — incomplete ralph block is unreliable.")
+
+    return content, finish_reason
 
 
 def parse_ralph_block(response: str):
@@ -364,14 +372,19 @@ def main():
     print(f"Prompt length: {len(prompt)} chars")
     print("Calling OpenRouter...")
 
-    response = call_openrouter(prompt, model, api_key)
+    response, finish_reason = call_openrouter(prompt, model, api_key)
     print(f"Response length: {len(response)} chars")
+    print(f"Finish reason: {finish_reason}")
+
+    truncated = finish_reason == "length"
 
     # Parse and apply
     commit_subject, commit_body, next_model, files, deletes = parse_ralph_block(response)
     changed = []
 
-    if files or deletes:
+    if truncated:
+        print("Skipping file changes due to truncated response.")
+    elif files or deletes:
         print("Applying changes...")
         changed = apply_changes(files, deletes)
     else:
