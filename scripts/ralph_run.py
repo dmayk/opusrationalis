@@ -683,7 +683,10 @@ def apply_changes(files, deletes):
         if _is_protected(rel_path):
             print(f"  BLOCKED: write to protected path '{rel_path}'")
             continue
-        full = REPO_ROOT / rel_path
+        full = (REPO_ROOT / rel_path).resolve()
+        if not str(full).startswith(str(REPO_ROOT.resolve())):
+            print(f"  BLOCKED: path traversal attempt '{rel_path}'")
+            continue
         full.parent.mkdir(parents=True, exist_ok=True)
         full.write_text(content, encoding="utf-8")
         changed.append({"action": "write", "path": rel_path})
@@ -693,7 +696,10 @@ def apply_changes(files, deletes):
         if _is_protected(rel_path):
             print(f"  BLOCKED: delete of protected path '{rel_path}'")
             continue
-        full = REPO_ROOT / rel_path
+        full = (REPO_ROOT / rel_path).resolve()
+        if not str(full).startswith(str(REPO_ROOT.resolve())):
+            print(f"  BLOCKED: path traversal attempt '{rel_path}'")
+            continue
         if full.exists():
             full.unlink()
             changed.append({"action": "delete", "path": rel_path})
