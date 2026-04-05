@@ -1,0 +1,435 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://theology-graph.local/schemas/resolution_tree.json",
+  "title": "Resolution Tree",
+  "description": "Structured synthesis of an atomic claim debate, recording where agreement was reached, where disagreement remains, and which textual or hermeneutical priors the remaining divergence depends on.",
+  "type": "object",
+  "definitions": {
+    "citation": {
+      "type": "object",
+      "description": "A supporting citation anchoring a resolution-tree node in scripture or historical sources.",
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": ["scripture", "historical"]
+        },
+        "reference": {
+          "type": "string",
+          "description": "Canonical verse reference or historical source locator."
+        },
+        "text_quoted": {
+          "type": "string",
+          "description": "Optional quoted text excerpt supporting this branch."
+        },
+        "original_language": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": ["hebrew", "aramaic", "greek", "latin", "syriac"]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Original language of the quoted source when applicable."
+        },
+        "weight": {
+          "type": "string",
+          "enum": ["primary", "secondary", "illustrative"],
+          "description": "Relative evidentiary weight assigned to the citation within this branch."
+        }
+      },
+      "required": ["source_type", "reference"]
+    },
+    "divergence_point": {
+      "type": "object",
+      "description": "Precise localization of where profiles or traditions part ways in the argument.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "passage",
+            "lexical_decision",
+            "textual_variant",
+            "profile_axis",
+            "authority_claim",
+            "methodological_move",
+            "scope_of_claim",
+            "other"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "description": "Short human-readable label for the divergence point."
+        },
+        "description": {
+          "type": "string",
+          "description": "Explanation of the precise move or decision at which agreement breaks."
+        },
+        "reference": {
+          "type": ["string", "null"],
+          "description": "Optional canonical reference, source location, or profile path."
+        }
+      },
+      "required": ["kind", "label", "description"]
+    },
+    "depends_on": {
+      "type": "object",
+      "description": "Declaration of what this node's synthesis depends on.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "none",
+            "passage",
+            "set_of_passages",
+            "profile_axis",
+            "textual_variant",
+            "historical_source",
+            "methodological_prior",
+            "composite"
+          ]
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "References, profile paths, or identifiers naming the dependencies."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Freeform explanation of the dependency."
+        }
+      },
+      "required": ["type", "references"]
+    },
+    "blocking_prior": {
+      "type": "object",
+      "description": "The explicit prior preventing further convergence at this branch.",
+      "properties": {
+        "profile_axis": {
+          "type": "string",
+          "enum": [
+            "canon",
+            "text_base",
+            "authority_model",
+            "interpretive_method",
+            "rule_of_faith",
+            "testament_relation",
+            "inspiration_model",
+            "clarity_hierarchy",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "What unstated or stated prior blocks agreement."
+        },
+        "profiles_affected": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Profile identifiers implicated by this blocking prior."
+        }
+      },
+      "required": ["profile_axis", "description", "profiles_affected"]
+    },
+    "profile_outcome": {
+      "type": "object",
+      "description": "How a given profile or profile cluster lands at a specific branch or conclusion.",
+      "properties": {
+        "profile_id": {
+          "type": "string",
+          "description": "Profile identifier, or a profile-cluster identifier if grouping traditions."
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "supports_claim",
+            "rejects_claim",
+            "partial_agreement",
+            "impasse",
+            "open_question",
+            "not_applicable"
+          ]
+        },
+        "node_id": {
+          "type": "string",
+          "description": "Identifier of the node where this profile currently terminates."
+        },
+        "rationale_summary": {
+          "type": "string",
+          "description": "Brief explanation of why this profile lands here."
+        }
+      },
+      "required": ["profile_id", "outcome", "node_id"]
+    },
+    "tree_node": {
+      "type": "object",
+      "description": "A node in the resolution tree.",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "description": "Unique identifier for this node within the tree."
+        },
+        "node_type": {
+          "type": "string",
+          "enum": [
+            "agreement",
+            "disagreement",
+            "impasse",
+            "open_question",
+            "terminal"
+          ],
+          "description": "The role this node plays in the resolution tree."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Human-readable synthesis of this node's state."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "stable",
+            "provisional",
+            "contested",
+            "unresolved"
+          ],
+          "description": "How firm this branch currently is."
+        },
+        "depends_on": {
+          "$ref": "#/definitions/depends_on"
+        },
+        "divergence_point": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/divergence_point"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Where agreement gives way to disagreement, if applicable."
+        },
+        "blocking_prior": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/blocking_prior"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The explicit prior preventing further convergence at this branch, if any."
+        },
+        "supporting_evidence": {
+          "type": "array",
+          "description": "Primary-source anchors for this synthesis node.",
+          "items": {
+            "$ref": "#/definitions/citation"
+          }
+        },
+        "counter_evidence": {
+          "type": "array",
+          "description": "Important surviving evidence or objections that keep this branch contested.",
+          "items": {
+            "$ref": "#/definitions/citation"
+          }
+        },
+        "profiles_in_scope": {
+          "type": "array",
+          "description": "Profiles actively represented at this branch.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "children": {
+          "type": "array",
+          "description": "Child branches flowing from this node.",
+          "items": {
+            "$ref": "#/definitions/tree_node"
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional explanatory commentary for maintainers or site rendering."
+        }
+      },
+      "required": [
+        "node_id",
+        "node_type",
+        "summary",
+        "status",
+        "depends_on",
+        "supporting_evidence",
+        "counter_evidence",
+        "profiles_in_scope",
+        "children"
+      ]
+    }
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A unique identifier for this resolution tree."
+    },
+    "claim_id": {
+      "type": "string",
+      "description": "The atomic claim this tree resolves."
+    },
+    "claim_statement": {
+      "type": "string",
+      "description": "Human-readable restatement of the atomic claim."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "provisional",
+        "stable",
+        "superseded"
+      ],
+      "description": "Current publication status of the resolution tree."
+    },
+    "resolution_summary": {
+      "type": "string",
+      "description": "Top-level synthesis of where the debate currently stands."
+    },
+    "source_debates": {
+      "type": "array",
+      "description": "Debate transcripts from which this tree was synthesized.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generated_from": {
+      "type": "object",
+      "description": "Provenance data for reproducibility.",
+      "properties": {
+        "author_model": {
+          "type": "string",
+          "description": "Model that authored or synthesized this tree."
+        },
+        "run_id": {
+          "type": ["string", "null"],
+          "description": "Run identifier or path if available."
+        },
+        "commit_sha": {
+          "type": ["string", "null"],
+          "description": "Commit SHA current at generation time if available."
+        },
+        "prompt_reference": {
+          "type": ["string", "null"],
+          "description": "Path or identifier for the prompt set used to generate the tree."
+        }
+      },
+      "required": ["author_model"]
+    },
+    "root": {
+      "$ref": "#/definitions/tree_node"
+    },
+    "profile_outcomes": {
+      "type": "array",
+      "description": "Per-profile mapping to the branch or conclusion each profile currently reaches.",
+      "items": {
+        "$ref": "#/definitions/profile_outcome"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Convergence and contestation metrics associated with this resolution tree.",
+      "properties": {
+        "stability_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Frequency of the same synthesis across independent reseedings."
+        },
+        "depth_of_consensus": {
+          "type": "number",
+          "minimum": 0,
+          "description": "How deep into the tree agreement extends before meaningful divergence."
+        },
+        "prior_dependence": {
+          "type": "array",
+          "description": "Profile axes this tree's key branches are sensitive to.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "canon",
+              "text_base",
+              "authority_model",
+              "interpretive_method",
+              "rule_of_faith",
+              "testament_relation",
+              "inspiration_model",
+              "clarity_hierarchy",
+              "other"
+            ]
+          }
+        },
+        "contestation_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Measure of the quality and persistence of surviving objections."
+        },
+        "drift_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Observed change across model versions, prompts, or corpus revisions."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Freeform notes about how metrics were assessed."
+        }
+      },
+      "required": [
+        "stability_score",
+        "depth_of_consensus",
+        "prior_dependence",
+        "contestation_score",
+        "drift_score"
+      ]
+    },
+    "version_history": {
+      "type": "array",
+      "description": "Chronological record of modifications to this resolution tree.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "commit_sha": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "author_model": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": ["commit_sha", "timestamp", "author_model"]
+      }
+    }
+  },
+  "required": [
+    "id",
+    "claim_id",
+    "claim_statement",
+    "status",
+    "resolution_summary",
+    "source_debates",
+    "generated_from",
+    "root",
+    "profile_outcomes",
+    "metrics",
+    "version_history"
+  ]
+}
