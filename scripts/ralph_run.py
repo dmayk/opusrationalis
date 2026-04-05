@@ -22,7 +22,7 @@ ELIGIBLE_MODELS = {
     "anthropic": ["anthropic/claude-opus-4.6", "anthropic/claude-sonnet-4.6"],
     "google": ["google/gemini-3.1-pro-preview", "google/gemini-3-flash-preview"],
     "openai": ["openai/gpt-5.4", "openai/gpt-5.3-codex"],
-    "qwen": ["qwen/qwen3.6-plus-preview", "qwen/qwen3.5-397b-a17b"],
+    "qwen": ["qwen/qwen3.6-plus:free", "qwen/qwen3.5-397b-a17b"],
     "x-ai": ["x-ai/grok-4.20"],
     "mistralai": ["mistralai/mistral-small-2603"],
 }
