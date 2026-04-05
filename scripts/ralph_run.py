@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Ralph runner — reads PROJECT.md, calls OpenRouter, applies file changes."""
+"""Ralph runner — reads PROJECT.md, calls OpenRouter with tools, applies file changes."""
 
+import ipaddress
 import json
 import os
 import random
@@ -9,15 +10,17 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_MODELS_URL = "https://openrouter.ai/api/v1/models"
+BRAVE_SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
 DEFAULT_MODEL = "anthropic/claude-sonnet-4.6"
+MAX_TOOL_ITERATIONS = 30
+MAX_TOOL_OUTPUT_CHARS = 50_000
 
-# Frontier-tier models eligible for rotation. Keys are provider prefixes,
-# values are lists of model ID patterns (exact or prefix match).
-# Keep this list curated — only strong reasoning models belong here.
+# Frontier-tier models eligible for rotation.
 ELIGIBLE_MODELS = {
     "anthropic": ["anthropic/claude-opus-4.6", "anthropic/claude-sonnet-4.6"],
     "google": ["google/gemini-3.1-pro-preview", "google/gemini-3-flash-preview"],
@@ -29,13 +32,292 @@ ELIGIBLE_MODELS = {
 
 MIN_CONTEXT_LENGTH = 32_000
 
-# --- Response format instructions appended to every prompt ---
+# Read-only git subcommands the agent is allowed to run.
+GIT_ALLOWED_SUBCOMMANDS = {"log", "diff", "show", "blame", "ls-files", "shortlog", "status", "rev-parse"}
+
+# ---------------------------------------------------------------------------
+# Tool definitions (OpenAI function-calling format)
+# ---------------------------------------------------------------------------
+
+TOOL_DEFINITIONS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "brave_search",
+            "description": "Search the web using Brave Search. Use this to find scripture texts, theological works, scholarly articles, primary sources, and any other information needed for research.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The search query.",
+                    },
+                    "count": {
+                        "type": "integer",
+                        "description": "Number of results to return (default 5, max 20).",
+                        "default": 5,
+                    },
+                },
+                "required": ["query"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "web_fetch",
+            "description": "Fetch the text content of a web page or file at a URL. Use this to read articles, download public domain texts, access scripture databases, or retrieve any web content found via brave_search.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "The URL to fetch.",
+                    },
+                    "max_chars": {
+                        "type": "integer",
+                        "description": "Maximum characters to return (default 50000).",
+                        "default": 50000,
+                    },
+                },
+                "required": ["url"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "read_file",
+            "description": "Read a file from the repository. Use this to read schemas, debate transcripts, corpora, profiles, STATE.md, or any other repository file.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "File path relative to repository root (e.g. 'schemas/claim.json').",
+                    },
+                    "offset": {
+                        "type": "integer",
+                        "description": "Line number to start reading from (0-based). Optional.",
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Maximum number of lines to read. Optional.",
+                    },
+                },
+                "required": ["path"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "git",
+            "description": "Run a read-only git command. Allowed subcommands: log, diff, show, blame, ls-files, shortlog, status, rev-parse. Use this to inspect commit history, view diffs, blame lines, or list tracked files.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "args": {
+                        "type": "string",
+                        "description": "Git arguments (e.g. 'log --oneline -10', 'diff HEAD~1', 'show HEAD:schemas/claim.json').",
+                    },
+                },
+                "required": ["args"],
+            },
+        },
+    },
+]
+
+# ---------------------------------------------------------------------------
+# Tool executors
+# ---------------------------------------------------------------------------
+
+
+def _is_private_url(url: str) -> bool:
+    """Check if a URL points to a private/localhost address."""
+    try:
+        hostname = urlparse(url).hostname
+        if not hostname:
+            return True
+        if hostname in ("localhost", "127.0.0.1", "0.0.0.0", "::1"):
+            return True
+        ip = ipaddress.ip_address(hostname)
+        return ip.is_private or ip.is_loopback or ip.is_reserved
+    except (ValueError, TypeError):
+        return False
+
+
+def execute_brave_search(args: dict) -> str:
+    """Execute a Brave Search API call."""
+    import requests
+
+    api_key = os.environ.get("BRAVE_API_KEY")
+    if not api_key:
+        return "ERROR: BRAVE_API_KEY not configured."
+
+    query = args.get("query", "")
+    count = min(args.get("count", 5), 20)
+
+    resp = requests.get(
+        BRAVE_SEARCH_URL,
+        params={"q": query, "count": count},
+        headers={
+            "X-Subscription-Token": api_key,
+            "Accept": "application/json",
+        },
+        timeout=15,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+
+    results = []
+    for item in data.get("web", {}).get("results", [])[:count]:
+        results.append({
+            "title": item.get("title", ""),
+            "url": item.get("url", ""),
+            "description": item.get("description", ""),
+        })
+
+    return json.dumps(results, indent=2, ensure_ascii=False)
+
+
+def execute_web_fetch(args: dict) -> str:
+    """Fetch text content from a URL."""
+    import requests
+
+    url = args.get("url", "")
+    max_chars = min(args.get("max_chars", MAX_TOOL_OUTPUT_CHARS), MAX_TOOL_OUTPUT_CHARS)
+
+    if not url.startswith(("http://", "https://")):
+        return "ERROR: URL must start with http:// or https://"
+
+    if _is_private_url(url):
+        return "ERROR: Cannot fetch private/localhost URLs."
+
+    try:
+        resp = requests.get(
+            url,
+            headers={"User-Agent": "RalphRunner/1.0 (theological-research-bot)"},
+            timeout=30,
+            allow_redirects=True,
+        )
+        resp.raise_for_status()
+    except requests.RequestException as e:
+        return f"ERROR: Failed to fetch URL: {e}"
+
+    content_type = resp.headers.get("content-type", "")
+
+    if "text/html" in content_type:
+        # Strip HTML tags for a rough plain-text extraction
+        text = re.sub(r"<script[^>]*>.*?</script>", "", resp.text, flags=re.DOTALL | re.IGNORECASE)
+        text = re.sub(r"<style[^>]*>.*?</style>", "", text, flags=re.DOTALL | re.IGNORECASE)
+        text = re.sub(r"<[^>]+>", " ", text)
+        text = re.sub(r"\s+", " ", text).strip()
+    else:
+        text = resp.text
+
+    return text[:max_chars]
+
+
+def execute_read_file(args: dict) -> str:
+    """Read a file from the repository."""
+    rel_path = args.get("path", "")
+    full_path = (REPO_ROOT / rel_path).resolve()
+
+    # Path traversal check
+    if not str(full_path).startswith(str(REPO_ROOT)):
+        return "ERROR: Path must be within the repository."
+
+    if not full_path.exists():
+        return f"ERROR: File not found: {rel_path}"
+
+    if not full_path.is_file():
+        return f"ERROR: Not a file: {rel_path}"
+
+    try:
+        lines = full_path.read_text(encoding="utf-8").splitlines()
+    except UnicodeDecodeError:
+        return f"ERROR: Cannot read binary file: {rel_path}"
+
+    offset = args.get("offset", 0)
+    limit = args.get("limit")
+
+    if limit is not None:
+        lines = lines[offset:offset + limit]
+    elif offset > 0:
+        lines = lines[offset:]
+
+    content = "\n".join(lines)
+    return content[:MAX_TOOL_OUTPUT_CHARS]
+
+
+def execute_git(args: dict) -> str:
+    """Run a read-only git command."""
+    raw_args = args.get("args", "")
+    parts = raw_args.split()
+
+    if not parts:
+        return "ERROR: No git arguments provided."
+
+    subcommand = parts[0]
+    if subcommand not in GIT_ALLOWED_SUBCOMMANDS:
+        return f"ERROR: git subcommand '{subcommand}' is not allowed. Allowed: {', '.join(sorted(GIT_ALLOWED_SUBCOMMANDS))}"
+
+    result = subprocess.run(
+        ["git"] + parts,
+        capture_output=True, text=True, cwd=REPO_ROOT, timeout=30,
+    )
+
+    output = result.stdout
+    if result.returncode != 0:
+        output += f"\n[git exited with code {result.returncode}]\n{result.stderr}"
+
+    return output[:MAX_TOOL_OUTPUT_CHARS]
+
+
+TOOL_EXECUTORS = {
+    "brave_search": execute_brave_search,
+    "web_fetch": execute_web_fetch,
+    "read_file": execute_read_file,
+    "git": execute_git,
+}
+
+
+def execute_tool(name: str, arguments: dict) -> str:
+    """Dispatch a tool call to the appropriate executor."""
+    executor = TOOL_EXECUTORS.get(name)
+    if not executor:
+        return f"ERROR: Unknown tool '{name}'."
+    try:
+        return executor(arguments)
+    except Exception as e:
+        return f"ERROR: Tool '{name}' failed: {e}"
+
+
+# ---------------------------------------------------------------------------
+# Response format (appended to every prompt)
+# ---------------------------------------------------------------------------
+
 RESPONSE_FORMAT = """\
+
+## Tools Available
+
+You have access to the following tools during this run — use them freely:
+
+- **brave_search(query, count?)** — Search the web for sources, scripture texts, scholarly works.
+- **web_fetch(url, max_chars?)** — Fetch and read the content of a web page or text file.
+- **read_file(path, offset?, limit?)** — Read any file in the repository.
+- **git(args)** — Run read-only git commands (log, diff, show, blame, ls-files, shortlog, status).
+
+Use these tools to research, verify, and ground your work in primary sources. Do not guess
+at file contents or source material — read them. Do not assume what prior runs have done —
+check the git log and read STATE.md.
 
 ## Response Format (required by the runner)
 
-You MUST end your response with a structured block so the runner can apply your
-changes. Use exactly this format — the runner parses it mechanically:
+When you are done with your research and tool use, you MUST end your final response with a
+structured block so the runner can apply your changes. Use exactly this format — the runner
+parses it mechanically:
 
 ```ralph
 COMMIT_SUBJECT: <one-line summary for the commit>
@@ -69,9 +351,12 @@ Rules:
   OpenAI, DeepSeek, or Meta model — never another Qwen model.
 """
 
+# ---------------------------------------------------------------------------
+# Core functions
+# ---------------------------------------------------------------------------
+
 
 def get_provider(model_id: str) -> str:
-    """Extract the provider prefix from a model ID like 'anthropic/claude-opus-4.6'."""
     return model_id.split("/")[0] if "/" in model_id else model_id
 
 
@@ -86,13 +371,12 @@ def get_git_sha() -> str:
 def read_project_md() -> str:
     path = REPO_ROOT / "PROJECT.md"
     if not path.exists():
-        print("ERROR: PROJECT.md not found. It is the source of truth and must be provided separately.", file=sys.stderr)
+        print("ERROR: PROJECT.md not found.", file=sys.stderr)
         sys.exit(1)
     return path.read_text(encoding="utf-8")
 
 
 def read_next_model_from_state() -> str | None:
-    """Read the next_model directive from STATE.md if it exists."""
     state_path = REPO_ROOT / "STATE.md"
     if not state_path.exists():
         return None
@@ -102,28 +386,22 @@ def read_next_model_from_state() -> str | None:
 
 
 def write_next_model_to_state(model_id: str):
-    """Write or update the next_model line in STATE.md."""
     state_path = REPO_ROOT / "STATE.md"
     if state_path.exists():
         content = state_path.read_text(encoding="utf-8")
         if re.search(r"^next_model:\s*.+$", content, re.MULTILINE):
             content = re.sub(
-                r"^next_model:\s*.+$",
-                f"next_model: {model_id}",
-                content,
-                flags=re.MULTILINE,
+                r"^next_model:\s*.+$", f"next_model: {model_id}",
+                content, flags=re.MULTILINE,
             )
         else:
             content = content.rstrip() + f"\n\nnext_model: {model_id}\n"
         state_path.write_text(content, encoding="utf-8")
     else:
-        # STATE.md doesn't exist yet — the agent will create it, but we
-        # still need to persist the next model. Create a minimal one.
         state_path.write_text(f"next_model: {model_id}\n", encoding="utf-8")
 
 
-def fetch_available_models(api_key: str) -> list[dict]:
-    """Fetch the full model list from OpenRouter and filter to eligible models."""
+def fetch_available_models(api_key: str) -> list[str]:
     import requests
 
     headers = {"Authorization": f"Bearer {api_key}"}
@@ -131,44 +409,35 @@ def fetch_available_models(api_key: str) -> list[dict]:
     resp.raise_for_status()
     all_models = resp.json().get("data", [])
 
-    # Build set of eligible model IDs
     eligible_ids = set()
     for models in ELIGIBLE_MODELS.values():
         eligible_ids.update(models)
 
-    # Filter: must be in our curated list AND actually available on OpenRouter
     available_ids = {m["id"] for m in all_models if m.get("context_length", 0) >= MIN_CONTEXT_LENGTH}
     valid = sorted(eligible_ids & available_ids)
 
     print(f"  Available eligible models: {len(valid)} of {len(eligible_ids)} curated")
     for mid in valid:
         print(f"    - {mid}")
-
     return valid
 
 
 def pick_fallback_model(available_models: list[str], current_provider: str) -> str:
-    """Pick a random eligible model from a different provider."""
     candidates = [m for m in available_models if get_provider(m) != current_provider]
     if not candidates:
-        # Extreme fallback: just use default if somehow nothing else is available
-        print("  WARNING: No models from other providers available, using default.")
         return DEFAULT_MODEL
     return random.choice(candidates)
 
 
 def gather_state_summary() -> str:
-    """Build a compact summary of the current repository state."""
     lines = []
 
-    # STATE.md if it exists
     state_path = REPO_ROOT / "STATE.md"
     if state_path.exists():
         lines.append("=== STATE.md ===")
         lines.append(state_path.read_text(encoding="utf-8"))
         lines.append("")
 
-    # Top-level directory listing
     lines.append("=== Repository top-level listing ===")
     for item in sorted(REPO_ROOT.iterdir()):
         if item.name.startswith("."):
@@ -177,7 +446,6 @@ def gather_state_summary() -> str:
         lines.append(f"  {kind}: {item.name}")
     lines.append("")
 
-    # state/ directory contents (if present)
     state_dir = REPO_ROOT / "state"
     if state_dir.is_dir():
         lines.append("=== state/ directory ===")
@@ -188,7 +456,6 @@ def gather_state_summary() -> str:
                 lines.append(f"  {rel} ({size} bytes)")
         lines.append("")
 
-    # Recent commits
     result = subprocess.run(
         ["git", "log", "--oneline", "-20"],
         capture_output=True, text=True, cwd=REPO_ROOT,
@@ -201,17 +468,17 @@ def gather_state_summary() -> str:
     return "\n".join(lines)
 
 
-def call_openrouter(prompt: str, model: str, api_key: str) -> str:
-    """Call the OpenRouter chat completions API."""
-    import requests
+# ---------------------------------------------------------------------------
+# OpenRouter tool-use loop
+# ---------------------------------------------------------------------------
 
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "user", "content": prompt},
-        ],
-        "max_tokens": 64000,
-    }
+
+def call_openrouter_with_tools(messages: list, model: str, api_key: str, tools: list) -> tuple[str, str, list]:
+    """
+    Call OpenRouter in a loop, executing tool calls until the model produces
+    a final text response. Returns (final_content, finish_reason, tool_call_log).
+    """
+    import requests
 
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -220,30 +487,96 @@ def call_openrouter(prompt: str, model: str, api_key: str) -> str:
         "X-Title": "OpusRationalis Ralph Runner",
     }
 
-    resp = requests.post(OPENROUTER_URL, json=payload, headers=headers, timeout=600)
-    resp.raise_for_status()
+    tool_call_log = []
 
-    data = resp.json()
-    choice = data["choices"][0]
-    finish_reason = choice.get("finish_reason", "unknown")
-    content = choice["message"]["content"]
+    for iteration in range(MAX_TOOL_ITERATIONS):
+        payload = {
+            "model": model,
+            "messages": messages,
+            "tools": tools,
+            "max_tokens": 64000,
+        }
 
-    if finish_reason == "length":
-        print("  WARNING: Response was truncated (hit max_tokens limit).")
-        print("  File changes will be skipped — incomplete ralph block is unreliable.")
+        print(f"  API call #{iteration + 1} (messages: {len(messages)})...")
+        resp = requests.post(OPENROUTER_URL, json=payload, headers=headers, timeout=600)
+        resp.raise_for_status()
 
-    return content, finish_reason
+        data = resp.json()
+        choice = data["choices"][0]
+        finish_reason = choice.get("finish_reason", "unknown")
+        message = choice["message"]
+
+        # Append the assistant message to conversation history
+        messages.append(message)
+
+        # Check if the model wants to call tools
+        tool_calls = message.get("tool_calls")
+        if tool_calls:
+            print(f"  Model requested {len(tool_calls)} tool call(s):")
+            for tc in tool_calls:
+                fn_name = tc["function"]["name"]
+                fn_args_raw = tc["function"]["arguments"]
+                tc_id = tc["id"]
+
+                try:
+                    fn_args = json.loads(fn_args_raw) if isinstance(fn_args_raw, str) else fn_args_raw
+                except json.JSONDecodeError:
+                    fn_args = {}
+
+                # Log
+                args_summary = fn_args_raw[:200] if isinstance(fn_args_raw, str) else json.dumps(fn_args)[:200]
+                print(f"    -> {fn_name}({args_summary})")
+
+                # Execute
+                result = execute_tool(fn_name, fn_args)
+                result_preview = result[:200] + "..." if len(result) > 200 else result
+                print(f"       <- {len(result)} chars: {result_preview}")
+
+                # Record in log
+                tool_call_log.append({
+                    "iteration": iteration + 1,
+                    "tool": fn_name,
+                    "arguments": fn_args,
+                    "result_length": len(result),
+                    "result_preview": result[:500],
+                })
+
+                # Append tool result to conversation
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tc_id,
+                    "content": result,
+                })
+
+            continue  # Loop back for the model's next response
+
+        # No tool calls — this is the final response
+        content = message.get("content", "")
+        print(f"  Final response: {len(content)} chars, finish_reason: {finish_reason}")
+
+        if finish_reason == "length":
+            print("  WARNING: Response was truncated (hit max_tokens limit).")
+
+        return content, finish_reason, tool_call_log
+
+    # Exhausted iterations
+    print(f"  WARNING: Hit max tool iterations ({MAX_TOOL_ITERATIONS}).")
+    last_content = messages[-1].get("content", "") if messages else ""
+    return last_content, "max_iterations", tool_call_log
+
+
+# ---------------------------------------------------------------------------
+# Ralph block parsing and file application
+# ---------------------------------------------------------------------------
 
 
 def parse_ralph_block(response: str):
-    """Parse the ```ralph ... ``` block from the agent response."""
     match = re.search(r"```ralph\s*\n(.*?)```", response, re.DOTALL)
     if not match:
         return None, None, None, [], []
 
     block = match.group(1)
 
-    # Parse commit subject and body
     subject_match = re.search(r"^COMMIT_SUBJECT:\s*(.+)$", block, re.MULTILINE)
     body_match = re.search(r"^COMMIT_BODY:\s*(.+)$", block, re.MULTILINE)
     next_model_match = re.search(r"^NEXT_MODEL:\s*(.+)$", block, re.MULTILINE)
@@ -251,7 +584,6 @@ def parse_ralph_block(response: str):
     commit_body = body_match.group(1).replace("\\n", "\n").strip() if body_match else ""
     next_model = next_model_match.group(1).strip() if next_model_match else None
 
-    # Parse FILE blocks
     files = []
     for file_match in re.finditer(
         r"^FILE:\s*(.+?)\s*\nCONTENT:\n(.*?)^END_FILE",
@@ -259,7 +591,6 @@ def parse_ralph_block(response: str):
     ):
         files.append((file_match.group(1).strip(), file_match.group(2)))
 
-    # Parse DELETE lines
     deletes = []
     for del_match in re.finditer(r"^DELETE:\s*(.+)$", block, re.MULTILINE):
         deletes.append(del_match.group(1).strip())
@@ -268,9 +599,7 @@ def parse_ralph_block(response: str):
 
 
 def apply_changes(files, deletes):
-    """Write files and delete paths."""
     changed = []
-
     for rel_path, content in files:
         full = REPO_ROOT / rel_path
         full.parent.mkdir(parents=True, exist_ok=True)
@@ -284,12 +613,10 @@ def apply_changes(files, deletes):
             full.unlink()
             changed.append({"action": "delete", "path": rel_path})
             print(f"  deleted: {rel_path}")
-
     return changed
 
 
-def write_run_log(timestamp, model, sha_before, prompt, response, changed):
-    """Write a reproducibility log to runs/."""
+def write_run_log(timestamp, model, sha_before, prompt, response, changed, tool_call_log):
     runs_dir = REPO_ROOT / "runs"
     runs_dir.mkdir(exist_ok=True)
 
@@ -302,6 +629,7 @@ def write_run_log(timestamp, model, sha_before, prompt, response, changed):
         "git_sha_before": sha_before,
         "prompt": prompt,
         "response": response,
+        "tool_calls": tool_call_log,
         "files_changed": changed,
     }
 
@@ -311,11 +639,15 @@ def write_run_log(timestamp, model, sha_before, prompt, response, changed):
 
 
 def write_commit_msg(subject, body, model):
-    """Write the commit message to .ralph_commit_msg for the workflow to pick up."""
     msg = subject or f"ralph: {datetime.now(timezone.utc).strftime('%Y-%m-%d')} {model} — no-op run"
     if body:
         msg += "\n\n" + body
     (REPO_ROOT / ".ralph_commit_msg").write_text(msg, encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
 
 
 def main():
@@ -327,7 +659,7 @@ def main():
     timestamp = datetime.now(timezone.utc)
     sha_before = get_git_sha()
 
-    # --- Model selection priority: env var > STATE.md > default ---
+    # --- Model selection: env var > STATE.md > default ---
     env_model = os.environ.get("MODEL")
     state_model = read_next_model_from_state()
 
@@ -350,12 +682,10 @@ def main():
     # --- Fetch available models for rotation ---
     print("Fetching available models from OpenRouter...")
     available_models = fetch_available_models(api_key)
-
-    # Build the list of eligible next models (different provider only)
     eligible_next = [m for m in available_models if get_provider(m) != current_provider]
     models_list_text = "\n".join(f"  - {m}" for m in eligible_next) if eligible_next else "  (none available)"
 
-    # Build prompt
+    # --- Build initial prompt ---
     project_md = read_project_md()
     state_summary = gather_state_summary()
 
@@ -370,15 +700,19 @@ def main():
     )
 
     print(f"Prompt length: {len(prompt)} chars")
-    print("Calling OpenRouter...")
+    print("Starting tool-use loop...")
 
-    response, finish_reason = call_openrouter(prompt, model, api_key)
-    print(f"Response length: {len(response)} chars")
-    print(f"Finish reason: {finish_reason}")
+    messages = [{"role": "user", "content": prompt}]
+
+    response, finish_reason, tool_call_log = call_openrouter_with_tools(
+        messages, model, api_key, TOOL_DEFINITIONS,
+    )
+
+    print(f"Tool calls made: {len(tool_call_log)}")
 
     truncated = finish_reason == "length"
 
-    # Parse and apply
+    # --- Parse and apply ---
     commit_subject, commit_body, next_model, files, deletes = parse_ralph_block(response)
     changed = []
 
@@ -401,11 +735,10 @@ def main():
         print(f"Next model (fallback): {fallback}")
         write_next_model_to_state(fallback)
 
-    # Write run log (always)
-    log_path = write_run_log(timestamp, model, sha_before, prompt, response, changed)
+    # --- Write run log ---
+    log_path = write_run_log(timestamp, model, sha_before, prompt, response, changed, tool_call_log)
     changed.append({"action": "write", "path": log_path})
 
-    # Write commit message
     write_commit_msg(commit_subject, commit_body, model)
 
     print("Done.")

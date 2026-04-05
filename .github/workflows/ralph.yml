@@ -35,6 +35,7 @@ jobs:
       - name: Run Ralph
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
         run: python scripts/ralph_run.py
 
       - name: Commit and push changes
