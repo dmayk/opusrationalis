@@ -13,6 +13,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+ALERT_EMAIL = "dennis@mayk.eu"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_MODELS_URL = "https://openrouter.ai/api/v1/models"
 BRAVE_SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
@@ -679,6 +680,83 @@ def write_commit_msg(subject, body, model):
 
 
 # ---------------------------------------------------------------------------
+# Soft-failure alerting
+# ---------------------------------------------------------------------------
+
+
+def count_consecutive_noop_runs() -> int:
+    """Count how many recent ralph commits had no file changes (just run logs)."""
+    result = subprocess.run(
+        ["git", "log", "--oneline", "-10", "--grep=ralph:"],
+        capture_output=True, text=True, cwd=REPO_ROOT,
+    )
+    if result.returncode != 0:
+        return 0
+
+    count = 0
+    for line in result.stdout.strip().splitlines():
+        sha = line.split()[0]
+        stat = subprocess.run(
+            ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", sha],
+            capture_output=True, text=True, cwd=REPO_ROOT,
+        )
+        files = [f for f in stat.stdout.strip().splitlines()
+                 if not f.startswith("runs/") and f != "STATE.md" and f != ".ralph_commit_msg"]
+        if files:
+            break
+        count += 1
+    return count
+
+
+def send_alert_email(subject: str, body: str):
+    """Send an alert email via SMTP. Fails silently if credentials are missing."""
+    import smtplib
+    from email.mime.text import MIMEText
+
+    smtp_user = os.environ.get("SMTP_USERNAME")
+    smtp_pass = os.environ.get("SMTP_PASSWORD")
+    if not smtp_user or not smtp_pass:
+        print("  Alert email skipped — SMTP credentials not configured.")
+        return
+
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = f"Ralph Bot <{smtp_user}>"
+    msg["To"] = ALERT_EMAIL
+
+    try:
+        with smtplib.SMTP("smtp.mail.me.com", 587) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_pass)
+            server.sendmail(smtp_user, [ALERT_EMAIL], msg.as_string())
+        print(f"  Alert email sent: {subject}")
+    except Exception as e:
+        print(f"  Alert email failed: {e}")
+
+
+def check_and_alert(warnings: list[str], model: str, timestamp: datetime):
+    """If any warnings accumulated, send a single digest email."""
+    if not warnings:
+        return
+
+    subject = f"Ralph warning — {len(warnings)} issue(s) on {timestamp.strftime('%Y-%m-%d')}"
+    body = (
+        f"Ralph run completed but with warnings.\n\n"
+        f"Model: {model}\n"
+        f"Time: {timestamp.isoformat()}\n\n"
+        f"Warnings:\n"
+    )
+    for i, w in enumerate(warnings, 1):
+        body += f"  {i}. {w}\n"
+    body += (
+        f"\nThe run did not crash — these are soft issues that may need attention.\n"
+        f"Check the latest run log in runs/ for details.\n"
+    )
+
+    send_alert_email(subject, body)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -743,7 +821,21 @@ def main():
 
     print(f"Tool calls made: {len(tool_call_log)}")
 
+    warnings = []
+
+    # Check for truncation
     truncated = finish_reason == "length"
+    if truncated:
+        warnings.append("Response was truncated (hit max_tokens). File changes skipped.")
+
+    # Check for tool loop exhaustion
+    if finish_reason == "max_iterations":
+        warnings.append(f"Tool loop hit the {MAX_TOOL_ITERATIONS}-iteration cap.")
+
+    # Check for brave_search failures
+    brave_errors = [tc for tc in tool_call_log if tc["tool"] == "brave_search" and tc["result_preview"].startswith("ERROR")]
+    if brave_errors:
+        warnings.append(f"Brave Search failed {len(brave_errors)} time(s) — agent ran without web access.")
 
     # --- Parse and apply ---
     commit_subject, commit_body, next_model, files, deletes = parse_ralph_block(response)
@@ -757,22 +849,40 @@ def main():
     else:
         print("No file changes in response (no-op run).")
 
+    # Check for no ralph block at all
+    if not commit_subject and not truncated:
+        warnings.append("No ralph block found in response — agent may have produced malformed output.")
+
     # --- Persist next model choice ---
     if next_model and next_model in available_models and get_provider(next_model) != current_provider:
         print(f"Next model (agent chose): {next_model}")
         write_next_model_to_state(next_model)
     else:
         if next_model:
+            warnings.append(f"Agent chose invalid next_model '{next_model}' — used random fallback.")
             print(f"  WARNING: Agent chose '{next_model}' but it's invalid or same provider. Picking fallback.")
         fallback = pick_fallback_model(available_models, current_provider)
         print(f"Next model (fallback): {fallback}")
         write_next_model_to_state(fallback)
+
+    # Check consecutive no-op runs (agent might be stuck)
+    if not changed:
+        noop_count = count_consecutive_noop_runs() + 1  # +1 for this run
+        if noop_count >= 3:
+            warnings.append(f"{noop_count} consecutive runs with no file changes — agent may be stuck.")
 
     # --- Write run log ---
     log_path = write_run_log(timestamp, model, sha_before, prompt, response, changed, tool_call_log)
     changed.append({"action": "write", "path": log_path})
 
     write_commit_msg(commit_subject, commit_body, model)
+
+    # --- Send alert if warnings accumulated ---
+    if warnings:
+        print(f"Warnings ({len(warnings)}):")
+        for w in warnings:
+            print(f"  - {w}")
+        check_and_alert(warnings, model, timestamp)
 
     print("Done.")
 
