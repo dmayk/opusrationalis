@@ -210,7 +210,7 @@ def call_openrouter(prompt: str, model: str, api_key: str) -> str:
         "messages": [
             {"role": "user", "content": prompt},
         ],
-        "max_tokens": 16000,
+        "max_tokens": 64000,
     }
 
     headers = {
