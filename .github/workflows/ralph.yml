@@ -32,9 +32,6 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Test failure (temporary — will be reverted)
-        run: exit 1
-
       - name: Run Ralph
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
