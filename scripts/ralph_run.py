@@ -20,17 +20,19 @@ DEFAULT_MODEL = "anthropic/claude-sonnet-4.6"
 MAX_TOOL_ITERATIONS = 30
 MAX_TOOL_OUTPUT_CHARS = 50_000
 
-# Frontier-tier models eligible for rotation.
-ELIGIBLE_MODELS = {
-    "anthropic": ["anthropic/claude-opus-4.6", "anthropic/claude-sonnet-4.6"],
-    "google": ["google/gemini-3.1-pro-preview", "google/gemini-3-flash-preview"],
-    "openai": ["openai/gpt-5.4", "openai/gpt-5.3-codex"],
-    "qwen": ["qwen/qwen3.6-plus:free", "qwen/qwen3.5-397b-a17b"],
-    "x-ai": ["x-ai/grok-4.20"],
-    "mistralai": ["mistralai/mistral-small-2603"],
-}
+MIN_CONTEXT_LENGTH = 128_000
 
-MIN_CONTEXT_LENGTH = 32_000
+# Providers to include in model rotation. Models are auto-discovered from
+# OpenRouter — the top model per provider (by completion price) is selected,
+# ensuring we always pick frontier-tier models without manual updates.
+ELIGIBLE_PROVIDERS = {"anthropic", "google", "openai", "qwen", "x-ai", "mistralai", "deepseek", "meta-llama"}
+
+# Minimum completion price per token — filters out tiny/free models.
+# $0.000001 per token ≈ $1/M tokens, which excludes hobby-tier models.
+MIN_COMPLETION_PRICE = 0.000001
+
+# Maximum number of models to keep per provider.
+MODELS_PER_PROVIDER = 2
 
 # Read-only git subcommands the agent is allowed to run.
 GIT_ALLOWED_SUBCOMMANDS = {"log", "diff", "show", "blame", "ls-files", "shortlog", "status", "rev-parse"}
@@ -402,6 +404,12 @@ def write_next_model_to_state(model_id: str):
 
 
 def fetch_available_models(api_key: str) -> list[str]:
+    """Auto-discover frontier models from OpenRouter.
+
+    Fetches the full model catalog, filters to eligible providers with
+    sufficient context length and pricing, then picks the top models
+    per provider by completion price (higher price = more capable).
+    """
     import requests
 
     headers = {"Authorization": f"Bearer {api_key}"}
@@ -409,14 +417,39 @@ def fetch_available_models(api_key: str) -> list[str]:
     resp.raise_for_status()
     all_models = resp.json().get("data", [])
 
-    eligible_ids = set()
-    for models in ELIGIBLE_MODELS.values():
-        eligible_ids.update(models)
+    # Group qualifying models by provider
+    by_provider: dict[str, list[tuple[float, str]]] = {}
+    for m in all_models:
+        model_id = m.get("id", "")
+        provider = get_provider(model_id)
+        if provider not in ELIGIBLE_PROVIDERS:
+            continue
+        if m.get("context_length", 0) < MIN_CONTEXT_LENGTH:
+            continue
 
-    available_ids = {m["id"] for m in all_models if m.get("context_length", 0) >= MIN_CONTEXT_LENGTH}
-    valid = sorted(eligible_ids & available_ids)
+        # Parse completion price — skip free/unknown models
+        pricing = m.get("pricing", {})
+        try:
+            completion_price = float(pricing.get("completion", "0"))
+        except (ValueError, TypeError):
+            continue
+        if completion_price < MIN_COMPLETION_PRICE:
+            continue
 
-    print(f"  Available eligible models: {len(valid)} of {len(eligible_ids)} curated")
+        # Skip models with ":free" suffix (rate-limited, unreliable for agentic use)
+        if model_id.endswith(":free"):
+            continue
+
+        by_provider.setdefault(provider, []).append((completion_price, model_id))
+
+    # Pick top N models per provider (sorted by price descending = most capable first)
+    valid = []
+    for provider in sorted(by_provider):
+        ranked = sorted(by_provider[provider], reverse=True)
+        top = [model_id for _, model_id in ranked[:MODELS_PER_PROVIDER]]
+        valid.extend(top)
+
+    print(f"  Auto-discovered {len(valid)} eligible models across {len(by_provider)} providers:")
     for mid in valid:
         print(f"    - {mid}")
     return valid

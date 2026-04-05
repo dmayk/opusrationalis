@@ -46,7 +46,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            # Read commit message from file if the runner left one
             if [ -f .ralph_commit_msg ]; then
               git commit -F .ralph_commit_msg
               rm .ralph_commit_msg
@@ -55,3 +54,25 @@ jobs:
             fi
             git push
           fi
+
+      - name: Send failure alert
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Ralph run failed — ${{ github.repository }}"
+          to: dennis@mayk.eu
+          from: Ralph Bot <${{ secrets.SMTP_USERNAME }}>
+          body: |
+            Ralph run failed on ${{ github.repository }}.
+
+            Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Branch: ${{ github.ref_name }}
+            Trigger: ${{ github.event_name }}
+            Time: ${{ github.event.head_commit.timestamp || 'manual dispatch' }}
+
+            Check the Actions log for details.
