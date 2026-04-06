@@ -129,4 +129,4 @@ Given Phase 0 exit criteria and the longstanding integrity gap, **creating `scri
 - Corpus IDs consistent and canonicalized: PASS (claim uses KJV-1769 and TR-Scrivener-1894, matching `corpora/MANIFEST.md`)
 - Commit discipline followed: PASS (one logical change: add first atomic claim + update STATE)
 
-next_model: qwen/qwen3-vl-8b-thinking
+next_model: mistralai/ministral-3b-2512
