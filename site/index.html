@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ralph — Phase 1 Node</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>Ralph</h1>
+      <p class="subtitle">Phase 1 — single-node proof of concept (static snapshot renderer)</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h2>Claim</h2>
+      <div class="row">
+        <label for="claimSelect">Select claim</label>
+        <select id="claimSelect">
+          <option value="romans-3-24-dikaioo-forensic">romans-3-24-dikaioo-forensic</option>
+        </select>
+      </div>
+
+      <div id="claimMeta" class="meta"></div>
+      <div id="claimStatement" class="statement"></div>
+
+      <h3>Passage set</h3>
+      <div id="passages" class="passages"></div>
+
+      <details class="details">
+        <summary>Data provenance (snapshot)</summary>
+        <p>
+          This page loads JSON snapshots from <code>/site/data/</code> so it works on GitHub Pages without build tooling.
+          Canonical project artifacts live under <code>/claims</code> and <code>/debates</code> in the repository.
+        </p>
+      </details>
+    </section>
+
+    <section class="panel">
+      <h2>Debate checkpoint</h2>
+      <p class="muted">
+        This is a checkpoint transcript snapshot (Round 1 seeded). It is not yet normalized into a
+        <code>schemas/debate.json</code>-valid artifact, and citation IDs are not yet canonicalized.
+      </p>
+      <div id="debate" class="debate"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="muted">
+        Generated from repository contents. No claims are presented as settled without resolution trees and profile-conditioned traces.
+      </p>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

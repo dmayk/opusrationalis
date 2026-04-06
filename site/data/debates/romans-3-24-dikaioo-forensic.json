@@ -1,0 +1,100 @@
+{
+  "claim_id": "romans-3-24-dikaioo-forensic",
+  "participants": ["reformed", "catholic", "eastern-orthodox"],
+  "rounds": [
+    {
+      "round_number": 1,
+      "moves": [
+        {
+          "move_id": "r1-reformed-proponent-01",
+          "agent_role": "proponent",
+          "profile_id": "reformed-westminster",
+          "author_model": "anthropic/claude-haiku-4.5",
+          "intent": "argue",
+          "content": "The forensic sense of δικαιόω in Romans 3:24 is established by Calvin's interpretation in the Institutes. Calvin writes: 'A man is said to be justified in the sight of God when in the judgment of God he is deemed righteous, and is accepted on account of his righteousness' (Institutes 3.11.2). He then clarifies: 'justification consists in the forgiveness of sins and the imputation of the righteousness of Christ.' The context of Romans 3:24 itself supports this: Paul juxtaposes 'being justified freely by his grace' (δικαιούμενοι) with the prior statement that 'there is no difference' in human moral standing (Rom 3:22-23). If δικαιόω meant intrinsic transformation, this would contradict Paul's point that we are already justified despite our ongoing sinfulness. The verb describes God's legal declaration, not an internal renewal. Calvin grounds this in 2 Corinthians 5:21: 'He made him to be sin for us who knew no sin; that we might be made the righteousness of God in him.' The imputation of Christ's forensic status to us is what justification means.",
+          "citations": [
+            {
+              "source_type": "historical",
+              "reference": "John Calvin, Institutes of the Christian Religion 3.11.2",
+              "text_quoted": "A man is said to be justified in the sight of God when in the judgment of God he is deemed righteous, and is accepted on account of his righteousness",
+              "original_language": null
+            },
+            {
+              "source_type": "scripture",
+              "reference": "Rom 3:24",
+              "text_quoted": "dikaioumenoi dwrean th autou cariti",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "2 Cor 5:21",
+              "text_quoted": "He made him to be sin for us who knew no sin; that we might be made the righteousness of God in him",
+              "original_language": null
+            }
+          ],
+          "referee_ruling": null
+        },
+        {
+          "move_id": "r1-catholic-opponent-01",
+          "agent_role": "opponent",
+          "profile_id": "catholic-tridentine",
+          "author_model": "anthropic/claude-haiku-4.5",
+          "intent": "argue",
+          "content": "The forensic interpretation fails to account for Trent's authoritative definition of justification in Session 6, Chapter 7, which explicitly teaches that justification is 'not remission of sins merely, but also the sanctification and renewal of the inward man.' Trent states: 'the alone formal cause is the justice of God, not that whereby He Himself is just, but that whereby He maketh us just, that, to wit, with which we being endowed by Him, are renewed in the spirit of our mind, and we are not only reputed, but are truly called, and are, just, receiving justice within us.' The Greek word δικαιόω here must bear its full semantic weight: to make righteous, not merely to declare righteous. Romans 3:24 itself uses the passive 'being justified' (δικαιούμενοι) in conjunction with 'freely' (δωρεάν) and 'grace' (χάριτι), indicating an infusion of justice, not a forensic imputation. Furthermore, Romans 6:17-19 speaks of becoming 'servants of righteousness,' which presupposes a real transformation. James 2:24, which must be harmonized with Romans, explicitly requires works as evidence of living justifying faith, confirming that δικαιόω entails genuine moral renewal, not a legal fiction.",
+          "citations": [
+            {
+              "source_type": "historical",
+              "reference": "Council of Trent, Session 6, Chapter 7: Decree on Justification",
+              "text_quoted": "Justification itself, which is not remission of sins merely, but also the sanctification and renewal of the inward man, through the voluntary reception of the grace, and of the gifts, whereby man of unjust becomes just",
+              "original_language": null
+            },
+            {
+              "source_type": "scripture",
+              "reference": "Rom 3:24",
+              "text_quoted": "dikaioumenoi dwrean th autou cariti",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "Rom 6:17-19",
+              "text_quoted": "servants of righteousness",
+              "original_language": null
+            },
+            {
+              "source_type": "scripture",
+              "reference": "Jas 2:24",
+              "text_quoted": "faith without works is dead",
+              "original_language": null
+            }
+          ],
+          "referee_ruling": null
+        },
+        {
+          "move_id": "r1-orthodox-referee-01",
+          "agent_role": "red_team",
+          "profile_id": null,
+          "author_model": "anthropic/claude-haiku-4.5",
+          "intent": "argue",
+          "content": "Both moves have engaged the core passage and cited relevant primary sources, which is good. However, I must flag three issues for verification: (1) The Reformed move invokes Calvin's forensic interpretation but does not yet address how Romans 3:24 sits within Paul's larger argument structure in 3:21-26, where δικαιοσύνη (righteousness) appears as a revealed attribute of God, not merely a legal status. (2) The Catholic move appeals to Trent Session 6 Chapter 7 correctly, but needs to specify: does Trent intend δικαιόω as a *univocal* term meaning transformation, or does it allow δικαιόω to mean the forensic *application* of infused justice? (3) Both moves treat James 2:24 differently but neither has yet engaged the textual context of James 2 itself in original language. An Eastern Orthodox perspective would note that this dispute emerges from a Western forensic-vs.-intrinsic dichotomy that the Eastern tradition does not frame in the same way. The Eastern approach is neither forensic declaration (which severs faith from transformation) nor intrinsic renewal alone (which separates the believer from God's act), but theosis—participation in divine energies. However, to complete this round fairly, I need the Reformed move to address the δικαιοσύνη θεοῦ language, and the Catholic move to clarify whether Trent allows a non-identity between the meaning of δικαιόω and the mode of justification's operation.",
+          "citations": [
+            {
+              "source_type": "scripture",
+              "reference": "Rom 3:21-26",
+              "text_quoted": "nuni de cwriv nomou dikaiosunh yeou pefanerwtai",
+              "original_language": "greek"
+            }
+          ],
+          "referee_ruling": null
+        }
+      ]
+    }
+  ],
+  "version_history": [
+    {
+      "commit_sha": "pending",
+      "timestamp": "2026-04-11T00:00:00Z",
+      "author_model": "anthropic/claude-haiku-4.5",
+      "note": "Round 1 seeded: Reformed proponent (Calvin 3.11.2), Catholic opponent (Trent Session 6 ch. 7), Orthodox red-team move. First moves argue the core thesis with primary source citations; referee notes areas for clarification in subsequent rounds."
+    }
+  ]
+}
