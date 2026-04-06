@@ -664,7 +664,7 @@ def parse_ralph_block(response: str):
 
 
 # Paths the agent is never allowed to write or delete.
-PROTECTED_PATHS = {"scripts/", ".github/", "PROJECT.md", ".gitignore"}
+PROTECTED_PATHS = {"scripts/ralph_run.py", ".github/", "PROJECT.md", ".gitignore"}
 
 
 def _is_protected(rel_path: str) -> bool:
