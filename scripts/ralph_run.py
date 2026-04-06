@@ -20,7 +20,6 @@ BRAVE_SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
 DEFAULT_MODEL = "anthropic/claude-sonnet-4.6"
 MAX_TOOL_ITERATIONS = 30
 MAX_TOOL_OUTPUT_CHARS = 50_000
-MAX_RUN_COST_USD = 0.80  # Hard cap: abort if estimated spend exceeds this
 
 MIN_CONTEXT_LENGTH = 128_000
 
@@ -549,34 +548,7 @@ def call_openrouter_with_tools(
     tool_call_log = []
     total_cost = 0.0
 
-    last_content = ""
-
     for iteration in range(MAX_TOOL_ITERATIONS):
-        # Pre-flight: estimate next call cost and abort if it would bust budget
-        est_prompt_tokens = sum(len(json.dumps(m)) for m in messages) // 3
-        est_call_cost = est_prompt_tokens * prompt_price
-        if total_cost + est_call_cost > MAX_RUN_COST_USD:
-            print(f"  PRE-FLIGHT: budget tight. Forcing final response (no tools).")
-            # Make one last call WITHOUT tools so the model must produce text
-            final_payload = {
-                "model": model,
-                "messages": messages + [{"role": "user", "content":
-                    "BUDGET LIMIT REACHED. You cannot make any more tool calls. "
-                    "Produce your final response NOW with the ```ralph block "
-                    "containing your file changes, commit message, and NEXT_MODEL. "
-                    "Use whatever research you have gathered so far."}],
-                "max_tokens": 16000,
-            }
-            resp = requests.post(OPENROUTER_URL, json=final_payload, headers=headers, timeout=600)
-            resp.raise_for_status()
-            data = resp.json()
-            content = data["choices"][0]["message"].get("content", "")
-            usage = data.get("usage", {})
-            final_cost = (usage.get("prompt_tokens", 0) * prompt_price) + (usage.get("completion_tokens", 0) * completion_price)
-            total_cost += final_cost
-            print(f"  Final forced response: {len(content)} chars, +${final_cost:.4f} (total: ${total_cost:.4f})")
-            return content, "budget_exceeded", tool_call_log, total_cost
-
         payload = {
             "model": model,
             "messages": messages,
@@ -608,13 +580,6 @@ def call_openrouter_with_tools(
             print(f"    tokens: {prompt_tokens} in / {completion_tokens} out = ${call_cost:.4f}")
         total_cost += call_cost
         print(f"    running total: ${total_cost:.4f}")
-
-        # Budget check
-        if total_cost >= MAX_RUN_COST_USD:
-            print(f"  BUDGET CAP: ${total_cost:.4f} >= ${MAX_RUN_COST_USD:.2f}. Stopping.")
-            content = message.get("content", "")
-            messages.append(message)
-            return content, "budget_exceeded", tool_call_log, total_cost
 
         # Append the assistant message to conversation history
         messages.append(message)
@@ -917,10 +882,9 @@ def main():
     eligible_next = [m for m in available_models if get_provider(m) != current_provider]
     models_list_text = "\n".join(f"  - {m}" for m in eligible_next) if eligible_next else "  (none available)"
 
-    # Look up pricing for current model (default to conservative estimate)
+    # Look up pricing for current model (for cost logging)
     model_pricing = pricing_map.get(model, {"prompt": 0.000003, "completion": 0.000015})
     print(f"  Model pricing: ${model_pricing['prompt']*1e6:.2f}/Mtok in, ${model_pricing['completion']*1e6:.2f}/Mtok out")
-    print(f"  Budget cap: ${MAX_RUN_COST_USD:.2f}")
 
     # --- Build initial prompt ---
     project_md = read_project_md()
@@ -960,11 +924,6 @@ def main():
     truncated = finish_reason == "length"
     if truncated:
         warnings.append("Response was truncated (hit max_tokens). File changes skipped.")
-
-    # Check for budget exceeded
-    if finish_reason == "budget_exceeded":
-        warnings.append(f"Run hit the ${MAX_RUN_COST_USD:.2f} budget cap at ${total_cost:.4f}. Response may be incomplete.")
-        truncated = True  # Treat as truncated — don't apply partial changes
 
     # Check for tool loop exhaustion
     if finish_reason == "max_iterations":
