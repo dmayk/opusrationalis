@@ -7,6 +7,8 @@
   --line: #243041;
   --accent: #93c5fd;
   --warn: #fca5a5;
+  --agree: #86efac;
+  --disagree: #f87171;
 
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
@@ -110,6 +112,198 @@ select {
 .details summary { cursor: pointer; color: var(--accent); }
 .details { margin-top: 12px; }
 
+/* Tree styles */
+.tree { display: grid; gap: 14px; }
+
+.tree-summary-box {
+  background: var(--panel-2);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.tree-metrics {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 14px;
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+}
+.tree-metrics strong { color: var(--accent); }
+.tree-metrics ul { margin: 4px 0 0 16px; padding: 0; }
+
+.tree-node {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel-2);
+  margin-left: calc(var(--indent, 0) * 20px);
+}
+
+.tree-depth-0 { margin-left: 0; }
+.tree-depth-1 { margin-left: 20px; }
+.tree-depth-2 { margin-left: 40px; }
+
+.tree-node-agreement { border-left: 4px solid var(--agree); }
+.tree-node-disagreement { border-left: 4px solid var(--disagree); }
+.tree-node-impasse { border-left: 4px solid #fbbf24; }
+
+.tree-node-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.tree-node-type-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: var(--bg);
+}
+.tree-node-type-badge.agreement { background: var(--agree); }
+.tree-node-type-badge.disagreement { background: var(--disagree); }
+.tree-node-type-badge.impasse { background: #fbbf24; }
+
+.tree-node-status {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.tree-node-id {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.tree-node-summary {
+  margin: 8px 0 10px 0;
+  font-size: 13px;
+}
+
+.tree-node-profiles {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 12px;
+}
+.profile-tag {
+  background: rgba(147, 197, 253, 0.15);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.tree-depends-on {
+  margin: 10px 0;
+  font-size: 12px;
+  background: rgba(147, 197, 253, 0.06);
+  border: 1px solid rgba(147, 197, 253, 0.2);
+  border-radius: 6px;
+  padding: 8px;
+}
+.tree-depends-content { margin-top: 6px; font-size: 11px; }
+
+.tree-divergence {
+  margin: 10px 0;
+  padding: 8px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.tree-evidence, .tree-counter-evidence {
+  margin: 10px 0;
+  font-size: 12px;
+}
+.tree-evidence ul, .tree-counter-evidence ul {
+  margin: 6px 0 0 16px;
+  padding: 0;
+  list-style: disc;
+}
+.tree-evidence li, .tree-counter-evidence li {
+  margin: 4px 0;
+  font-size: 12px;
+}
+.evidence-quote, .counter-quote {
+  margin: 6px 0 0 16px;
+  padding: 8px;
+  border-left: 2px solid var(--accent);
+  background: rgba(147, 197, 253, 0.06);
+  font-size: 11px;
+  font-style: italic;
+}
+.counter-quote {
+  border-left-color: var(--disagree);
+  background: rgba(248, 113, 113, 0.06);
+}
+
+.tree-notes {
+  margin: 10px 0;
+  padding: 8px;
+  background: var(--panel);
+  border-radius: 6px;
+  font-size: 12px;
+}
+.tree-notes p { margin: 6px 0 0 0; }
+
+.tree-children {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.tree-profile-outcomes {
+  margin-top: 16px;
+  display: grid;
+  gap: 10px;
+}
+.tree-profile-outcomes h3 { margin: 0 0 10px 0; font-size: 14px; }
+
+.profile-outcome {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--panel-2);
+}
+.outcome-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.outcome-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: var(--bg);
+}
+.outcome-badge.supports_claim { background: var(--agree); }
+.outcome-badge.rejects_claim { background: var(--disagree); }
+.outcome-badge.conditionally_supports { background: #60a5fa; }
+
+.outcome-rationale {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* Debate styles */
 .debate { display: grid; gap: 14px; }
 .round {
   border: 1px solid var(--line);
