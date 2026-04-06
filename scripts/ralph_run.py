@@ -26,9 +26,9 @@ MIN_CONTEXT_LENGTH = 128_000
 # a single run. $0.00005/token = $50/Mtok completion.
 MAX_COMPLETION_PRICE = 0.00005
 
-# Minimum prompt price — filters out tiny models (3B, 8B, 9B) that are
-# too small for complex theological reasoning. $0.0000002/token = $0.20/Mtok.
-MIN_PROMPT_PRICE = 0.0000002
+# Bottom percentile of models to exclude by prompt price. Dynamically
+# cuts the cheapest/smallest models from the eligible set each run.
+PRICE_PERCENTILE_CUTOFF = 25
 
 # Providers we trust for autonomous theological research. The agent picks
 # freely within this set — no per-provider ranking or limit.
@@ -448,8 +448,6 @@ def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
             continue
         if completion_price <= 0 or completion_price > MAX_COMPLETION_PRICE:
             continue
-        if prompt_price < MIN_PROMPT_PRICE:
-            continue
 
         # Skip models older than 6 months (legacy/superseded)
         created = m.get("created", 0)
@@ -468,6 +466,17 @@ def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
 
         valid.append(model_id)
         pricing_map[model_id] = {"prompt": prompt_price, "completion": completion_price}
+
+    # Cut the bottom percentile by prompt price (filters out tiny models)
+    if valid and PRICE_PERCENTILE_CUTOFF > 0:
+        prompt_prices = sorted(pricing_map[m]["prompt"] for m in valid)
+        cutoff_idx = len(prompt_prices) * PRICE_PERCENTILE_CUTOFF // 100
+        price_floor = prompt_prices[cutoff_idx] if cutoff_idx < len(prompt_prices) else 0
+        before = len(valid)
+        valid = [m for m in valid if pricing_map[m]["prompt"] >= price_floor]
+        # Also clean pricing_map
+        pricing_map = {m: pricing_map[m] for m in valid}
+        print(f"  P{PRICE_PERCENTILE_CUTOFF} price floor: ${price_floor*1e6:.2f}/Mtok prompt — cut {before - len(valid)} models")
 
     valid.sort()
     providers = {get_provider(m) for m in valid}
