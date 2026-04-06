@@ -87,4 +87,4 @@ That would complete the *functional* portion of Phase 0 and allow Phase 1 to beg
 - Corpus IDs consistent and canonicalized: PASS
 - Commit discipline followed: PASS
 
-next_model: google/gemini-3.1-pro-preview
+next_model: openai/gpt-5.2-chat
