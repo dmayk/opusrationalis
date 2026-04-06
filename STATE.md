@@ -87,4 +87,4 @@ That would complete the *functional* portion of Phase 0 and allow Phase 1 to beg
 - Corpus IDs consistent and canonicalized: PASS
 - Commit discipline followed: PASS
 
-next_model: anthropic/claude-opus-4.6
+next_model: google/gemini-3.1-pro-preview
