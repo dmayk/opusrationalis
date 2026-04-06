@@ -329,7 +329,6 @@ parses it mechanically:
 ```ralph
 COMMIT_SUBJECT: <one-line summary for the commit>
 COMMIT_BODY: <optional longer description; use \\n for newlines>
-NEXT_MODEL: <model id for the next run — MUST be from a different provider/company than your own>
 
 FILE: <path relative to repo root>
 CONTENT:
@@ -352,10 +351,6 @@ Rules:
 - The COMMIT_SUBJECT is mandatory and follows the convention:
   ralph: <YYYY-MM-DD> <model-id> — <one-line summary>
 - Place all your reasoning, debate work, and commentary ABOVE the ```ralph block.
-- NEXT_MODEL is mandatory. You must choose from the available models list provided
-  below. The model MUST be from a different company/provider than the one running
-  this iteration. For example, if you are a Qwen model, pick an Anthropic, Google,
-  OpenAI, DeepSeek, or Meta model — never another Qwen model.
 """
 
 # ---------------------------------------------------------------------------
@@ -470,11 +465,53 @@ def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
     return valid, pricing_map
 
 
-def pick_fallback_model(available_models: list[str], current_provider: str) -> str:
-    candidates = [m for m in available_models if get_provider(m) != current_provider]
-    if not candidates:
+def pick_next_model_round_robin(available_models: list[str], current_provider: str) -> str:
+    """Pick next model by rotating through providers based on recent usage.
+
+    Looks at the last 10 ralph commits to find which providers ran recently,
+    then picks a random model from the least-recently-used provider.
+    """
+    # Get recent providers from git history
+    result = subprocess.run(
+        ["git", "log", "--oneline", "-10", "--grep=ralph:"],
+        capture_output=True, text=True, cwd=REPO_ROOT,
+    )
+    recent_providers = []
+    if result.returncode == 0:
+        for line in result.stdout.strip().splitlines():
+            # Extract provider from commit message: "ralph: YYYY-MM-DD provider/model — ..."
+            parts = line.split()
+            for part in parts:
+                if "/" in part and get_provider(part) in ELIGIBLE_PROVIDERS:
+                    recent_providers.append(get_provider(part))
+                    break
+
+    # Group available models by provider (excluding current)
+    by_provider: dict[str, list[str]] = {}
+    for m in available_models:
+        p = get_provider(m)
+        if p != current_provider:
+            by_provider.setdefault(p, []).append(m)
+
+    if not by_provider:
         return DEFAULT_MODEL
-    return random.choice(candidates)
+
+    # Score providers: lower = less recently used = preferred
+    provider_scores = {}
+    for provider in by_provider:
+        try:
+            idx = recent_providers.index(provider)
+        except ValueError:
+            idx = 999  # Never used — highest priority
+        provider_scores[provider] = idx
+
+    # Pick from the least-recently-used provider
+    best_score = max(provider_scores.values())
+    best_providers = [p for p, s in provider_scores.items() if s == best_score]
+    chosen_provider = random.choice(best_providers)
+
+    # Pick a random model from that provider
+    return random.choice(by_provider[chosen_provider])
 
 
 def gather_state_summary() -> str:
@@ -635,19 +672,17 @@ def call_openrouter_with_tools(
 
 def parse_ralph_block(response: str):
     if not response:
-        return None, None, None, [], []
+        return None, None, [], []
     match = re.search(r"```ralph\s*\n(.*?)```", response, re.DOTALL)
     if not match:
-        return None, None, None, [], []
+        return None, None, [], []
 
     block = match.group(1)
 
     subject_match = re.search(r"^COMMIT_SUBJECT:\s*(.+)$", block, re.MULTILINE)
     body_match = re.search(r"^COMMIT_BODY:\s*(.+)$", block, re.MULTILINE)
-    next_model_match = re.search(r"^NEXT_MODEL:\s*(.+)$", block, re.MULTILINE)
     commit_subject = subject_match.group(1).strip() if subject_match else None
     commit_body = body_match.group(1).replace("\\n", "\n").strip() if body_match else ""
-    next_model = next_model_match.group(1).strip() if next_model_match else None
 
     files = []
     for file_match in re.finditer(
@@ -660,7 +695,7 @@ def parse_ralph_block(response: str):
     for del_match in re.finditer(r"^DELETE:\s*(.+)$", block, re.MULTILINE):
         deletes.append(del_match.group(1).strip())
 
-    return commit_subject, commit_body, next_model, files, deletes
+    return commit_subject, commit_body, files, deletes
 
 
 # Paths the agent is never allowed to write or delete.
@@ -844,9 +879,6 @@ def main():
             current_provider = get_provider(model)
         print(f"  Using: {model}")
 
-    eligible_next = [m for m in available_models if get_provider(m) != current_provider]
-    models_list_text = "\n".join(f"  - {m}" for m in eligible_next) if eligible_next else "  (none available)"
-
     # Look up pricing for current model (for cost logging)
     model_pricing = pricing_map.get(model, {"prompt": 0.000003, "completion": 0.000015})
     print(f"  Model pricing: ${model_pricing['prompt']*1e6:.2f}/Mtok in, ${model_pricing['completion']*1e6:.2f}/Mtok out")
@@ -859,12 +891,6 @@ def main():
         f"# PROJECT.md\n\n{project_md}\n\n"
         f"# Current Repository State\n\n{state_summary}\n\n"
         f"# Current Model\n\nYou are running as: `{model}` (provider: {current_provider})\n\n"
-        f"# Available Models for NEXT_MODEL (different provider only)\n\n"
-        f"Pick the model you think is best suited for the next iteration's work. "
-        f"It MUST be from a different provider than `{current_provider}`. "
-        f"Consider the model's strengths (reasoning, coding, long context) relative "
-        f"to what the next step in the project requires.\n\n"
-        f"{models_list_text}\n\n"
         f"Proceed per the instructions in PROJECT.md."
         f"{RESPONSE_FORMAT}"
     )
@@ -900,7 +926,7 @@ def main():
         warnings.append(f"Brave Search failed {len(brave_errors)} time(s) — agent ran without web access.")
 
     # --- Parse and apply ---
-    commit_subject, commit_body, next_model, files, deletes = parse_ralph_block(response)
+    commit_subject, commit_body, files, deletes = parse_ralph_block(response)
     changed = []
 
     if truncated:
@@ -915,17 +941,10 @@ def main():
     if not commit_subject and not truncated:
         warnings.append("No ralph block found in response — agent may have produced malformed output.")
 
-    # --- Persist next model choice ---
-    if next_model and next_model in available_models and get_provider(next_model) != current_provider:
-        print(f"Next model (agent chose): {next_model}")
-        write_next_model_to_state(next_model)
-    else:
-        if next_model:
-            warnings.append(f"Agent chose invalid next_model '{next_model}' — used random fallback.")
-            print(f"  WARNING: Agent chose '{next_model}' but it's invalid or same provider. Picking fallback.")
-        fallback = pick_fallback_model(available_models, current_provider)
-        print(f"Next model (fallback): {fallback}")
-        write_next_model_to_state(fallback)
+    # --- Pick next model (runner-driven round-robin, not agent choice) ---
+    next_run_model = pick_next_model_round_robin(available_models, current_provider)
+    print(f"Next model (round-robin): {next_run_model} (provider: {get_provider(next_run_model)})")
+    write_next_model_to_state(next_run_model)
 
     # Check consecutive no-op runs (agent might be stuck)
     if not changed:
