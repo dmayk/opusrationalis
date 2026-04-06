@@ -1,0 +1,147 @@
+{
+  "id": "romans-3-24-dikaioo-debate-0001",
+  "claim_id": "romans-3-24-dikaioo-forensic",
+  "status": "active",
+  "terminal_state": null,
+  "metadata": {
+    "random_seed": 20260411,
+    "system_prompts": {
+      "proponent": "You are arguing the Reformed position on justification in Romans 3:24. You are seeded with Calvin's Institutes 3.11.2 and related Westminster Confession passages. Argue that δικαιόω in Romans 3:24 is primarily forensic (God's legal declaration of righteousness), not primarily transformative. Ground every move in the supplied texts. Do not smuggle in assumptions not present in those texts. If you reach a genuine impasse, declare it explicitly.",
+      "opponent": "You are arguing the Catholic position on justification in Romans 3:24. You are seeded with the Council of Trent, Session 6, Chapter 7, and related ecclesiastical sources. Argue that δικαιόω in Romans 3:24 includes a truly transformative component, not merely forensic declaration. Ground every move in supplied texts. Challenge any appeal to consensus or 'mainstream' interpretation. If you reach impasse, declare it.",
+      "red_team": "You are a red-team reviewer. Your role is to flag where the debate has moved too fast, missed textual evidence, or smuggled in unstated priors. You do not have a position to defend. You are hunting for: (1) moves that ignore the strongest opposing argument, (2) unstated assumptions in the reasoning, (3) passages that seem to count against the speaker's position but were not engaged. You flag these as issues for the next round, not as a scored judgment.",
+      "referee": "You are a neutral referee. Your job is to check whether each move follows the rules: Does it cite specific verses in original languages or specific lines from supplied historical sources? Does it engage the strongest form of the opposing argument? Does it smuggle in unstated priors? Flag violations. Accept moves that follow the rules, even if you disagree with them. Log any hidden assumptions you detect."
+    }
+  },
+  "participants": {
+    "proponent": {
+      "profile_id": "reformed-westminster",
+      "seed_arguments": [
+        "Calvin, Institutes of the Christian Religion 3.11.2: 'A man is said to be justified in the sight of God when in the judgment of God he is deemed righteous, and is accepted on account of his righteousness. And this justification consists in the forgiveness of sins and the imputation of the righteousness of Christ.'",
+        "Westminster Confession of Faith 11.1: 'Those whom God effectually calleth, He also freely justifieth: not by infusing righteousness into them, but by imputing the righteousness of Christ unto them.'",
+        "Romans 3:22-24: The prior statement that 'there is no difference: for all have sinned, and come short of the glory of God' (KJV-1769) immediately precedes the declaration that we are 'justified freely by his grace through the redemption that is in Christ Jesus' (δικαιούμενοι δωρεὰν τῇ αὐτοῦ χάριτι). The juridical contrast shows justification is a status change, not an internal transformation.",
+        "2 Corinthians 5:21: 'For he hath made him to be sin for us, who knew no sin; that we might be made the righteousness of God in him' (KJV-1769). The imputation of Christ's forensic status to the believer is what constitutes justification.",
+        "Romans 4:5-8: 'But to him that worketh not, but believeth on him that justifieth the ungodly, his faith is counted for righteousness... David describeth the blessedness of the man, unto whom God imputeth righteousness without works, Saying, Blessed are they whose iniquities are forgiven, and whose sins are covered.' The forensic language of imputation (λογίζομαι) and the explicit statement that blessedness consists in forgiveness (not renewal) confirms the juridical sense."
+      ]
+    },
+    "opponents": [
+      {
+        "profile_id": "catholic-tridentine",
+        "seed_arguments": [
+          "Council of Trent, Session 6, Chapter 7 (Decree on Justification): 'The one formal cause [of justification] is the justice of God, not that whereby He Himself is just, but that whereby He maketh us just... receiving justice within us, each one according to his own measure, which the Holy Ghost distributes to every one as He wills, and according to each one's disposition and co-operation.'",
+          "Trent further states: 'Justification itself, which is not remission of sins merely, but also the sanctification and renewal of the inward man, through the voluntary reception of the grace, and of the gifts, whereby man of unjust becomes just.' The language is explicit: δικαιόω entails a real transformation, not a legal fiction.",
+          "Romans 6:17-19: 'But God be thanked, that ye were the servants of sin... and being made free from sin, ye became the servants of righteousness.' This indicates a real change of allegiance and life, not merely a declarative status.",
+          "James 2:24: 'Ye see then how that by works a man is justified, and not by faith only' (KJV-1769). This passage, which must be harmonized with Romans 3:24, shows that δικαιόω-justification is inseparable from works and living faith, implying genuine moral transformation.",
+          "Romans 3:24 itself speaks of being justified 'freely by his grace' (δωρεὰν τῇ αὐτοῦ χάριτι). Grace in Christian teaching is not merely a legal fiction but an operative power that transforms the soul. To be justified by grace is to be made just, not merely declared just."
+        ]
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "round_number": 1,
+      "moves": [
+        {
+          "move_id": "r1-proponent-01",
+          "agent_role": "proponent",
+          "profile_id": "reformed-westminster",
+          "author_model": "anthropic/claude-haiku-4.5",
+          "intent": "argue",
+          "content": "The forensic sense of δικαιόω in Romans 3:24 is established by Calvin's interpretation in the Institutes. Calvin writes: 'A man is said to be justified in the sight of God when in the judgment of God he is deemed righteous, and is accepted on account of his righteousness' (Institutes 3.11.2). He then clarifies: 'justification consists in the forgiveness of sins and the imputation of the righteousness of Christ.' The context of Romans 3:24 itself supports this: Paul juxtaposes 'being justified freely by his grace' (δικαιούμενοι) with the prior statement that 'there is no difference' in human moral standing (Rom 3:22-23). If δικαιόω meant intrinsic transformation, this would contradict Paul's point that we are already justified despite our ongoing sinfulness. The verb describes God's legal declaration, not an internal renewal. Calvin grounds this in 2 Corinthians 5:21: 'He made him to be sin for us who knew no sin; that we might be made the righteousness of God in him.' The imputation of Christ's forensic status to us is what justification means.",
+          "citations": [
+            {
+              "source_type": "historical",
+              "reference": "Calvin-Inst-1559:3.11.2",
+              "text_quoted": "A man is said to be justified in the sight of God when in the judgment of God he is deemed righteous, and is accepted on account of his righteousness. And this justification consists in the forgiveness of sins and the imputation of the righteousness of Christ.",
+              "original_language": null
+            },
+            {
+              "source_type": "scripture",
+              "reference": "NA28-2012:Rom.3.24",
+              "text_quoted": "dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "NA28-2012:Rom.3.22",
+              "text_quoted": "There is no difference, for all have sinned and fall short of the glory of God",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "NA28-2012:2Cor.5.21",
+              "text_quoted": "For our sake he made him to be sin who knew no sin, so that in him we might become the righteousness of God",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "Westminster-1646:11.1",
+              "text_quoted": "Those whom God effectually calleth, He also freely justifieth: not by infusing righteousness into them, but by imputing the righteousness of Christ unto them.",
+              "original_language": null
+            }
+          ],
+          "referee_ruling": null
+        },
+        {
+          "move_id": "r1-opponent-01",
+          "agent_role": "opponent",
+          "profile_id": "catholic-tridentine",
+          "author_model": "anthropic/claude-haiku-4.5",
+          "intent": "argue",
+          "content": "The forensic interpretation fails to account for Trent's authoritative definition of justification in Session 6, Chapter 7, which explicitly teaches that justification is 'not remission of sins merely, but also the sanctification and renewal of the inward man.' Trent states: 'the alone formal cause is the justice of God, not that whereby He Himself is just, but that whereby He maketh us just, that, to wit, with which we being endowed by Him, are renewed in the spirit of our mind, and we are not only reputed, but are truly called, and are, just, receiving justice within us.' The Greek word δικαιόω here must bear its full semantic weight: to make righteous, not merely to declare righteous. Romans 3:24 itself uses the passive 'being justified' (δικαιούμενοι) in conjunction with 'freely' (δωρεάν) and 'grace' (χάριτι), indicating an infusion of justice, not a forensic imputation. Furthermore, Romans 6:17-19 speaks of becoming 'servants of righteousness,' which presupposes a real transformation. James 2:24, which must be harmonized with Romans, explicitly requires works as evidence of living justifying faith, confirming that δικαιόω entails genuine moral renewal, not a legal fiction.",
+          "citations": [
+            {
+              "source_type": "historical",
+              "reference": "Trent-1547-S6:Ch.7",
+              "text_quoted": "Justification itself, which is not remission of sins merely, but also the sanctification and renewal of the inward man, through the voluntary reception of the grace, and of the gifts, whereby man of unjust becomes just",
+              "original_language": null
+            },
+            {
+              "source_type": "scripture",
+              "reference": "NA28-2012:Rom.3.24",
+              "text_quoted": "dikaioumenoi dwrean th autou cariti",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "NA28-2012:Rom.6.17-19",
+              "text_quoted": "But God be thanked, that ye were the servants of sin... and being made free from sin, ye became the servants of righteousness",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "NA28-2012:Jas.2.24",
+              "text_quoted": "Ye see then how that by works a man is justified, and not by faith only",
+              "original_language": "greek"
+            }
+          ],
+          "referee_ruling": null
+        },
+        {
+          "move_id": "r1-red-team-01",
+          "agent_role": "red_team",
+          "profile_id": null,
+          "author_model": "anthropic/claude-haiku-4.5",
+          "intent": "red_team_attack",
+          "content": "Both moves have engaged the core passage and cited relevant primary sources, which is good. However, I must flag three issues for verification: (1) The Reformed move invokes Calvin's forensic interpretation but does not yet address how Romans 3:24 sits within Paul's larger argument structure in 3:21-26, where δικαιοσύνη (righteousness) appears as a revealed attribute of God, not merely a legal status. (2) The Catholic move appeals to Trent Session 6 Chapter 7 correctly, but needs to specify: does Trent intend δικαιόω as a *univocal* term meaning transformation, or does it allow δικαιόω to mean the forensic *application* of infused justice? (3) Both moves treat James 2:24 differently but neither has yet engaged the textual context of James 2 itself in original language. An Eastern Orthodox perspective would note that this dispute emerges from a Western forensic-vs.-intrinsic dichotomy that the Eastern tradition does not frame in the same way. The Eastern approach is neither forensic declaration (which severs faith from transformation) nor intrinsic renewal alone (which separates the believer from God's act), but theosis—participation in divine energies. However, to complete this round fairly, I need the Reformed move to address the δικαιοσύνη θεοῦ language, and the Catholic move to clarify whether Trent allows a non-identity between the meaning of δικαιόω and the mode of justification's operation.",
+          "citations": [
+            {
+              "source_type": "scripture",
+              "reference": "NA28-2012:Rom.3.21-26",
+              "text_quoted": "nuni de cwriv nomou dikaiosunh yeou pefanerwtai marturoumenh upo tou nomou kai twn profhtwn",
+              "original_language": "greek"
+            }
+          ],
+          "referee_ruling": null
+        }
+      ]
+    }
+  ],
+  "version_history": [
+    {
+      "commit_sha": "062da39",
+      "timestamp": "2026-04-11T00:00:00Z",
+      "author_model": "anthropic/claude-haiku-4.5",
+      "note": "Round 1 initial checkpoint: Reformed proponent argues forensic sense (Calvin 3.11.2, Westminster 11.1), Catholic opponent argues transformative sense (Trent Session 6 ch. 7), red-team flags missing contextual engagements. All moves cite primary sources and original-language passages."
+    }
+  ]
+}

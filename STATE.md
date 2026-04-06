@@ -97,4 +97,4 @@ However, the current checkpoint is stored as `debate-manifest.json` and does **n
 - Core schemas present: PASS
 - Corpora IDs consistent: PASS
 
-next_model: anthropic/claude-haiku-4.5
+next_model: qwen/qwen3-max-thinking
