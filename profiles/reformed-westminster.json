@@ -1,0 +1,134 @@
+{
+  "id": "reformed-westminster",
+  "name": "Reformed (Westminster)",
+  "tradition": "Reformed",
+  "description": "A confessional Reformed profile grounded in the Westminster Confession of Faith (1646) and its Larger and Shorter Catechisms. Operates under sola scriptura with Scripture as the sole infallible rule of faith and practice. The Westminster Standards function as the norma normata (normed norm) subordinate to Scripture as norma normans (norming norm). Employs historical-grammatical exegesis as primary method, supplemented by redemptive-historical and typological reading within a covenantal theological framework. The analogy of faith (analogia fidei) — the principle that Scripture interprets Scripture, with clearer passages governing the reading of less clear ones — is the governing hermeneutical principle (WCF 1.9). Affirms verbal plenary inspiration and strict inerrancy of the autographs.",
+  "canon": {
+    "tradition": "protestant",
+    "notes": "66-book Protestant canon per WCF 1.2–3. The Apocrypha 'not being of divine inspiration, are no part of the Canon of the Scripture; and therefore are of no authority in the Church of God, nor to be any otherwise approved, or made use of, than other human writings' (WCF 1.3)."
+  },
+  "text_base": {
+    "ot_primary": "masoretic-bhs",
+    "ot_secondary": ["septuagint-rahlfs", "dead-sea-scrolls"],
+    "nt_primary": "na28",
+    "nt_secondary": ["byzantine-majority", "textus-receptus"],
+    "variant_positions": [
+      {
+        "reference": "1 John 5:7-8",
+        "variant_name": "comma-johanneum",
+        "position": "interpolation",
+        "notes": "Not present in earliest Greek manuscripts. The Trinitarian doctrine does not depend on this verse and is established from other texts. Some historical Reformed usage (e.g., KJV tradition) included it, but modern text-critical consensus, which this profile follows, treats it as a later addition."
+      },
+      {
+        "reference": "Mark 16:9-20",
+        "variant_name": "longer-ending-mark",
+        "position": "uncertain",
+        "notes": "Absent from the earliest manuscripts (Sinaiticus, Vaticanus). This profile treats it as textually uncertain and does not build doctrinal arguments solely on material unique to this passage."
+      },
+      {
+        "reference": "John 7:53-8:11",
+        "variant_name": "pericope-adulterae",
+        "position": "secondary",
+        "notes": "Absent from earliest manuscripts and many early versions. Likely an authentic tradition but not original to its current location in John. No doctrine is built solely on this passage."
+      }
+    ],
+    "notes": "Per WCF 1.8: 'The Old Testament in Hebrew... and the New Testament in Greek... being immediately inspired by God, and by His singular care and providence kept pure in all ages, are therefore authentical; so as in all controversies of religion the Church is finally to appeal unto them.' The Masoretic Hebrew and critical Greek NT are primary; versions and translations are derivative witnesses."
+  },
+  "authority_model": {
+    "position": "sola-scriptura",
+    "notes": "WCF 1.4: 'The authority of the holy Scripture, for which it ought to be believed and obeyed, dependeth not upon the testimony of any man or church, but wholly upon God (who is truth itself), the Author thereof.' WCF 1.6: 'The whole counsel of God, concerning all things necessary for His own glory, man's salvation, faith, and life, is either expressly set down in Scripture, or by good and necessary consequence may be deduced from Scripture: unto which nothing at any time is to be added, whether by new revelations of the Spirit, or traditions of men.' WCF 1.10: 'The Supreme Judge, by which all controversies of religion are to be determined... can be no other but the Holy Spirit speaking in the Scripture.' Confessions and creeds carry subordinate authority as faithful summaries of Scripture's teaching."
+  },
+  "interpretive_method": {
+    "primary": "historical-grammatical",
+    "secondary": ["redemptive-historical", "typological", "canonical"],
+    "notes": "WCF 1.9: 'The infallible rule of interpretation of Scripture is the Scripture itself; and therefore, when there is a question about the true and full sense of any scripture (which is not manifold, but one), it must be searched and known by other places that speak more clearly.' The single intended sense (sensus literalis) is the governing principle, though typological readings are permitted when grounded in explicit NT usage. Redemptive-historical reading locates each text within the unfolding history of redemption across the covenantal structure of Scripture."
+  },
+  "rule_of_faith": {
+    "creeds": [
+      "apostles",
+      "nicene-constantinopolitan-381",
+      "chalcedonian-451",
+      "athanasian"
+    ],
+    "confessions": [
+      {
+        "name": "Westminster Confession of Faith",
+        "authority_level": "normative"
+      },
+      {
+        "name": "Westminster Larger Catechism",
+        "authority_level": "normative"
+      },
+      {
+        "name": "Westminster Shorter Catechism",
+        "authority_level": "normative"
+      },
+      {
+        "name": "Canons of Dort",
+        "authority_level": "instructive"
+      },
+      {
+        "name": "Belgic Confession",
+        "authority_level": "instructive"
+      },
+      {
+        "name": "Heidelberg Catechism",
+        "authority_level": "instructive"
+      }
+    ],
+    "councils": [
+      {
+        "name": "Nicaea I",
+        "authority_level": "normative"
+      },
+      {
+        "name": "Constantinople I",
+        "authority_level": "normative"
+      },
+      {
+        "name": "Ephesus",
+        "authority_level": "normative"
+      },
+      {
+        "name": "Chalcedon",
+        "authority_level": "normative"
+      }
+    ],
+    "notes": "Scripture is norma normans; confessions and creeds are norma normata. The Westminster Standards are received 'because of' (quia), not merely 'insofar as' (quatenus), they agree with Scripture — but they remain subordinate to Scripture and reformable by it. The first four ecumenical councils are affirmed as faithful expressions of biblical teaching on the Trinity and Christology; later councils are evaluated on a case-by-case basis against Scripture."
+  },
+  "testament_relation": {
+    "position": "covenantal",
+    "notes": "The covenant of works (with Adam) and the covenant of grace (from the protoevangelium onward, administered differently in successive dispensations but one in substance) structure the relationship between the Testaments (WCF 7.1–6). The Mosaic covenant is an administration of the covenant of grace, not a republication of the covenant of works (though the latter position has minority Reformed support). The moral law remains binding; the ceremonial and judicial laws are fulfilled in Christ. OT types and shadows find their substance in the NT."
+  },
+  "inspiration_model": {
+    "position": "verbal-plenary",
+    "inerrancy": "strict-inerrancy",
+    "notes": "WCF 1.4 and 1.8 ground the authority of Scripture in its divine authorship. The Chicago Statement on Biblical Inerrancy (1978), while not part of the Westminster Standards, articulates the inerrancy position most Westminster-tradition churches hold: inerrancy extends to all that Scripture affirms, in the autographic text. Copies and translations are authoritative insofar as they faithfully represent the originals."
+  },
+  "clarity_hierarchy": {
+    "general_principle": "Analogia fidei (analogy of faith): Scripture interprets Scripture. Clearer passages govern the reading of less clear passages. Didactic/expository passages (especially the epistles) have interpretive priority over narrative and poetic passages for doctrinal formulation. The NT interprets the OT, not vice versa.",
+    "specific_priorities": [
+      {
+        "domain": "justification",
+        "controlling_passages": ["Rom 3:21-5:1", "Gal 2:15-3:29", "Eph 2:1-10", "Phil 3:7-9"],
+        "subordinate_passages": ["Jas 2:14-26"],
+        "rationale": "Paul's extended, systematic treatment of justification in Romans and Galatians is the controlling corpus. James 2 is read as addressing a different question (the evidence of faith, not the ground of justification) in light of Paul's clear teaching that justification is by faith apart from works of the law (Rom 3:28)."
+      },
+      {
+        "domain": "divine-sovereignty-and-human-agency",
+        "controlling_passages": ["Rom 8:28-39", "Rom 9:1-29", "Eph 1:3-14", "John 6:37-44"],
+        "subordinate_passages": ["2 Pet 3:9", "1 Tim 2:4", "Ezek 18:23"],
+        "rationale": "Paul's sustained argument in Romans 9 and Ephesians 1 for unconditional divine election governs the reading of passages that appear to express universal salvific will. The latter are read as referring to classes of people (elect from every nation) rather than to every individual without exception."
+      }
+    ],
+    "notes": "WCF 1.7: 'All things in Scripture are not alike plain in themselves, nor alike clear unto all; yet those things which are necessary to be known, believed, and observed, for salvation, are so clearly propounded and opened in some place of Scripture or other, that not only the learned, but the unlearned, in a due use of the ordinary means, may attain unto a sufficient understanding of them.' This perspicuity applies to matters necessary for salvation; not all passages are equally clear."
+  },
+  "version_history": [
+    {
+      "commit_sha": "PENDING",
+      "timestamp": "2026-04-08T00:00:00Z",
+      "author_model": "anthropic/claude-opus-4.6",
+      "note": "Initial creation. Profile grounded in Westminster Confession of Faith (1646) and standard Reformed hermeneutical practice."
+    }
+  ]
+}
