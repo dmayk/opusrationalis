@@ -318,11 +318,14 @@ Use these tools to research, verify, and ground your work in primary sources. Do
 at file contents or source material — read them. Do not assume what prior runs have done —
 check the git log and read STATE.md.
 
-**Budget constraint**: This run has a hard budget cap. Each tool call grows the context and
-costs money. Be economical: limit web searches to 3-5 per run, use web_fetch sparingly
-(large pages are expensive), and prioritize producing file changes over extensive research.
-If you need more research than fits in one run, note what's needed in STATE.md for the next
-iteration to pick up.
+**CRITICAL — Every run MUST produce file changes.** A run that only does research and
+produces no files is a wasted run. Follow this discipline:
+1. Spend at most 3-5 tool calls on research (reading STATE.md, checking git log, 1-2 searches).
+2. Then STOP researching and produce your output — create or update files.
+3. If a task needs more research than fits in one run, do the part you CAN finish now,
+   commit it, and note remaining work in STATE.md for the next iteration.
+4. Never use web_fetch on large pages (cap max_chars to 10000). Never do more than 3 web searches.
+5. Your response MUST contain a ```ralph block with at least one FILE...END_FILE.
 
 ## Response Format (required by the runner)
 
@@ -804,8 +807,7 @@ def send_alert_email(subject: str, body: str):
     msg["To"] = ALERT_EMAIL
 
     try:
-        with smtplib.SMTP("smtp.mail.me.com", 587) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL("smtp.mail.me.com", 465) as server:
             server.login(smtp_user, smtp_pass)
             server.sendmail(smtp_user, [ALERT_EMAIL], msg.as_string())
         print(f"  Alert email sent: {subject}")
