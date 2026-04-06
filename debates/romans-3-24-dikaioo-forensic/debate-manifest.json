@@ -1,0 +1,22 @@
+{
+  "claim_id": "romans-3-24-dikaioo-forensic",
+  "participants": ["reformed", "catholic", "eastern-orthodox"],
+  "rounds": [
+    {
+      "round_id": "round-1-stub",
+      "participant": "placeholder",
+      "timestamp": null,
+      "role": null,
+      "actions": null,
+      "move": null,
+      "move_type": null,
+      "reference_key": null,
+      "excerpt_quote": null,
+      "metadata": {
+        "model": null,
+        "seed": null,
+        "cost_tokens": null
+      }
+    }
+  ]
+}
