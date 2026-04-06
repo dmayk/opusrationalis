@@ -36,8 +36,6 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         run: python scripts/ralph_run.py
 
       - name: Commit and push changes
@@ -57,6 +55,19 @@ jobs:
             git push
           fi
 
+      - name: Send soft-failure alert
+        if: always() && hashFiles('.ralph_warnings') != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.mail.me.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Ralph warning — ${{ github.repository }}"
+          to: dennis@mayk.eu
+          from: Ralph Bot <${{ secrets.SMTP_USERNAME }}>
+          body: file://.ralph_warnings
+
       - name: Send failure alert
         if: failure()
         uses: dawidd6/action-send-mail@v3
@@ -67,13 +78,12 @@ jobs:
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "Ralph run failed — ${{ github.repository }}"
           to: dennis@mayk.eu
-          from: Ralph Bot <dev@opusrationalis.org>
+          from: Ralph Bot <${{ secrets.SMTP_USERNAME }}>
           body: |
             Ralph run failed on ${{ github.repository }}.
 
             Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
             Branch: ${{ github.ref_name }}
             Trigger: ${{ github.event_name }}
-            Time: ${{ github.event.head_commit.timestamp || 'manual dispatch' }}
 
             Check the Actions log for details.

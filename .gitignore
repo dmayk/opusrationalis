@@ -1,3 +1,4 @@
 .ralph_commit_msg
+.ralph_warnings
 __pycache__/
 *.pyc

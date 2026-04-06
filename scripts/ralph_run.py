@@ -13,7 +13,6 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-ALERT_EMAIL = "dennis@mayk.eu"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_MODELS_URL = "https://openrouter.ai/api/v1/models"
 BRAVE_SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
@@ -533,8 +532,7 @@ def call_openrouter_with_tools(
 ) -> tuple[str, str, list, float]:
     """
     Call OpenRouter in a loop, executing tool calls until the model produces
-    a final text response. Tracks estimated cost and aborts if MAX_RUN_COST_USD
-    is exceeded. Returns (final_content, finish_reason, tool_call_log, total_cost).
+    a final text response. Returns (final_content, finish_reason, tool_call_log, total_cost).
     """
     import requests
 
@@ -570,7 +568,7 @@ def call_openrouter_with_tools(
         prompt_tokens = usage.get("prompt_tokens", 0)
         completion_tokens = usage.get("completion_tokens", 0)
         if prompt_tokens == 0 and completion_tokens == 0:
-            # Estimate: ~4 chars per token
+            # Estimate: ~3 chars per token (conservative)
             est_prompt = sum(len(json.dumps(m)) for m in messages) // 3
             est_completion = len(json.dumps(message)) // 3
             call_cost = (est_prompt * prompt_price) + (est_completion * completion_price)
@@ -773,42 +771,13 @@ def count_consecutive_noop_runs() -> int:
     return count
 
 
-def send_alert_email(subject: str, body: str):
-    """Send an alert email via SMTP. Fails silently if credentials are missing."""
-    import smtplib
-    from email.mime.text import MIMEText
-
-    smtp_user = os.environ.get("SMTP_USERNAME")
-    smtp_pass = os.environ.get("SMTP_PASSWORD")
-    if not smtp_user or not smtp_pass:
-        print("  Alert email skipped — SMTP credentials not configured.")
-        return
-
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = f"Ralph Bot <{smtp_user}>"
-    msg["To"] = ALERT_EMAIL
-
-    try:
-        with smtplib.SMTP("smtp.mail.me.com", 587) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(smtp_user, smtp_pass)
-            server.sendmail(smtp_user, [ALERT_EMAIL], msg.as_string())
-        print(f"  Alert email sent: {subject}")
-    except Exception as e:
-        print(f"  Alert email failed: {type(e).__name__}: {e}")
-
-
-def check_and_alert(warnings: list[str], model: str, timestamp: datetime):
-    """If any warnings accumulated, send a single digest email."""
+def write_warnings_file(warnings: list[str], model: str, timestamp: datetime):
+    """Write warnings to .ralph_warnings for the workflow to pick up and email."""
     if not warnings:
         return
 
-    subject = f"Ralph warning — {len(warnings)} issue(s) on {timestamp.strftime('%Y-%m-%d')}"
     body = (
-        f"Ralph run completed but with warnings.\n\n"
+        f"Ralph run completed with {len(warnings)} warning(s).\n\n"
         f"Model: {model}\n"
         f"Time: {timestamp.isoformat()}\n\n"
         f"Warnings:\n"
@@ -820,7 +789,8 @@ def check_and_alert(warnings: list[str], model: str, timestamp: datetime):
         f"Check the latest run log in runs/ for details.\n"
     )
 
-    send_alert_email(subject, body)
+    (REPO_ROOT / ".ralph_warnings").write_text(body, encoding="utf-8")
+    print(f"  Warnings written to .ralph_warnings")
 
 
 # ---------------------------------------------------------------------------
@@ -865,7 +835,7 @@ def main():
     if not available_models:
         msg = "No qualifying models found on OpenRouter. Cannot proceed."
         print(f"  ERROR: {msg}", file=sys.stderr)
-        send_alert_email("Ralph FATAL — no models available", msg)
+        write_warnings_file(["No qualifying models found on OpenRouter."], "none", datetime.now(timezone.utc))
         sys.exit(1)
 
     # Validate selected model is actually available
@@ -979,7 +949,7 @@ def main():
         print(f"Warnings ({len(warnings)}):")
         for w in warnings:
             print(f"  - {w}")
-        check_and_alert(warnings, model, timestamp)
+        write_warnings_file(warnings, model, timestamp)
 
     print("Done.")
 
