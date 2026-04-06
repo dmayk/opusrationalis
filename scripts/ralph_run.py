@@ -24,11 +24,10 @@ MAX_RUN_COST_USD = 0.80  # Hard cap: abort if estimated spend exceeds this
 
 MIN_CONTEXT_LENGTH = 128_000
 
-# Maximum completion price per token. With $0.80 budget, ~7 API calls
-# at ~30k prompt tokens each, we need prompt cost under ~$0.10/call.
-# At $15/Mtok prompt that's $0.45 for prompts alone, leaving room for
-# completion. $0.000015/token = $15/Mtok keeps us in budget.
-MAX_COMPLETION_PRICE = 0.000015
+# Maximum completion price per token. $0.00005/token = $50/Mtok.
+# Includes Opus-class models — the pre-flight budget check prevents
+# expensive models from overspending rather than excluding them.
+MAX_COMPLETION_PRICE = 0.00005
 
 # Providers we trust for autonomous theological research. The agent picks
 # freely within this set — no per-provider ranking or limit.
@@ -319,6 +318,12 @@ Use these tools to research, verify, and ground your work in primary sources. Do
 at file contents or source material — read them. Do not assume what prior runs have done —
 check the git log and read STATE.md.
 
+**Budget constraint**: This run has a hard budget cap. Each tool call grows the context and
+costs money. Be economical: limit web searches to 3-5 per run, use web_fetch sparingly
+(large pages are expensive), and prioritize producing file changes over extensive research.
+If you need more research than fits in one run, note what's needed in STATE.md for the next
+iteration to pick up.
+
 ## Response Format (required by the runner)
 
 When you are done with your research and tool use, you MUST end your final response with a
@@ -536,7 +541,16 @@ def call_openrouter_with_tools(
     tool_call_log = []
     total_cost = 0.0
 
+    last_content = ""
+
     for iteration in range(MAX_TOOL_ITERATIONS):
+        # Pre-flight: estimate next call cost and abort if it would bust budget
+        est_prompt_tokens = sum(len(json.dumps(m)) for m in messages) // 3
+        est_call_cost = est_prompt_tokens * prompt_price
+        if total_cost + est_call_cost > MAX_RUN_COST_USD:
+            print(f"  PRE-FLIGHT: next call ~${est_call_cost:.4f}, total would be ~${total_cost + est_call_cost:.4f} > ${MAX_RUN_COST_USD:.2f}. Stopping before sending.")
+            return last_content, "budget_exceeded", tool_call_log, total_cost
+
         payload = {
             "model": model,
             "messages": messages,
