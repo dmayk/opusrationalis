@@ -450,6 +450,11 @@ def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
         if completion_price <= 0 or completion_price > MAX_COMPLETION_PRICE:
             continue
 
+        # Skip models older than 6 months (legacy/superseded)
+        created = m.get("created", 0)
+        if created and created < (datetime.now(timezone.utc).timestamp() - 180 * 86400):
+            continue
+
         # Skip models that are about to expire (within 30 days)
         expiration = m.get("expiration_date")
         if expiration:
