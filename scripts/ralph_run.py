@@ -22,11 +22,6 @@ MAX_TOOL_OUTPUT_CHARS = 50_000
 
 MIN_CONTEXT_LENGTH = 128_000
 
-# Maximum completion price per token. $0.00005/token = $50/Mtok.
-# Includes Opus-class models — the pre-flight budget check prevents
-# expensive models from overspending rather than excluding them.
-MAX_COMPLETION_PRICE = 0.00005
-
 # Providers we trust for autonomous theological research. The agent picks
 # freely within this set — no per-provider ranking or limit.
 ELIGIBLE_PROVIDERS = {
@@ -318,11 +313,11 @@ check the git log and read STATE.md.
 
 **CRITICAL — Every run MUST produce file changes.** A run that only does research and
 produces no files is a wasted run. Follow this discipline:
-1. Spend at most 3-5 tool calls on research (reading STATE.md, checking git log, 1-2 searches).
-2. Then STOP researching and produce your output — create or update files.
-3. If a task needs more research than fits in one run, do the part you CAN finish now,
+1. Start by reading STATE.md and checking git log to understand current state.
+2. Research as needed using brave_search, web_fetch, and read_file.
+3. Then produce your output — create or update files. Do not end a run without file changes.
+4. If a task needs more research than fits in one run, do the part you CAN finish now,
    commit it, and note remaining work in STATE.md for the next iteration.
-4. Never use web_fetch on large pages (cap max_chars to 10000). Never do more than 3 web searches.
 5. Your response MUST contain a ```ralph block with at least one FILE...END_FILE.
 
 ## Response Format (required by the runner)
@@ -448,7 +443,7 @@ def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
             completion_price = float(pricing.get("completion", "0"))
         except (ValueError, TypeError):
             continue
-        if completion_price <= 0 or completion_price > MAX_COMPLETION_PRICE:
+        if completion_price <= 0:
             continue
 
         # Skip models older than 6 months (legacy/superseded)
