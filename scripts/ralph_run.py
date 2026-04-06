@@ -24,10 +24,11 @@ MAX_RUN_COST_USD = 0.80  # Hard cap: abort if estimated spend exceeds this
 
 MIN_CONTEXT_LENGTH = 128_000
 
-# Maximum completion price per token — filters out models where even a
-# modest response would blow the per-run budget.
-# At $1 budget and ~20k output tokens, that's $0.00005/token max.
-MAX_COMPLETION_PRICE = 0.00005
+# Maximum completion price per token. With $0.80 budget, ~7 API calls
+# at ~30k prompt tokens each, we need prompt cost under ~$0.10/call.
+# At $15/Mtok prompt that's $0.45 for prompts alone, leaving room for
+# completion. $0.000015/token = $15/Mtok keeps us in budget.
+MAX_COMPLETION_PRICE = 0.000015
 
 # Providers we trust for autonomous theological research. The agent picks
 # freely within this set — no per-provider ranking or limit.
@@ -635,6 +636,8 @@ def call_openrouter_with_tools(
 
 
 def parse_ralph_block(response: str):
+    if not response:
+        return None, None, None, [], []
     match = re.search(r"```ralph\s*\n(.*?)```", response, re.DOTALL)
     if not match:
         return None, None, None, [], []
