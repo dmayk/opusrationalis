@@ -556,8 +556,26 @@ def call_openrouter_with_tools(
         est_prompt_tokens = sum(len(json.dumps(m)) for m in messages) // 3
         est_call_cost = est_prompt_tokens * prompt_price
         if total_cost + est_call_cost > MAX_RUN_COST_USD:
-            print(f"  PRE-FLIGHT: next call ~${est_call_cost:.4f}, total would be ~${total_cost + est_call_cost:.4f} > ${MAX_RUN_COST_USD:.2f}. Stopping before sending.")
-            return last_content, "budget_exceeded", tool_call_log, total_cost
+            print(f"  PRE-FLIGHT: budget tight. Forcing final response (no tools).")
+            # Make one last call WITHOUT tools so the model must produce text
+            final_payload = {
+                "model": model,
+                "messages": messages + [{"role": "user", "content":
+                    "BUDGET LIMIT REACHED. You cannot make any more tool calls. "
+                    "Produce your final response NOW with the ```ralph block "
+                    "containing your file changes, commit message, and NEXT_MODEL. "
+                    "Use whatever research you have gathered so far."}],
+                "max_tokens": 16000,
+            }
+            resp = requests.post(OPENROUTER_URL, json=final_payload, headers=headers, timeout=600)
+            resp.raise_for_status()
+            data = resp.json()
+            content = data["choices"][0]["message"].get("content", "")
+            usage = data.get("usage", {})
+            final_cost = (usage.get("prompt_tokens", 0) * prompt_price) + (usage.get("completion_tokens", 0) * completion_price)
+            total_cost += final_cost
+            print(f"  Final forced response: {len(content)} chars, +${final_cost:.4f} (total: ${total_cost:.4f})")
+            return content, "budget_exceeded", tool_call_log, total_cost
 
         payload = {
             "model": model,
@@ -803,16 +821,19 @@ def send_alert_email(subject: str, body: str):
 
     msg = MIMEText(body)
     msg["Subject"] = subject
-    msg["From"] = "Ralph Bot <dev@opusrationalis.org>"
+    msg["From"] = f"Ralph Bot <{smtp_user}>"
     msg["To"] = ALERT_EMAIL
 
     try:
-        with smtplib.SMTP_SSL("smtp.mail.me.com", 465) as server:
+        with smtplib.SMTP("smtp.mail.me.com", 587) as server:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
             server.login(smtp_user, smtp_pass)
             server.sendmail(smtp_user, [ALERT_EMAIL], msg.as_string())
         print(f"  Alert email sent: {subject}")
     except Exception as e:
-        print(f"  Alert email failed: {e}")
+        print(f"  Alert email failed: {type(e).__name__}: {e}")
 
 
 def check_and_alert(warnings: list[str], model: str, timestamp: datetime):
