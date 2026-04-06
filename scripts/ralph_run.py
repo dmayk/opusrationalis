@@ -28,7 +28,7 @@ MAX_COMPLETION_PRICE = 0.00005
 
 # Bottom percentile of models to exclude by prompt price. Dynamically
 # cuts the cheapest/smallest models from the eligible set each run.
-PRICE_PERCENTILE_CUTOFF = 25
+PRICE_PERCENTILE_CUTOFF = 50
 
 # Providers we trust for autonomous theological research. The agent picks
 # freely within this set — no per-provider ranking or limit.
