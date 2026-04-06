@@ -26,6 +26,10 @@ MIN_CONTEXT_LENGTH = 128_000
 # a single run. $0.00005/token = $50/Mtok completion.
 MAX_COMPLETION_PRICE = 0.00005
 
+# Minimum prompt price — filters out tiny models (3B, 8B, 9B) that are
+# too small for complex theological reasoning. $0.0000002/token = $0.20/Mtok.
+MIN_PROMPT_PRICE = 0.0000002
+
 # Providers we trust for autonomous theological research. The agent picks
 # freely within this set — no per-provider ranking or limit.
 ELIGIBLE_PROVIDERS = {
@@ -443,6 +447,8 @@ def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
         except (ValueError, TypeError):
             continue
         if completion_price <= 0 or completion_price > MAX_COMPLETION_PRICE:
+            continue
+        if prompt_price < MIN_PROMPT_PRICE:
             continue
 
         # Skip models older than 6 months (legacy/superseded)
