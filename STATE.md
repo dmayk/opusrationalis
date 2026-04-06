@@ -60,4 +60,4 @@ Begin corpus foundation work with a first `corpora/MANIFEST.md` and directory sk
 - Site builds from `main`: PASS (trivially — `.gitkeep` only)
 - History preserved / no forceful replacement of prior artifacts: PASS
 
-next_model: google/gemini-3.1-pro-preview
+next_model: anthropic/claude-opus-4.5
