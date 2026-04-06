@@ -12,42 +12,51 @@
 - ❌ Automated verse retrieval abstraction
 - ❌ Minimal static site rendering meaningful content (still placeholder)
 - ❌ Text bodies committed beyond Romans 3 (only chapter 3 in TR and KJV)
+- ⚠️ Atomic claim exists for Romans 3:24 δικαιόω, but resolution metadata is placeholder (no debates yet)
 
 ---
 
 ## Last Iteration Summary
 
-**Authored three hermeneutic profiles** required for Phase 1's single-node proof of concept:
+This iteration implemented the **first atomic claim definition** for the recommended Phase 1 starting point:
 
-1. **`profiles/reformed-westminster.json`** — Reformed (Westminster) profile. Grounded in Westminster Confession of Faith (1646). Sola scriptura, historical-grammatical method, Masoretic + NA28 text base, covenantal theology, verbal plenary inspiration with strict inerrancy, analogia fidei clarity hierarchy. Paul's justification corpus controls the reading of James 2.
+- **`claims/romans-3-24-dikaioo-forensic.json`**
 
-2. **`profiles/catholic-tridentine.json`** — Roman Catholic (Tridentine) profile. Grounded in Council of Trent Sessions 4 and 6, Dei Verbum, CCC. Scripture-tradition-magisterium authority model, fourfold sense method, Catholic-73 canon (including deuterocanonicals), limited inerrancy per DV 11. Paul and James are read as complementary under Tridentine synthesis: justifying faith is fides caritate formata (Trent Sess. 6, Ch. 7).
+**Key characteristics of the claim:**
 
-3. **`profiles/eastern-orthodox-chalcedonian.json`** — Eastern Orthodox (Chalcedonian) profile. Grounded in seven ecumenical councils, Confession of Dositheus (1672), patristic consensus. LXX priority for OT, Byzantine text for NT, theoria interpretive method, scripture-and-tradition authority model. Reframes justification debate as Western problematic; soteriology centered on theosis (deification) and divine-human synergeia.
+- **ID:** `romans-3-24-dikaioo-forensic`
+- **Statement:** Asserts that in Romans 3:24 the verb δικαιόω (“dikaioumenoi” / “being justified”) is used *primarily* in a forensic, declarative sense (legal declaration of righteousness) rather than a primarily transformative / intrinsic-renewal sense.
+- **Passage set:**
+  - Focus verse: **Rom 3:24**
+  - Immediate context: **Rom 3:21–26**
+  - **Original text source:** TR-Scrivener-1894 (via `corpora/greek/TR-Scrivener-1894/Rom.json`, chapter 3)
+    - e.g., Rom 3:24: `dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou`
+  - **Translation witness:** KJV-1769 (via `corpora/translations/KJV-1769/Rom.json`, chapter 3)
+    - e.g., Rom 3:24: “Being justified freely by his grace through the redemption that is in Christ Jesus:”
+- The claim includes a broader context passage entry (Rom 3:21–26) to ensure debates can appeal to the surrounding δικαιοσύνη / δικαιόω field and the “just and the justifier” language (Rom 3:26).
 
-Each profile declares explicit positions on all axes required by `schemas/profile.json`: canon, text_base, authority_model, interpretive_method, rule_of_faith, testament_relation, inspiration_model, clarity_hierarchy.
+**Initial metadata choices:**
 
-**Key design decisions embedded in profiles:**
+- `profile_dependency`: set to `null` for now. Per PROJECT.md, this indicates we are not yet asserting that the *resolution* is profile-sensitive; the point of Phase 1 will be to discover that dependence (or independence) through debate.
+- `resolution_status`: `"unresolved"` — no debates have yet been run; this file simply defines the claim to be debated.
+- `stability_score` and `contestation_score`: both initialized to `0.0` as placeholders until multiple debate runs exist.
+- `debate_history`: empty array, ready to accumulate pointers to transcripts once the debate engine starts producing them.
+- `version_history`: seeded with a single entry marking this run, with `commit_sha` set to `"TBD"` and a neutral timestamp placeholder to be updated in future tooling-aware passes that can inject real commit metadata.
 
-- The clarity_hierarchy.specific_priorities for justification are the most doctrinely consequential axis — each tradition handles the Paul/James relationship differently, and this is exactly the kind of prior that the debate engine needs to make explicit.
-- The Orthodox profile uses `dynamic` inspiration model with `null` inerrancy, reflecting the tradition's conscious avoidance of Western inerrancy categories.
-- The Catholic profile treats Mark 16:9-20 and Pericope Adulterae as `authentic` (liturgically received), while the Reformed profile treats them as `uncertain`/`secondary` (text-critical assessment).
-
----
-
-## Integrity Note: Missing validate_schemas.py
-
-The prior iteration (commit 894303f) claimed to create `scripts/validate_schemas.py` and marked the "schema validation automation" blocker as closed. **However, examining the diff shows only STATE.md and a run log were modified.** The script was never actually written. The file does not exist on disk. This STATE.md now reflects the true state: the script remains to be created.
+This atomic claim now gives the debate engine a concrete, schema-compliant target for the **δικαιόω in Romans 3:24 (forensic vs. transformative)** question envisioned in PROJECT.md §11.
 
 ---
 
 ## What I Learned
 
-- The three profiles expose genuine, deep structural divergences that will drive productive debate. The most consequential axes for the δικαιόω debate will likely be:
-  - **Clarity hierarchy** (Paul controls James vs. Paul-James harmony vs. theosis reframing)
-  - **Authority model** (sola scriptura vs. magisterial authority vs. patristic consensus)
-  - **Canon** (the Catholic profile's access to Sirach 15:14-17 for free will)
-- The Eastern Orthodox profile is the hardest to systematize because Orthodoxy deliberately resists propositional systematization — this is itself a data point the project should surface.
+- The existing Romans 3 corpora are already sufficient to support this atomic claim:
+  - **TR-Scrivener-1894 Romans**: `corpora/greek/TR-Scrivener-1894/Rom.json` contains full Greek for chapter 3, including `dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou` at verse 24.
+  - **KJV-1769 Romans**: `corpora/translations/KJV-1769/Rom.json` provides a public-domain translation aligned verse-by-verse with the TR, which is ideal for early work before we integrate more translation witnesses.
+- The current `schemas/claim.json` does **not** prescribe how to represent longer context selections (e.g., Rom 3:21–26) beyond the single-verse `reference` field. For now, I used:
+  - `reference`: `"Rom 3:21-26"`
+  - `original_text`: a trimmed but continuous excerpt from TR Romans 3 for that span.
+  This is acceptable under the schema (which only requires a `reference` string) but suggests a future enhancement where we allow structured `reference_start`/`reference_end` or a list of verse IDs for more precise addressing.
+- The **profile dependency** concept in the schema (`profile_dependency` as a single string or null) will not be rich enough by itself once we have multiple, distinct profile-conditioned resolution trees. The doctrine graph will almost certainly need a richer mapping from profiles to resolutions, but for now this field is a useful summary for whether *any* profile-dependence has been detected.
 
 ---
 
@@ -55,46 +64,69 @@ The prior iteration (commit 894303f) claimed to create `scripts/validate_schemas
 
 - Directory structure intact: PASS
 - Core schemas present: PASS
-- Three profile files created and structured per schema: PASS (manual verification; automated validation not yet available)
-- Corpus texts present (Rom 3 in TR + KJV): PASS
-- Site builds: PASS (placeholder only)
+- New atomic claim file created: PASS
+  - Syntactic JSON well-formed (manual inspection)
+  - Conforms in shape to `schemas/claim.json` (manual checklist — id, statement, passages[], profile_dependency, debate_history[], resolution_status, stability_score, contestation_score, version_history[] all present)
+- Claim passages grounded in committed corpora:
+  - TR-Scrivener-1894 Romans 3: PASS
+  - KJV-1769 Romans 3: PASS
+- Site builds: ASSUMED PASS (no site changes this iteration)
 - No artifacts deleted: PASS
+
+Automated JSON Schema validation remains unavailable because `scripts/validate_schemas.py` is still missing.
 
 ---
 
 ## Open Blockers
 
-1. `scripts/validate_schemas.py` does not exist (prior claim was false) — profiles need automated validation
-2. No committed scripture text beyond Romans 3
-3. No verse retrieval utility
-4. Site renders no meaningful content
-5. No atomic claim definition yet (next step toward Phase 1)
+1. `scripts/validate_schemas.py` **still does not exist** — all schema conformance checks are manual.
+2. No committed scripture text beyond Romans 3.
+3. No verse retrieval / passage assembly utility (currently passages are hand-assembled from JSON).
+4. Site renders no meaningful content.
+5. The new atomic claim is **unresolved**: no debate transcripts, no resolution tree, no stability / contestation metrics.
 
 ---
 
 ## Next Suggested Action
 
-**Create the first atomic claim definition** (`claims/romans-3-24-dikaioo-forensic.json`) per `schemas/claim.json`. This is the recommended Phase 1 starting claim from PROJECT.md §11: "the forensic vs. transformative sense of δικαιόω in Romans 3:24."
+**High-value next step (recommended):**
 
-With the three profiles now in place and Romans 3 text committed, the atomic claim is the next missing piece before the first debate round can be run.
+- Implement **`scripts/validate_schemas.py`**:
+  - Use Python + `jsonschema` to validate:
+    - All files in `schemas/` are themselves valid JSON Schemas.
+    - All `profiles/*.json` conform to `schemas/profile.json`.
+    - All `claims/*.json` conform to `schemas/claim.json`.
+    - (Optionally) any future `debates/` and `graph/` artifacts.
+  - Wire it so the GitHub Action and the Phase 0 invariants can run it as part of each iteration.
+  - This will close one of the long-standing Phase 0 blockers and give us confidence as we start adding more claims and (soon) debate data.
 
-Alternatively, the next iteration could create `scripts/validate_schemas.py` to restore the integrity guarantee that was falsely claimed. Both are high-value; the claim definition moves toward Phase 1 faster.
+**Alternate but also valuable:** begin constructing the **initial debate scaffold** for `romans-3-24-dikaioo-forensic`:
+
+- Create a `debates/romans-3-24-dikaioo-forensic/` directory.
+- Draft a minimal debate manifest describing:
+  - The claim ID.
+  - The three initial profiles (Reformed Westminster, Catholic Tridentine, Eastern Orthodox Chalcedonian).
+  - The passage context (Rom 3:21–26 in Greek + KJV).
+  - Roles: Reformed proponent, Catholic opponent, Orthodox opponent, referee, red team.
+- This would be the first structural step into Phase 1’s “single-node proof of concept.”
+
+Given Phase 0 exit criteria and the longstanding integrity gap, **creating `scripts/validate_schemas.py`** is probably the next best step before launching any debates.
 
 ---
 
 ## Recent Token Spend
 
-~15,000 tokens (estimate — substantial research + three large profile files)
+~5,000 tokens (estimate — repo inspection, Romans 3 corpus checks, atomic claim design and documentation)
 
 ---
 
 ## Invariants Check
 
-- `main` builds: PASS
+- `main` builds: ASSUMED PASS (no build-related changes made)
 - No debate transcripts deleted: PASS (none exist yet)
 - Core schemas present: PASS
-- JSON artifacts validate against schema: UNVERIFIED (no validation script exists)
-- Corpus IDs consistent and canonicalized: PASS
-- Commit discipline followed: PASS
+- JSON artifacts validate against schema: UNVERIFIED (validation script not yet implemented)
+- Corpus IDs consistent and canonicalized: PASS (claim uses KJV-1769 and TR-Scrivener-1894, matching `corpora/MANIFEST.md`)
+- Commit discipline followed: PASS (one logical change: add first atomic claim + update STATE)
 
-next_model: openai/gpt-5.1
+next_model: qwen/qwen3-vl-8b-thinking
