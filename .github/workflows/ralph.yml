@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: ralph-loop
@@ -54,6 +56,16 @@ jobs:
             fi
             git push
           fi
+
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Publish Pages
+        if: success()
+        uses: actions/deploy-pages@v4
 
       - name: Check for warnings
         id: warnings
