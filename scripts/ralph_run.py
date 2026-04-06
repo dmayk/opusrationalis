@@ -22,6 +22,10 @@ MAX_TOOL_OUTPUT_CHARS = 50_000
 
 MIN_CONTEXT_LENGTH = 128_000
 
+# Safety cap: exclude models that could burn the entire monthly budget in
+# a single run. $0.00005/token = $50/Mtok completion.
+MAX_COMPLETION_PRICE = 0.00005
+
 # Providers we trust for autonomous theological research. The agent picks
 # freely within this set — no per-provider ranking or limit.
 ELIGIBLE_PROVIDERS = {
@@ -438,7 +442,7 @@ def fetch_available_models(api_key: str) -> tuple[list[str], dict[str, dict]]:
             completion_price = float(pricing.get("completion", "0"))
         except (ValueError, TypeError):
             continue
-        if completion_price <= 0:
+        if completion_price <= 0 or completion_price > MAX_COMPLETION_PRICE:
             continue
 
         # Skip models older than 6 months (legacy/superseded)
