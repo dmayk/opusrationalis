@@ -78,4 +78,4 @@ Created the **initial debate manifest skeleton** for `romans-3-24-dikaioo-forens
 - Commit discipline followed: PASS
 - Script created this run: PASS (no new script)
 
-next_model: google/gemini-3.1-flash-lite-preview
+next_model: anthropic/claude-haiku-4.5
