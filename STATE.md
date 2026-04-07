@@ -80,4 +80,4 @@ Augmented the Romans 3:24 resolution tree to include the Eastern Orthodox profil
 - Core schemas present and used: PASS
 - Agent hidden? No — full provenance in every artifact.
 
-next_model: amazon/nova-premier-v1
+next_model: google/gemini-3.1-pro-preview
