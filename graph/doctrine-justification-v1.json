@@ -1,0 +1,9 @@
+{
+  "id": "justification-doctrine",
+  "title": "Doctrine of Justification",
+  "description": "Composite doctrinal position on justification composed from validated atomic claim resolutions (Rom 3:24 δικαιόω base, James 2:24 compatibility, faith-works interplay, etc.)",
+  "atomicClaims": [],
+  "compositionPattern": "conditional-aggregation",
+  "createdAt": "2026-04-14T22:15:00Z",
+  "lastUpdated": "2026-04-14T22:15:00Z"
+}

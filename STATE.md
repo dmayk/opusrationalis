@@ -76,4 +76,4 @@ We are fully equipped to move to Phase 2 (A single doctrine), starting with deco
 - Core schemas present and used: PASS
 - Agent hidden? No — full provenance inside version_history.
 
-next_model: amazon/nova-premier-v1
+next_model: openai/gpt-5.1
