@@ -76,4 +76,4 @@ Draft first proponent move and initial referee parameters:
 - Real citations ✅: Corpus entries verified against MANIFEST.md
 - Profile alignment ✅: Using validated Reformation/Catholic/Orthodox profiles
 
-next_model: qwen/qwen3-max-thinking
+next_model: amazon/nova-premier-v1

@@ -1,0 +1,95 @@
+{
+  "id": "james-2-24-rom-3-28-dikaioo-debate-0001",
+  "claim_id": "james-2-24-rom-3-28-dikaioo-compatibility",
+  "status": "active",
+  "terminal_state": null,
+  "metadata": {
+    "random_seed": 20260416,
+    "system_prompts": {
+      "proponent": "You are arguing the Reformed position on the compatibility of δικαιόω in James 2:24 and Romans 3:28. You are seeded with Calvin's Commentary on James 2:21-24 and related Westminster Confession passages. Argue that there is no genuine contradiction between Paul and James because they use δικαιόω in different senses: Paul addresses the cause/manner of justification before God (forensic, by faith alone), while James addresses the demonstration/manifestation of genuine faith before men (evidenced by works). Ground every move in the supplied texts. Do not smuggle in assumptions not present in those texts. If you reach a genuine impasse, declare it explicitly.",
+      "opponent": "You are arguing the Catholic position on the compatibility of δικαιόω in James 2:24 and Romans 3:28. You are seeded with the Council of Trent, Session 6, Chapter 11-12, and related ecclesiastical sources. Argue that Paul and James must be harmonized as complementary teachings that together show justification involves both initial grace through faith and the necessity of works as evidence and completion of that faith. Ground every move in supplied texts. Challenge any appeal to consensus or 'mainstream' interpretation. If you reach impasse, declare it.",
+      "red_team": "You are a red-team reviewer. Your role is to flag where the debate has moved too fast, missed textual evidence, or smuggled in unstated priors. You do not have a position to defend. You are hunting for: (1) moves that ignore the strongest opposing argument, (2) unstated assumptions in the reasoning, (3) passages that seem to count against the speaker's position but were not engaged. You flag these as issues for the next round, not as a scored judgment.",
+      "referee": "You are a neutral referee. Your job is to check whether each move follows the rules: Does it cite specific verses in original languages or specific lines from supplied historical sources? Does it engage the strongest form of the opposing argument? Does it smuggle in unstated priors? Flag violations. Accept moves that follow the rules, even if you disagree with them. Log any hidden assumptions you detect."
+    }
+  },
+  "participants": {
+    "proponent": {
+      "profile_id": "reformed-westminster",
+      "seed_arguments": [
+        "Calvin, Commentary on James 2:21: 'We must understand the state of the question, for the dispute here is not respecting the cause of justification, but only what avails a profession of faith without works... Paul means by [justified] the gratuitous imputation of righteousness before the tribunal of God; and James, the manifestation of righteousness by the conduct, and that before men.'",
+        "Calvin, Commentary on James 2:23-24: 'The faith of Abram was formed and therefore perfected before he sacrificed his son... James then understood no other thing, than that the integrity of his faith then appeared, because it brought forth that remarkable fruit of obedience. Man is not justified by faith alone, that is, by a bare and empty knowledge of God; he is justified by works, that is, his righteousness is known and proved by its fruits.'",
+        "Westminster Confession of Faith 11.2: 'Faith, thus receiving and resting on Christ and his righteousness, is the alone instrument of justification: yet it is not alone in the person justified, but is ever accompanied with all other saving graces, and is no dead faith, but worketh by love.'",
+        "Romans 3:28: 'Therefore we conclude that a man is justified by faith without the deeds of the law' (οὖν λογιζόμεθα δικαιοῦσθαι πίστει ἄνθρωπον χωρὶς ἔργων νόμου)",
+        "James 2:24: 'Ye see then how that by works a man is justified, and not by faith only' (ὁρᾶτε ὅτι ἐξ ἔργων δικαιοῦται ἄνθρωπος καὶ οὐκ ἐκ πίστεως μόνον)"
+      ]
+    },
+    "opponents": [
+      {
+        "profile_id": "catholic-tridentine",
+        "seed_arguments": [
+          "Council of Trent, Session 6, Chapter 11: 'He is not indeed himself justified, nor does he actually obtain the justice of God, unless he has been renewed in the spirit of his mind, and unless he has obeyed the commandment of God and of the Church. Wherefore, in this new birth, there is made a new creature in Christ Jesus, and the man, received into the grace of God, is changed from that unjust which he was into a just man.'",
+          "Trent, Session 6, Chapter 12: 'Faith, unless hope and charity be added to it, neither unites man perfectly with Christ, nor makes him a living member of his body. For which cause it is most truly said, that Faith without works is dead, and that man does not live by faith only, but also by works.'",
+          "Trent, Session 6, Chapter 16: 'Nor is this trust to be ascribed to a mere human persuasion, but to faith, by which they ought most firmly to believe that they are justified by Christ alone, and that they enjoy the remission of their sins because of him. But no one who is conscious that he has committed a sin that renders him liable to eternal damnation can with a firm confidence be assured that he is absolved from it, unless he receives an assurance of it by special revelation.'",
+          "Romans 3:28: 'Therefore we conclude that a man is justified by faith without the deeds of the law' (οὖν λογιζόμεθα δικαιοῦσθαι πίστει ἄνθρωπον χωρὶς ἔργων νόμου)",
+          "James 2:24: 'Ye see then how that by works a man is justified, and not by faith only' (ὁρᾶτε ὅτι ἐξ ἔργων δικαιοῦται ἄνθρωπος καὶ οὐκ ἐκ πίστεως μόνον)"
+        ]
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "round_number": 1,
+      "moves": [
+        {
+          "move_id": "r1-proponent-01",
+          "agent_role": "proponent",
+          "profile_id": "reformed-westminster",
+          "author_model": "qwen/qwen3-max-thinking",
+          "intent": "argue",
+          "content": "The apparent tension between Romans 3:28 and James 2:24 dissolves when we recognize that Paul and James use δικαιόω in different senses, as Calvin clearly explains in his Commentary on James. Calvin states: 'We must understand the state of the question, for the dispute here is not respecting the cause of justification, but only what avails a profession of faith without works... Paul means by [justified] the gratuitous imputation of righteousness before the tribunal of God; and James, the manifestation of righteousness by the conduct, and that before men.' Paul addresses how a sinner is declared righteous before God—by faith alone, apart from works of the law (Rom 3:28: οὖν λογιζόμεθα δικαιοῦσθαι πίστει ἄνθρωπον χωρὶς ἔργων νόμου). James addresses how genuine faith is demonstrated before men—not by mere verbal profession, but by works that flow from living faith (Jas 2:24: ὁρᾶτε ὅτι ἐξ ἔργων δικαιοῦται ἄνθρωπος καὶ οὐκ ἐκ πίστεως μόνον). Calvin illustrates this with Abraham: 'The faith of Abram was formed and therefore perfected before he sacrificed his son... James then understood no other thing, than that the integrity of his faith then appeared, because it brought forth that remarkable fruit of obedience.' The Westminster Confession captures this distinction: 'Faith, thus receiving and resting on Christ and his righteousness, is the alone instrument of justification: yet it is not alone in the person justified, but is ever accompanied with all other saving graces, and is no dead faith, but worketh by love' (WCF 11.2). There is no contradiction because the two authors address different questions: Paul asks 'How is a sinner justified before God?' (answer: by faith alone), while James asks 'How is genuine faith demonstrated before men?' (answer: by works). The Reformed position maintains both truths without conflating them.",
+          "citations": [
+            {
+              "source_type": "historical",
+              "reference": "Calvin-Commentary-James-1551:2.21",
+              "text_quoted": "We must understand the state of the question, for the dispute here is not respecting the cause of justification, but only what avails a profession of faith without works... Paul means by [justified] the gratuitous imputation of righteousness before the tribunal of God; and James, the manifestation of righteousness by the conduct, and that before men.",
+              "original_language": null
+            },
+            {
+              "source_type": "scripture",
+              "reference": "TR-Scrivener-1894:Rom.3.28",
+              "text_quoted": "οὖν λογιζόμεθα δικαιοῦσθαι πίστει ἄνθρωπον χωρὶς ἔργων νόμου",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "TR-Scrivener-1894:Jas.2.24",
+              "text_quoted": "ὁρᾶτε ὅτι ἐξ ἔργων δικαιοῦται ἄνθρωπος καὶ οὐκ ἐκ πίστεως μόνον",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "historical",
+              "reference": "Calvin-Commentary-James-1551:2.23-24",
+              "text_quoted": "The faith of Abram was formed and therefore perfected before he sacrificed his son... James then understood no other thing, than that the integrity of his faith then appeared, because it brought forth that remarkable fruit of obedience.",
+              "original_language": null
+            },
+            {
+              "source_type": "historical",
+              "reference": "Westminster-1646:11.2",
+              "text_quoted": "Faith, thus receiving and resting on Christ and his righteousness, is the alone instrument of justification: yet it is not alone in the person justified, but is ever accompanied with all other saving graces, and is no dead faith, but worketh by love.",
+              "original_language": null
+            }
+          ],
+          "referee_ruling": null
+        }
+      ]
+    }
+  ],
+  "version_history": [
+    {
+      "commit_sha": "01ea85a",
+      "timestamp": "2026-04-16T00:00:00Z",
+      "author_model": "qwen/qwen3-max-thinking",
+      "note": "Round 1 initial checkpoint: Reformed proponent argues compatibility of Romans 3:28 and James 2:24 based on Calvin's distinction between forensic justification before God (Paul) and demonstrative justification before men (James). Cites Calvin's Commentary on James 2:21-24 and Westminster Confession 11.2."
+    }
+  ]
+}
