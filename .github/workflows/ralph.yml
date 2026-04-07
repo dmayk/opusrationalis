@@ -87,7 +87,7 @@ jobs:
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "Ralph warning — ${{ github.repository }}"
-          to: dennis@mayk.eu
+          to: ${{ secrets.ALERT_EMAIL }}
           from: Ralph Bot <${{ secrets.SMTP_USERNAME }}>
           body: ${{ steps.warnings.outputs.warnings_body }}
 
@@ -100,7 +100,7 @@ jobs:
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "Ralph run failed — ${{ github.repository }}"
-          to: dennis@mayk.eu
+          to: ${{ secrets.ALERT_EMAIL }}
           from: Ralph Bot <${{ secrets.SMTP_USERNAME }}>
           body: |
             Ralph run failed on ${{ github.repository }}.
