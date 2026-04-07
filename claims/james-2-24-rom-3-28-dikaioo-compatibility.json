@@ -1,0 +1,86 @@
+{
+  "id": "james-2-24-rom-3-28-dikaioo-compatibility",
+  "statement": "Under a Reformed hermeneutic profile, the use of δικαιόω in James 2:24 is ultimately compatible with its use in Romans 3:28 when each is read in its immediate and broader Pauline/Jacobean context.",
+  "category": "lexical-semantic",
+  "tags": [
+    "δικαιόω",
+    "justification",
+    "faith-and-works",
+    "Romans-3-28",
+    "James-2-24"
+  ],
+  "passages": [
+    {
+      "canon": "NT",
+      "tradition": "Greek-TR",
+      "sourceId": "TR-Scrivener-1894",
+      "language": "grc",
+      "book": "Rom",
+      "ref": "3:28",
+      "text": "[TODO: populate from corpora/greek/TR-Scrivener-1894/Rom.json using scripts/verse_retriever.py for Rom 3:28]"
+    },
+    {
+      "canon": "NT",
+      "tradition": "Greek-TR",
+      "sourceId": "TR-Scrivener-1894",
+      "language": "grc",
+      "book": "Jas",
+      "ref": "2:24",
+      "text": "[TODO: populate from corpora/greek/TR-Scrivener-1894/Jas.json (or equivalent) using scripts/verse_retriever.py for Jas 2:24]"
+    },
+    {
+      "canon": "NT",
+      "tradition": "English-KJV",
+      "sourceId": "KJV-1769",
+      "language": "en",
+      "book": "Rom",
+      "ref": "3:28",
+      "text": "Therefore we conclude that a man is justified by faith without the deeds of the law."
+    },
+    {
+      "canon": "NT",
+      "tradition": "English-KJV",
+      "sourceId": "KJV-1769",
+      "language": "en",
+      "book": "Jas",
+      "ref": "2:24",
+      "text": "Ye see then how that by works a man is justified, and not by faith only."
+    }
+  ],
+  "profiles": [
+    "reformed-westminster",
+    "catholic-tridentine",
+    "eastern-orthodox-chalcedonian"
+  ],
+  "profileSensitivity": {
+    "axes": [
+      "authority-model",
+      "interpretive-method",
+      "testament-relation",
+      "clarity-hierarchy"
+    ],
+    "notes": "The compatibility assessment is expected to be highly sensitive to how each profile relates Paul and James, to its definition of 'works of the law' and 'faith', and to its rule-of-faith constraints."
+  },
+  "dependencies": [
+    "romans-3-24-dikaioo-forensic"
+  ],
+  "resolutionStatus": "unresolved",
+  "resolutionTreeIds": [],
+  "debates": [],
+  "metrics": {
+    "stability": 0.0,
+    "depthOfConsensus": 0.0,
+    "priorDependence": 0.0,
+    "contestation": 0.0,
+    "drift": 0.0,
+    "notes": "New atomic claim; no debates or resolution tree yet."
+  },
+  "createdAt": "2026-04-15T00:00:00Z",
+  "updatedAt": "2026-04-15T00:00:00Z",
+  "provenance": {
+    "createdBy": "ralph-agent",
+    "createdByModel": "openai/gpt-5.1",
+    "createdFromCommit": "b1bb69b",
+    "notes": "Initial definition of James 2:24 vs Romans 3:28 δικαιόω compatibility claim for Phase 2 justification doctrine work."
+  }
+}

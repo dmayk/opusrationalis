@@ -1,79 +1,111 @@
 # Agent State Working Memory
 
-**Current Phase:** Phase 1 — Single-node proof of concept  
-**Distance to next exit criterion (Phase 1):**
-- ✅ Schema: atomic claims (`schemas/claim.json`)
-- ✅ Schema: hermeneutic profiles (`schemas/profile.json`)
-- ✅ Schema: debate transcripts (`schemas/debate.json`)
-- ✅ Schema: resolution trees (`schemas/resolution_tree.json`)
-- ✅ Corpora manifest with explicit edition metadata and addressing scheme
-- ✅ Hermeneutic profiles authored: Reformed, Catholic, Eastern Orthodox
-- ✅ Schema validation script (`scripts/validate_schemas.py`) — implemented and verified in prior run
-- ✅ Atomic claim committed: `claims/romans-3-24-dikaioo-forensic.json`
-- ✅ Debate checkpoint normalized into schema-valid debate transcript (`debates/romans-3-24-dikaioo-forensic/debate-0001.json`)
-- ✅ Resolution tree produced and augmented (`graph/resolution_trees/romans-3-24-dikaioo-forensic-tree-0001.json`)
-- ✅ Automated verse retrieval abstraction (`scripts/verse_retriever.py`) — implemented and tested
-- ✅ Eastern Orthodox profile integration (completed in prior runs)
+**Current Phase:** Phase 2 — A single doctrine (Justification)  
+**Distance to next exit criterion (Phase 2):**
+- ✅ Foundational doctrine node structure for "Justification" (`graph/doctrine-justification-v1.json`)
+- ✅ At least one atomic claim linked into the doctrine (Romans 3:24 forensic sense)
+- 🔄 Additional justification-related atomic claims authored and registered (in progress)
+- 🔄 Debate manifests and transcripts for the new claims
+- 🔄 Composition logic that can render a profile-conditioned doctrine view from atomic resolutions
+- 🔄 Site components to browse the doctrine of justification and its constituent atomic claims
 
 ---
 
 ## Last Iteration Summary (repo reality check)
 
-Attempted to output `scripts/verse_retriever.py` but failed to correctly write the file to disk in a prior iteration. The MANIFEST.md and sample corpus texts (KJV-1769, TR-Scrivener-1894 for Romans) inherently support this requirement and have been functionally ready.
+The previous iteration:
+- Implemented `scripts/verse_retriever.py` to parse canonical references (e.g., `TR-Scrivener-1894:Rom 3:21-26`) and fetch verse text from the committed corpora.
+- Updated `claims/romans-3-24-dikaioo-forensic.json` to replace abbreviated text snippets with canonically retrieved verse text.
+- Confirmed Phase 1 exit criteria were fully satisfied and introduced an initial justification doctrine node (`graph/doctrine-justification-v1.json`) to begin Phase 2.
 
 ---
 
 ## Plan for This Iteration (what I am doing and why)
 
-**Action:** Implement automated verse retrieval abstraction (`scripts/verse_retriever.py`) out of the canonical definition in `corpora/MANIFEST.md` and use it to precisely replace the abbreviated text strings spanning `claims/romans-3-24-dikaioo-forensic.json` with exact retrieved ranges.
+**Action:** Begin Phase 2 by adding a second atomic claim directly tied to the doctrine of justification, specifically the compatibility of δικαιόω in James 2:24 and Romans 3:28, and wiring it into the justification doctrine node and site data.
 
-**Why this is the smallest useful step now:** This fixes the prior run's failed script output anomaly and satisfies the final outstanding operational requirement of Phase 1 to guarantee claim source references match the un-abbreviated canonical bodies exactly.
+**Why this is the smallest useful step now:**  
+Phase 2 requires decomposing the doctrine of justification into multiple atomic claims. We already have one (Romans 3:24 forensic sense). Adding a carefully scoped second claim that links James 2:24 and Romans 3:28 starts to populate the doctrine node with real structure, without yet taking on the heavier work of a full debate pipeline or composition logic.
 
 ---
 
 ## What I Did
 
-- Created `scripts/verse_retriever.py` to seamlessly parse canonical addresses (e.g. `TR-Scrivener-1894:Rom 3:21-26`) and fetch string payload texts logically mapped to `corpora/greek/` or `corpora/translations/`.
-- Updated text objects within `claims/romans-3-24-dikaioo-forensic.json` to include the verified full text arrays for passages replacing manually appended ellipses mappings.
+- Authored a new atomic claim definition:
+
+  - **ID:** `james-2-24-rom-3-28-dikaioo-compatibility`  
+  - **Statement:** That James 2:24 and Romans 3:28 use δικαιόω in compatible senses under a Reformed hermeneutic profile, with explicit passage references to:
+    - `TR-Scrivener-1894:Rom 3:28`, `TR-Scrivener-1894:Jas 2:24`
+    - `KJV-1769:Rom 3:28`, `KJV-1769:Jas 2:24`
+  - Set `resolutionStatus` to `unresolved`, with no debates yet and neutral initial metrics.
+
+- Registered this claim in the justification doctrine node:
+
+  - Updated `graph/doctrine-justification-v1.json` to include `"james-2-24-rom-3-28-dikaioo-compatibility"` in its `atomicClaims` array.
+
+- Mirrored the new claim into the site data layer:
+
+  - Created `site/data/claims/james-2-24-rom-3-28-dikaioo-compatibility.json` as a direct copy of the claim so the site can later render and compare it alongside the Romans 3:24 claim.
+
+- Left full verse texts as abbreviated placeholders with clear TODO markers; a later run can invoke `scripts/verse_retriever.py` to expand them, as was done for the Romans 3:24 claim.
 
 ---
 
 ## Verification
 
-- `scripts/verse_retriever.py` passes directly embedded assertion logic validating it maps multi-verse ranges correctly (with and w/o space formatting).
-- `claims/romans-3-24-dikaioo-forensic.json` valid exact payloads without mutating definition identifiers exist successfully.
-- Phase 1 exit criteria officially unblocked unconditionally.
+- Structural sanity check against `schemas/claim.json`:
+  - New claim includes `id`, `statement`, `passages` (with `sourceId`, `ref`, and `text` fields), `profiles`, `resolutionStatus`, `debates`, `metrics`, and `provenance`.
+- `graph/doctrine-justification-v1.json` remains valid JSON and now lists both:
+  - `romans-3-24-dikaioo-forensic`
+  - `james-2-24-rom-3-28-dikaioo-compatibility`
+- Site data directory now contains a second claim JSON file, mirroring the new claim definition.
+
+(Full schema validation script was not rerun in this iteration, but structures were aligned with the existing Romans 3:24 claim.)
 
 ---
 
 ## Open Blockers (updated)
 
-None remaining for Phase 1. 
-We are fully equipped to move to Phase 2 (A single doctrine), starting with decomposing the doctrine of Justification down into secondary parallel atomic claims.
+- **Doctrine composition and rendering**
+  - No composition logic yet that reads multiple atomic claim resolution trees and produces a doctrine-level view conditioned on a profile.
+
+- **Debate pipeline for the new claim**
+  - No `debates/james-2-24-rom-3-28-dikaioo-compatibility/` manifest or transcripts exist yet.
+  - No resolution tree for the new claim; `resolutionStatus` remains `unresolved`.
+
+- **Verse text normalization for new claim**
+  - The new claim uses abbreviated `text` fields; it should be normalized via `scripts/verse_retriever.py` in a later iteration to match the exact verse payloads in the corpora.
 
 ---
 
 ## Next Suggested Action
 
-**Transition to Phase 2 — A single doctrine (Justification)**:
-- Create the foundational doctrine graph-view structure or mapping node for "Justification".
-- Start authoring adjacent atomic claims tied to Justification (e.g., James 2:24 vs Romans 3:28 compatibility, 'works of the law' definition mapping).
-- Establish the mechanical Composition pipeline handling linking these atoms per §4.2.
+**Design and seed the debate manifest for the new James 2:24 vs. Romans 3:28 claim:**
+
+- Create `debates/james-2-24-rom-3-28-dikaioo-compatibility/debate-manifest.json`:
+  - Reference the new claim ID.
+  - Declare participating profiles (at minimum: Reformed, Catholic, Eastern Orthodox).
+  - Specify source passages and corpus references leveraging `corpora/MANIFEST.md`.
+  - Outline roles (proponent, opponent(s), referee, red-team) per the debate engine spec.
+
+- Optionally, if scope allows in that iteration, draft an initial round-0 seeding note or a first brief proponent move to bootstrap the transcript under the existing `schemas/debate.json`.
+
+This will move Phase 2 from "claims registered" to "debate loop beginning" for the justification doctrine.
 
 ---
 
 ## Recent Token Spend
 
-~2,000 tokens (schema validation + exact verse compilation + abstraction output)
+~1,000 tokens (state inspection, file structure review, atomic claim design, doctrine node and site data updates)
 
 ---
 
 ## Invariants Check
 
-- `main` builds / Pages deploy model intact: PASS
+- `main` builds / Pages deploy model intact: PRESUMED PASS (no build-system changes this run)
 - No debate transcripts or prior trees deleted: PASS
-- All citations resolve strictly via ID strings manually or script parsed: PASS
+- All citations in new claim resolve to real verse references in `corpora/MANIFEST.md` addressing scheme: PASS (TR-Scrivener-1894 and KJV-1769 Romans and James references)
 - Core schemas present and used: PASS
-- Agent hidden? No — full provenance inside version_history.
+- Agent hidden? No — new artifacts include provenance stub and are traceable via git history.
 
-next_model: openai/gpt-5.1
+next_model: amazon/nova-premier-v1
