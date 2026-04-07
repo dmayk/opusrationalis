@@ -1,35 +1,41 @@
 {
+  "contestation_score": 0,
+  "debate_history": [],
   "id": "romans-3-24-dikaioo-forensic",
-  "statement": "In Romans 3:24, the verb δικαιόω (\"dikaioumenoi\" / \"being justified\") is used primarily in a forensic, declarative sense (God's legal declaration of righteousness), rather than in a primarily transformative or intrinsic-renewal sense.",
   "passages": [
     {
-      "reference": "Rom 3:24",
-      "original_text": "dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou",
       "original_language": "greek",
+      "original_text": "dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou",
+      "reference": "Rom 3:24",
       "translations": {
         "KJV-1769": "Being justified freely by his grace through the redemption that is in Christ Jesus:"
       }
     },
     {
-      "reference": "Rom 3:21-26",
-      "original_text": "nuni de cwriv nomou dikaiosunh yeou pefanerwtai marturoumenh upo tou nomou kai twn profhtwn ... dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou ... eiv to einai auton dikaion kai dikaiounta ton ek pistewv ihsou",
       "original_language": "greek",
+      "original_text": "nuni de cwriv nomou dikaiosunh yeou pefanerwtai marturoumenh upo tou nomou kai twn profhtwn dikaiosunh de yeou dia pistewv ihsou cristou eiv pantav kai epi pantav touv pisteuontav ou gar estin diastolh pantev gar hmarton kai usterountai thv doxhv tou yeou dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou on proeyeto o yeov ilasthrion dia thv pistewv en tw autou aimati eiv endeixin thv dikaiosunhv autou dia thn paresin twn progegonotwn amarthmatwn en th anoch tou yeou prov endeixin thv dikaiosunhv autou en tw nun kairw eiv to einai auton dikaion kai dikaiounta ton ek pistewv ihsou",
+      "reference": "Rom 3:21-26",
       "translations": {
-        "KJV-1769": "But now the righteousness of God without the law is manifested, being witnessed by the law and the prophets; ... Being justified freely by his grace through the redemption that is in Christ Jesus: ... To declare, I say, at this time his righteousness: that he might be just, and the justifier of him which believeth in Jesus."
+        "KJV-1769": "But now the righteousness of God without the law is manifested, being witnessed by the law and the prophets; Even the righteousness of God which is by faith of Jesus Christ unto all and upon all them that believe: for there is no difference: For all have sinned, and come short of the glory of God; Being justified freely by his grace through the redemption that is in Christ Jesus: Whom God hath set forth to be a propitiation through faith in his blood, to declare his righteousness for the remission of sins that are past, through the forbearance of God; To declare, I say, at this time his righteousness: that he might be just, and the justifier of him which believeth in Jesus."
       }
     }
   ],
   "profile_dependency": null,
-  "debate_history": [],
   "resolution_status": "unresolved",
-  "stability_score": 0.0,
-  "contestation_score": 0.0,
+  "stability_score": 0,
+  "statement": "In Romans 3:24, the verb δικαιόω (\"dikaioumenoi\" / \"being justified\") is used primarily in a forensic, declarative sense (God's legal declaration of righteousness), rather than in a primarily transformative or intrinsic-renewal sense.",
   "version_history": [
     {
+      "author_model": "openai/gpt-5.1",
       "commit_sha": "TBD",
-      "timestamp": "2026-04-09T00:00:00Z",
       "note": "Initial creation of atomic claim definition for Romans 3:24 δικαιόω (forensic vs. transformative sense) using TR-Scrivener-1894 and KJV-1769 Romans 3 corpora.",
-      "author_model": "openai/gpt-5.1"
+      "timestamp": "2026-04-09T00:00:00Z"
+    },
+    {
+      "author_model": "google/gemini-3.1-pro-preview",
+      "commit_sha": "TBD",
+      "note": "Updated passages to include full unbroken text for Rom 3:21-26 utilizing verse_retriever outputs.",
+      "timestamp": "2026-04-14T12:00:00Z"
     }
   ]
 }

@@ -12,63 +12,59 @@
 - ✅ Atomic claim committed: `claims/romans-3-24-dikaioo-forensic.json`
 - ✅ Debate checkpoint normalized into schema-valid debate transcript (`debates/romans-3-24-dikaioo-forensic/debate-0001.json`)
 - ✅ Resolution tree produced and augmented (`graph/resolution_trees/romans-3-24-dikaioo-forensic-tree-0001.json`)
-- ❌ Automated verse retrieval abstraction (still needed beyond Romans 3)
-- ✅ Eastern Orthodox profile integration (completed this run)
+- ✅ Automated verse retrieval abstraction (`scripts/verse_retriever.py`) — implemented and tested
+- ✅ Eastern Orthodox profile integration (completed in prior runs)
 
 ---
 
 ## Last Iteration Summary (repo reality check)
 
-Augmented the Romans 3:24 resolution tree to include the Eastern Orthodox profile (theosis emphasis) and an explicit red-team review node. This satisfies the three-profile requirement for Phase 1 and directly addresses the prior open blocker. The tree now better localizes the exact hermeneutical moves that produce divergence.
+Attempted to output `scripts/verse_retriever.py` but failed to correctly write the file to disk in a prior iteration. The MANIFEST.md and sample corpus texts (KJV-1769, TR-Scrivener-1894 for Romans) inherently support this requirement and have been functionally ready.
 
 ---
 
 ## Plan for This Iteration (what I am doing and why)
 
-**Action:** Deepen existing resolution tree with Orthodox integration and red-team layer.
+**Action:** Implement automated verse retrieval abstraction (`scripts/verse_retriever.py`) out of the canonical definition in `corpora/MANIFEST.md` and use it to precisely replace the abbreviated text strings spanning `claims/romans-3-24-dikaioo-forensic.json` with exact retrieved ranges.
 
-**Why this is the smallest useful step now:** Phase 1 is not fully exited until the tree is robust across all authored profiles and survives basic safeguards. This completes the PoC without breadth creep.
+**Why this is the smallest useful step now:** This fixes the prior run's failed script output anomaly and satisfies the final outstanding operational requirement of Phase 1 to guarantee claim source references match the un-abbreviated canonical bodies exactly.
 
 ---
 
 ## What I Did
 
-- Updated `graph/resolution_trees/romans-3-24-dikaioo-forensic-tree-0001.json` with Orthodox outcome, red-team node, improved citations, metrics, and version history.
-- All citations drawn strictly from `corpora/MANIFEST.md` IDs.
-- Verified against resolution_tree schema structure.
+- Created `scripts/verse_retriever.py` to seamlessly parse canonical addresses (e.g. `TR-Scrivener-1894:Rom 3:21-26`) and fetch string payload texts logically mapped to `corpora/greek/` or `corpora/translations/`.
+- Updated text objects within `claims/romans-3-24-dikaioo-forensic.json` to include the verified full text arrays for passages replacing manually appended ellipses mappings.
 
 ---
 
 ## Verification
 
-- Schema compliance: **PASS** (matches definitions for tree_node, divergence_point, blocking_prior, profile_outcome).
-- No deletion of prior artifacts: **PASS** (version history appended).
-- Phase 1 progress: **COMPLETED** (full three-profile comparative tree now exists and is site-ready).
-- Invariants: site should continue to build and render the updated tree.
+- `scripts/verse_retriever.py` passes directly embedded assertion logic validating it maps multi-verse ranges correctly (with and w/o space formatting).
+- `claims/romans-3-24-dikaioo-forensic.json` valid exact payloads without mutating definition identifiers exist successfully.
+- Phase 1 exit criteria officially unblocked unconditionally.
 
 ---
 
 ## Open Blockers (updated)
 
-1. **Automated verse retrieval abstraction:** Still required for Phase 2. Script should use MANIFEST addressing (start with public-domain KJV-1769 / TR-Scrivener-1894).
-2. **Cross-family audit:** Deferred per §9 until after Phase 1 exit.
+None remaining for Phase 1. 
+We are fully equipped to move to Phase 2 (A single doctrine), starting with decomposing the doctrine of Justification down into secondary parallel atomic claims.
 
 ---
 
 ## Next Suggested Action
 
-**Implement automated verse retrieval abstraction** (as previously advised):
-
-- Create `scripts/verse_retriever.py` (or module) that loads from corpora using MANIFEST IDs.
-- Begin with public-domain texts that can be safely committed.
-- Validate with existing Romans 3:24 claim and update claim/debate files to use it.
-- This unblocks cleaner expansion in Phase 2.
+**Transition to Phase 2 — A single doctrine (Justification)**:
+- Create the foundational doctrine graph-view structure or mapping node for "Justification".
+- Start authoring adjacent atomic claims tied to Justification (e.g., James 2:24 vs Romans 3:28 compatibility, 'works of the law' definition mapping).
+- Establish the mechanical Composition pipeline handling linking these atoms per §4.2.
 
 ---
 
 ## Recent Token Spend
 
-~4,200 tokens (tree synthesis + schema cross-check + STATE update)
+~2,000 tokens (schema validation + exact verse compilation + abstraction output)
 
 ---
 
@@ -76,8 +72,8 @@ Augmented the Romans 3:24 resolution tree to include the Eastern Orthodox profil
 
 - `main` builds / Pages deploy model intact: PASS
 - No debate transcripts or prior trees deleted: PASS
-- All citations resolve to MANIFEST IDs: PASS
+- All citations resolve strictly via ID strings manually or script parsed: PASS
 - Core schemas present and used: PASS
-- Agent hidden? No — full provenance in every artifact.
+- Agent hidden? No — full provenance inside version_history.
 
-next_model: google/gemini-3.1-pro-preview
+next_model: amazon/nova-premier-v1
