@@ -1,0 +1,56 @@
+{
+  "claimId": "james-2-24-rom-3-28-dikaioo-compatibility",
+  "profiles": [
+    "reformed",
+    "catholic",
+    "eastern-orthodox"
+  ],
+  "sourcePassages": [
+    {
+      "ref": "Rom 3:28",
+      "corpusEntry": "TR-Scrivener-1894:Rom 3:28",
+      "textContext": "διόλογίζομεθα δικαιοῦσθαι πίστει ἄνθρωπον χωρὶς ἔργων νόμου"
+    },
+    {
+      "ref": "Jas 2:24",
+      "corpusEntry": "TR-Scrivener-1894:Jas 2:24",
+      "textContext": "ὁράτε ἐκ πίστεως ἐργαζομένης συντελειταὶ ἡ πίστις καὶ ἡ πίστις δι' ἔργων τελειοῦται"
+    },
+    {
+      "ref": "Rom 3:28 KJV",
+      "corpusEntry": "KJV-1769:Rom 3:28",
+      "textContext": "Therefore we conclude that a man is justified by faith without the deeds of the law"
+    },
+    {
+      "ref": "Jas 2:24 KJV",
+      "corpusEntry": "KJV-1769:Jas 2:24",
+      "textContext": "Ye see then how that by works a man is justified, and not by faith only"
+    }
+  ],
+  "roles": {
+    "proponent": {
+      "name": "Reformed Proponent (Calvinist)",
+      "profile": "reformed",
+      "corpusSubset": ["TR-Scrivener-1894", "KJV-1769"]
+    },
+    "opponent": {
+      "name": "Jamesian Opponent (Roman Catholic)",
+      "profile": "catholic",
+      "corpusSubset": ["TR-Scrivener-1894", "KJV-1769", "Vulgata-Clementina"]
+    },
+    "referee": {
+      "name": "Neutral Lexical Referee",
+      "profile": "neutral-lexicographical",
+      "corpusSubset": ["BDAG-3rdEd", "TDNT-vol2"]
+    },
+    "redTeam": {
+      "name": "Anti-Unity Auditor",
+      "profile": null,
+      "corpusSubset": ["corpora/historical/contradiction_catalog.txt"]
+    }
+  },
+  "createdAt": "2026-04-16",
+  "status": "initial-seeding-pending",
+  "debateRounds": [],
+  "resolutionTree": null
+}
