@@ -1,0 +1,45 @@
+{
+  "id": "james-2-24-reform-catholic-orthodox-debate-1",
+  "claim_id": "atomic-claim:justification:works-vs-faith:james-2-24-compatibility",
+  "status": "active",
+  "terminal_state": null,
+  "participants": {
+    "proponent": {
+      "profile_id": "profiles:reformed",
+      "seed_arguments": [
+        "Institutes of the Christian Religion, Book 3, Chapter XIV, Paragraph 11: 'James is not teaching righteousness comes from works... but shows deadness of empty profession without works.'"
+      ]
+    },
+    "opponents": []
+  },
+  "rounds": [
+    {
+      "round_number": 1,
+      "moves": [
+        {
+          "move_id": "move.proponent.001",
+          "agent_role": "proponent",
+          "profile_id": "profiles:reformed",
+          "content": "James 2:24 shows 'faith alone' is insufficient through \"faith without works is dead\" (KJV). We begin with Calvin's Institutes bk 3 ch 14 para 11 which resolves any contradictions between James and Paul by distinguishing legal vs. living faith - works manifest true justifying faith rather than earn it.",
+          "author_model": "amazon/nova-premier-v1",
+          "intent": "argue",
+          "citations": [
+            {
+              "reference": "James 2:24",
+              "source_type": "scripture",
+              "original_language": " greek",
+              "text_quoted": "Ye see then how that by works a man is justified, and not by faith only."
+            },
+            {
+              "reference": "Institutes bk 3 ch 14 para 11",
+              "source_type": "historical",
+              "text_quoted": "James is not teaching righteousness comes from works... but shows deadness of empty profession without works."
+            }
+          ],
+          "referee_ruling": null
+        }
+      ]
+    }
+  ],
+  "version_history": []
+}
