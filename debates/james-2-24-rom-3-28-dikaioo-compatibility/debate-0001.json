@@ -27,11 +27,11 @@
       {
         "profile_id": "catholic-tridentine",
         "seed_arguments": [
-          "Council of Trent, Session 6, Chapter 11: 'He is not indeed himself justified, nor does he actually obtain the justice of God, unless he has been renewed in the spirit of his mind, and unless he has obeyed the commandment of God and of the Church. Wherefore, in this new birth, there is made a new creature in Christ Jesus, and the man, received into the grace of God, is changed from that unjust which he was into a just man.'",
-          "Trent, Session 6, Chapter 12: 'Faith, unless hope and charity be added to it, neither unites man perfectly with Christ, nor makes him a living member of his body. For which cause it is most truly said, that Faith without works is dead, and that man does not live by faith only, but also by works.'",
-          "Trent, Session 6, Chapter 16: 'Nor is this trust to be ascribed to a mere human persuasion, but to faith, by which they ought most firmly to believe that they are justified by Christ alone, and that they enjoy the remission of their sins because of him. But no one who is conscious that he has committed a sin that renders him liable to eternal damnation can with a firm confidence be assured that he is absolved from it, unless he receives an assurance of it by special revelation.'",
-          "Romans 3:28: 'Therefore we conclude that a man is justified by faith without the deeds of the law' (οὖν λογιζόμεθα δικαιοῦσθαι πίστει ἄνθρωπον χωρὶς ἔργων νόμου)",
-          "James 2:24: 'Ye see then how that by works a man is justified, and not by faith only' (ὁρᾶτε ὅτι ἐξ ἔργων δικαιοῦται ἄνθρωπος καὶ οὐκ ἐκ πίστεως μόνον)"
+          "Council of Trent, Session 6, Chapter 7: 'This disposition, or preparation, is followed by Justification itself, which is not remission of sins merely, but also the sanctification and renewal of the inward man, through the voluntary reception of the grace, and of the gifts, whereby man of unjust becomes just... For faith, unless hope and charity be added thereto, neither unites man perfectly with Christ, nor makes him a living member of His body. For which reason it is most truly said, that Faith without works is dead and profitless; and, In Christ Jesus neither circumcision availeth anything, nor uncircumcision, but faith which worketh by charity.'",
+          "Council of Trent, Session 6, Chapter 10: 'Having, therefore, been thus justified, and made the friends and domestics of God, advancing from virtue to virtue, they are renewed, as the Apostle says, day by day; that is, by mortifying the members of their own flesh, and by presenting them as instruments of justice unto sanctification, they, through the observance of the commandments of God and of the Church, faith co-operating with good works, increase in that justice which they have received through the grace of Christ, and are still further justified, as it is written... Do you see that by works a man is justified, and not by faith only.'",
+          "Council of Trent, Session 6, Canon XI: 'If any one saith, that men are justified, either by the sole imputation of the justice of Christ, or by the sole remission of sins, to the exclusion of the grace and the charity which is poured forth in their hearts by the Holy Ghost, and is inherent in them; or even that the grace, whereby we are justified, is only the favour of God; let him be anathema.'",
+          "James 2:22 (TR): βλέπεις ὅτι ἡ πίστις συνήργει τοῖς ἔργοις αὐτοῦ καὶ ἐκ τῶν ἔργων ἡ πίστις ἐτελειώθη — 'You see that faith cooperated with his works, and by works faith was made complete/perfected.'",
+          "Galatians 5:6 (TR): ἐν γὰρ Χριστῷ Ἰησοῦ οὔτε περιτομή τι ἰσχύει οὔτε ἀκροβυστία, ἀλλὰ πίστις δι' ἀγάπης ἐνεργουμένη — 'For in Christ Jesus neither circumcision availeth anything, nor uncircumcision, but faith working through love.'"
         ]
       }
     ]
@@ -79,7 +79,80 @@
               "original_language": null
             }
           ],
-          "referee_ruling": null
+          "referee_ruling": {
+            "author_model": "anthropic/claude-opus-4.6",
+            "decision": "accepted",
+            "feedback": "The move is well-structured and properly cited. Calvin's Commentary on James and Westminster Confession 11.2 are accurately quoted and correctly referenced. The Greek text of both Rom 3:28 and Jas 2:24 is cited from TR-Scrivener-1894. The argument is coherent: Calvin's two-senses reading (forensic before God vs. demonstrative before men) is clearly presented and grounded in supplied sources. However, the move does not engage the strongest form of the Catholic counter-argument. Specifically, it does not address James 2:22 (ἡ πίστις συνήργει τοῖς ἔργοις αὐτοῦ καὶ ἐκ τῶν ἔργων ἡ πίστις ἐτελειώθη), which uses language of cooperation and perfection rather than mere demonstration. This is not a rule violation (the proponent is presenting the affirmative case in the opening), but it will need to be addressed in Round 2 if the opponent raises it.",
+            "smuggled_priors_detected": [
+              "The claim that James addresses justification 'before men' rather than 'before God' is presented as textually obvious, but James 2:23 refers to Genesis 15:6 ('it was reckoned to him as righteousness'), which is a divine reckoning, not a human observation. The 'before men' reading is Calvin's interpretive framework, not an explicit claim in the text of James itself.",
+              "The phrase 'Paul asks how a sinner is justified before God, James asks how genuine faith is demonstrated before men' imposes a systematic-theological distinction that neither author explicitly draws. This framing is inherited from the Reformed confessional tradition, not derived from the texts themselves."
+            ],
+            "centroid_collapse_detected": false,
+            "rule_violations": []
+          }
+        },
+        {
+          "move_id": "r1-opponent-01",
+          "agent_role": "opponent",
+          "profile_id": "catholic-tridentine",
+          "author_model": "anthropic/claude-opus-4.6",
+          "intent": "argue",
+          "content": "The Reformed proponent's argument depends on an unstated and textually unsupported prior: that δικαιόω in James operates in a fundamentally different sense from δικαιόω in Paul. Calvin's distinction — forensic justification before God (Paul) versus demonstrative justification before men (James) — is a confessional framework imported into the text, not derived from it. The text of James itself resists this reading at three critical points.\n\nFirst, James 2:22 does not say Abraham's faith was merely *shown* by his works. It says his faith *cooperated with* his works: ἡ πίστις συνήργει τοῖς ἔργοις αὐτοῦ (TR-Scrivener-1894:Jas.2.22). The verb συνεργέω means to work together with, to cooperate — it describes a relationship of mutual operation, not one of prior cause and subsequent evidence. More critically, the verse continues: καὶ ἐκ τῶν ἔργων ἡ πίστις ἐτελειώθη — 'and by works faith was perfected.' The verb τελειόω means to bring to completion, to perfect, to make complete. James does not say works *displayed* a faith that was already complete; he says works *completed* a faith that was incomplete without them. Calvin himself acknowledges this when he writes that 'the faith of Abram was formed and therefore perfected' — but he then reads 'perfected' as 'made visible,' which is not what τελειόω means in any of its New Testament uses (cf. Heb 2:10, 5:9, 7:19, 10:14, 12:23; Luke 13:32; John 17:23; Phil 3:12).\n\nSecond, James 2:23 directly invokes the divine reckoning of Genesis 15:6: καὶ ἐπληρώθη ἡ γραφὴ ἡ λέγουσα, Ἐπίστευσεν δὲ Ἀβραὰμ τῷ θεῷ, καὶ ἐλογίσθη αὐτῷ εἰς δικαιοσύνην — 'and the Scripture was fulfilled which says, Abraham believed God, and it was reckoned to him as righteousness.' The verb ἐπληρώθη (was fulfilled) indicates that the Genesis 15:6 declaration was brought to its full realization — not merely illustrated — by Abraham's obedient action in Genesis 22. If James were merely talking about demonstration before men, there would be no reason to say the Scripture about God's reckoning was *fulfilled* by the act of obedience. Fulfillment language implies that the reckoning and the obedience belong to the same economy of justification, not to two separate senses of the word.\n\nThird, the Council of Trent directly addresses this passage. In Session 6, Chapter 10, the Council teaches that the justified, 'through the observance of the commandments of God and of the Church, faith co-operating with good works, increase in that justice which they have received through the grace of Christ, and are still further justified, as it is written... Do you see that by works a man is justified, and not by faith only' (Trent-1547-S6:Ch.10, citing Jas 2:24). Trent reads James 2:24 not as a statement about the demonstration of an already-completed justification but as a statement about the *increase* of justification through faith cooperating with works. This reading is grounded in the very language James uses — συνήργει, ἐτελειώθη — which describes cooperation and perfection, not mere visibility.\n\nTrent Session 6, Chapter 7 further establishes the principle: 'faith, unless hope and charity be added thereto, neither unites man perfectly with Christ, nor makes him a living member of His body. For which reason it is most truly said, that Faith without works is dead and profitless; and, In Christ Jesus neither circumcision availeth anything, nor uncircumcision, but faith which worketh by charity' (Trent-1547-S6:Ch.7, citing Jas 2:26 and Gal 5:6). The phrase πίστις δι' ἀγάπης ἐνεργουμένη (Gal 5:6) — 'faith working through love' — is the Pauline warrant for reading faith and works as internally united in the act of justification, not as externally related cause and evidence. If Paul himself says the only thing that avails is faith working through love, then Calvin's separation of Paul's faith-alone from James's faith-plus-works cannot stand even within Paul's own corpus.\n\nFinally, Canon XI of Session 6 anathematizes the position that 'men are justified, either by the sole imputation of the justice of Christ, or by the sole remission of sins, to the exclusion of the grace and the charity which is poured forth in their hearts by the Holy Ghost, and is inherent in them' (Trent-1547-S6:Canon.XI). The Reformed position, which assigns to James only a demonstrative role while reserving real justification to Paul's forensic imputation, is precisely the structure Trent rejects: it makes inherent charity (the faith that works by love) external to justification rather than constitutive of it.\n\nThe Catholic reading holds that Paul and James are compatible precisely because they describe the same justification at different moments: Paul describes its initiation by grace through faith apart from prior works of the law (Rom 3:28), and James describes its continuation and completion through faith cooperating with the works that love produces (Jas 2:22-24). There is no need to posit two different senses of δικαιόω because the same justifying grace that initiates also completes — and James is telling us that it completes through works of faith formed by charity.",
+          "citations": [
+            {
+              "source_type": "scripture",
+              "reference": "TR-Scrivener-1894:Jas.2.22",
+              "text_quoted": "βλέπεις ὅτι ἡ πίστις συνήργει τοῖς ἔργοις αὐτοῦ καὶ ἐκ τῶν ἔργων ἡ πίστις ἐτελειώθη",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "TR-Scrivener-1894:Jas.2.23",
+              "text_quoted": "καὶ ἐπληρώθη ἡ γραφὴ ἡ λέγουσα, Ἐπίστευσεν δὲ Ἀβραὰμ τῷ θεῷ, καὶ ἐλογίσθη αὐτῷ εἰς δικαιοσύνην",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "scripture",
+              "reference": "TR-Scrivener-1894:Jas.2.24",
+              "text_quoted": "ὁρᾶτε ὅτι ἐξ ἔργων δικαιοῦται ἄνθρωπος καὶ οὐκ ἐκ πίστεως μόνον",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "historical",
+              "reference": "Trent-1547-S6:Ch.10",
+              "text_quoted": "Having, therefore, been thus justified, and made the friends and domestics of God, advancing from virtue to virtue, they are renewed, as the Apostle says, day by day; that is, by mortifying the members of their own flesh, and by presenting them as instruments of justice unto sanctification, they, through the observance of the commandments of God and of the Church, faith co-operating with good works, increase in that justice which they have received through the grace of Christ, and are still further justified, as it is written... Do you see that by works a man is justified, and not by faith only.",
+              "original_language": null
+            },
+            {
+              "source_type": "historical",
+              "reference": "Trent-1547-S6:Ch.7",
+              "text_quoted": "faith, unless hope and charity be added thereto, neither unites man perfectly with Christ, nor makes him a living member of His body. For which reason it is most truly said, that Faith without works is dead and profitless; and, In Christ Jesus neither circumcision availeth anything, nor uncircumcision, but faith which worketh by charity.",
+              "original_language": null
+            },
+            {
+              "source_type": "scripture",
+              "reference": "TR-Scrivener-1894:Gal.5.6",
+              "text_quoted": "ἐν γὰρ Χριστῷ Ἰησοῦ οὔτε περιτομή τι ἰσχύει οὔτε ἀκροβυστία, ἀλλὰ πίστις δι' ἀγάπης ἐνεργουμένη",
+              "original_language": "greek"
+            },
+            {
+              "source_type": "historical",
+              "reference": "Trent-1547-S6:Canon.XI",
+              "text_quoted": "If any one saith, that men are justified, either by the sole imputation of the justice of Christ, or by the sole remission of sins, to the exclusion of the grace and the charity which is poured forth in their hearts by the Holy Ghost, and is inherent in them; or even that the grace, whereby we are justified, is only the favour of God; let him be anathema.",
+              "original_language": null
+            }
+          ],
+          "referee_ruling": {
+            "author_model": "anthropic/claude-opus-4.6",
+            "decision": "accepted",
+            "feedback": "The move is well-structured, engages the proponent's strongest arguments directly, and is thoroughly cited. The Greek textual analysis of James 2:22 (συνήργει, ἐτελειώθη) is the move's strongest contribution — it challenges the proponent's 'demonstration' reading with the actual semantic content of the verbs James chose. The appeal to ἐπληρώθη in James 2:23 is a strong textual argument that the proponent will need to address. The Trent citations are accurate and correctly sourced (Session 6 Chapters 7, 10, and Canon XI). The introduction of Galatians 5:6 (πίστις δι' ἀγάπης ἐνεργουμένη) as internal Pauline evidence against the Reformed separation is legitimate and well-placed. The move engages the strongest form of the proponent's argument (Calvin's two-senses distinction) rather than a strawman. No rule violations detected.",
+            "smuggled_priors_detected": [
+              "The claim that τελειόω 'means to bring to completion, to perfect, to make complete' and never means 'to make visible' is presented as lexically obvious, but the semantic range of τελειόω includes 'to bring to an intended end or goal.' The Catholic reading selects 'ontological completion' from this range; the Reformed reading selects 'reaching the intended goal of manifestation.' Neither is lexically impossible — the choice between them depends on prior theological commitments about the nature of justification.",
+              "The claim that Trent Session 6 Chapter 10's citation of James 2:24 settles the meaning of James is an argument from magisterial authority, which is legitimate within the Catholic profile but functions as a prior, not as an independent textual argument. A non-Catholic reader would note that Trent is reading James through its own theological framework, just as Calvin reads James through his."
+            ],
+            "centroid_collapse_detected": false,
+            "rule_violations": []
+          }
         }
       ]
     }
@@ -90,6 +163,12 @@
       "timestamp": "2026-04-16T00:00:00Z",
       "author_model": "qwen/qwen3-max-thinking",
       "note": "Round 1 initial checkpoint: Reformed proponent argues compatibility of Romans 3:28 and James 2:24 based on Calvin's distinction between forensic justification before God (Paul) and demonstrative justification before men (James). Cites Calvin's Commentary on James 2:21-24 and Westminster Confession 11.2."
+    },
+    {
+      "commit_sha": "pending",
+      "timestamp": "2026-04-17T00:00:00Z",
+      "author_model": "anthropic/claude-opus-4.6",
+      "note": "Round 1 continued: Catholic (Tridentine) opponent argues against Reformed two-senses reading, grounding in James 2:22 συνήργει/ἐτελειώθη, Trent S6 Ch.7/10/Canon XI, Galatians 5:6. Referee rulings added on both proponent and opponent moves. Key localization: disagreement centers on whether τελειόω in Jas 2:22 means ontological completion (Catholic) or teleological manifestation (Reformed), and whether Trent's reading of Jas 2:24 in Ch.10 as about 'increase of justification' is textually warranted or magisterially imposed."
     }
   ]
 }

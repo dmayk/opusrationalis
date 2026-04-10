@@ -9,12 +9,27 @@
     {
       "ref": "Rom 3:28",
       "corpusEntry": "TR-Scrivener-1894:Rom 3:28",
-      "textContext": "διόλογίζομεθα δικαιοῦσθαι πίστει ἄνθρωπον χωρὶς ἔργων νόμου"
+      "textContext": "λογιζόμεθα γὰρ δικαιοῦσθαι πίστει ἄνθρωπον χωρὶς ἔργων νόμου"
     },
     {
       "ref": "Jas 2:24",
       "corpusEntry": "TR-Scrivener-1894:Jas 2:24",
-      "textContext": "ὁράτε ἐκ πίστεως ἐργαζομένης συντελειταὶ ἡ πίστις καὶ ἡ πίστις δι' ἔργων τελειοῦται"
+      "textContext": "ὁρᾶτε ὅτι ἐξ ἔργων δικαιοῦται ἄνθρωπος καὶ οὐκ ἐκ πίστεως μόνον"
+    },
+    {
+      "ref": "Jas 2:22",
+      "corpusEntry": "TR-Scrivener-1894:Jas 2:22",
+      "textContext": "βλέπεις ὅτι ἡ πίστις συνήργει τοῖς ἔργοις αὐτοῦ καὶ ἐκ τῶν ἔργων ἡ πίστις ἐτελειώθη"
+    },
+    {
+      "ref": "Jas 2:23",
+      "corpusEntry": "TR-Scrivener-1894:Jas 2:23",
+      "textContext": "καὶ ἐπληρώθη ἡ γραφὴ ἡ λέγουσα, Ἐπίστευσεν δὲ Ἀβραὰμ τῷ θεῷ, καὶ ἐλογίσθη αὐτῷ εἰς δικαιοσύνην, καὶ φίλος θεοῦ ἐκλήθη"
+    },
+    {
+      "ref": "Gal 5:6",
+      "corpusEntry": "TR-Scrivener-1894:Gal 5:6",
+      "textContext": "ἐν γὰρ Χριστῷ Ἰησοῦ οὔτε περιτομή τι ἰσχύει οὔτε ἀκροβυστία, ἀλλὰ πίστις δι' ἀγάπης ἐνεργουμένη"
     },
     {
       "ref": "Rom 3:28 KJV",
@@ -34,7 +49,7 @@
       "corpusSubset": ["TR-Scrivener-1894", "KJV-1769"]
     },
     "opponent": {
-      "name": "Jamesian Opponent (Roman Catholic)",
+      "name": "Catholic Opponent (Tridentine)",
       "profile": "catholic",
       "corpusSubset": ["TR-Scrivener-1894", "KJV-1769", "Vulgata-Clementina"]
     },
@@ -50,7 +65,11 @@
     }
   },
   "createdAt": "2026-04-16",
-  "status": "initial-seeding-pending",
-  "debateRounds": [],
-  "resolutionTree": null
+  "updatedAt": "2026-04-17",
+  "status": "round-1-in-progress",
+  "debateRounds": [
+    "debate-0001.json"
+  ],
+  "resolutionTree": null,
+  "notes": "Greek text for Jas 2:24 corrected from prior iteration (was fabricated text). Added Jas 2:22, 2:23, and Gal 5:6 to source passages as they emerged as critical in Round 1."
 }
