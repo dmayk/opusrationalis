@@ -1,307 +1,1052 @@
-async function loadJson(path) {
-  const res = await fetch(path, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
-  return res.json();
-}
+(function () {
+  'use strict';
 
-function escapeHtml(s) {
-  return String(s)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
+  /* ═══════════════════════════════════════════
+     SECTION 1: UTILITIES
+     ═══════════════════════════════════════════ */
 
-function el(tag, attrs = {}, children = []) {
-  const node = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === "class") node.className = v;
-    else if (k === "html") node.innerHTML = v;
-    else node.setAttribute(k, v);
+  function escapeHtml(s) {
+    return String(s)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
   }
-  for (const ch of children) node.appendChild(ch);
-  return node;
-}
 
-function renderClaim(claim) {
-  const meta = document.getElementById("claimMeta");
-  const statement = document.getElementById("claimStatement");
-  const passages = document.getElementById("passages");
+  function el(tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      for (var k in attrs) {
+        if (k === 'class') node.className = attrs[k];
+        else if (k === 'html') node.innerHTML = attrs[k];
+        else if (k === 'onclick') node.addEventListener('click', attrs[k]);
+        else node.setAttribute(k, attrs[k]);
+      }
+    }
+    if (children) {
+      var arr = Array.isArray(children) ? children : [children];
+      for (var i = 0; i < arr.length; i++) {
+        var ch = arr[i];
+        if (typeof ch === 'string') node.appendChild(document.createTextNode(ch));
+        else if (ch) node.appendChild(ch);
+      }
+    }
+    return node;
+  }
 
-  meta.textContent = `id=${claim.id} • resolution_status=${claim.resolution_status} • stability=${claim.stability_score} • contestation=${claim.contestation_score}`;
-  statement.textContent = claim.statement;
+  function text(s) { return document.createTextNode(s); }
 
-  passages.innerHTML = "";
-  for (const p of (claim.passages || [])) {
-    const wrap = el("div", { class: "passage" });
-    wrap.appendChild(el("h4", { html: `${escapeHtml(p.reference)} <span class="muted">(${escapeHtml(p.original_language || "unknown")})</span>` }));
+  var PROFILE_LABELS = {
+    'reformed-westminster': 'Reformed',
+    'catholic-tridentine': 'Catholic',
+    'eastern-orthodox-chalcedonian': 'Orthodox',
+  };
+  var OUTCOME_LABELS = {
+    'supports_claim': 'Supports',
+    'rejects_claim': 'Rejects',
+    'conditionally_supports': 'Conditional',
+  };
+  var ROLE_LABELS = {
+    'proponent': 'Proponent',
+    'opponent': 'Opponent',
+    'red_team': 'Red Team',
+    'referee': 'Referee',
+  };
+  var AXIS_LABELS = {
+    'canon': 'Canon',
+    'text_base': 'Text Base',
+    'authority_model': 'Authority Model',
+    'interpretive_method': 'Interpretive Method',
+    'rule_of_faith': 'Rule of Faith',
+    'testament_relation': 'Testament Relation',
+    'inspiration_model': 'Inspiration Model',
+    'clarity_hierarchy': 'Clarity Hierarchy',
+  };
+  var AXES_ORDER = ['canon', 'text_base', 'authority_model', 'interpretive_method',
+    'rule_of_faith', 'testament_relation', 'inspiration_model', 'clarity_hierarchy'];
 
-    wrap.appendChild(el("div", { class: "kv" }, [
-      el("div", { class: "k" , html: "Original (as stored)" }),
-      el("div", { class: "v" , html: `<pre class="block">${escapeHtml(p.original_text || "")}</pre>` }),
+  function profileLabel(id) { return PROFILE_LABELS[id] || id; }
+  function outcomeLabel(o) { return OUTCOME_LABELS[o] || o; }
+  function shortModel(m) { return m ? m.replace(/^[^/]+\//, '') : ''; }
+  function formatDate(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    return d.toISOString().slice(0, 10);
+  }
+  function truncate(s, n) { return s && s.length > n ? s.slice(0, n) + '...' : s || ''; }
+
+  /* ═══════════════════════════════════════════
+     SECTION 2: STATE
+     ═══════════════════════════════════════════ */
+
+  var State = {
+    manifest: null,
+    claims: {},
+    trees: {},
+    debates: {},
+    profiles: {},
+    lens: '',
+    searchIndex: null,
+  };
+
+  /* ═══════════════════════════════════════════
+     SECTION 3: DATA LAYER
+     ═══════════════════════════════════════════ */
+
+  function loadJson(path) {
+    return fetch(path, { cache: 'no-store' }).then(function (res) {
+      if (!res.ok) throw new Error('Failed to load ' + path + ': ' + res.status);
+      return res.json();
+    });
+  }
+
+  function loadManifest() {
+    return loadJson('./data/index.json').then(function (data) {
+      State.manifest = data;
+      return data;
+    });
+  }
+
+  function loadClaim(id) {
+    if (State.claims[id]) return Promise.resolve(State.claims[id]);
+    return loadJson('./data/claims/' + id + '.json').then(function (d) {
+      State.claims[id] = d;
+      return d;
+    });
+  }
+
+  function loadTree(id) {
+    if (State.trees[id]) return Promise.resolve(State.trees[id]);
+    return loadJson('./data/trees/' + id + '.json').then(function (d) {
+      State.trees[id] = d;
+      return d;
+    }).catch(function () { return null; });
+  }
+
+  function loadDebate(id) {
+    if (State.debates[id]) return Promise.resolve(State.debates[id]);
+    return loadJson('./data/debates/' + id + '.json').then(function (d) {
+      State.debates[id] = d;
+      return d;
+    }).catch(function () { return null; });
+  }
+
+  function loadProfile(id) {
+    if (State.profiles[id]) return Promise.resolve(State.profiles[id]);
+    return loadJson('./data/profiles/' + id + '.json').then(function (d) {
+      State.profiles[id] = d;
+      return d;
+    });
+  }
+
+  /* helper to find manifest entry for a claim */
+  function findManifestClaim(claimId) {
+    if (!State.manifest) return null;
+    for (var i = 0; i < State.manifest.doctrines.length; i++) {
+      var doc = State.manifest.doctrines[i];
+      for (var j = 0; j < doc.claims.length; j++) {
+        if (doc.claims[j].id === claimId) return doc.claims[j];
+      }
+    }
+    return null;
+  }
+
+  /* all claims flat */
+  function allManifestClaims() {
+    if (!State.manifest) return [];
+    var out = [];
+    State.manifest.doctrines.forEach(function (d) {
+      d.claims.forEach(function (c) { out.push(c); });
+    });
+    return out;
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 4: COMPONENTS
+     ═══════════════════════════════════════════ */
+
+  /* ── Profile Pill ─────────────────────── */
+  function profilePill(profileId, outcome) {
+    return el('span', { class: 'pill pill--' + outcome }, [
+      el('span', { class: 'pill-name' }, profileLabel(profileId)),
+      text(' '),
+      el('span', {}, outcomeLabel(outcome)),
+    ]);
+  }
+
+  function pillsRow(outcomes, extraClass) {
+    var div = el('div', { class: 'pills' + (extraClass ? ' ' + extraClass : '') });
+    (outcomes || []).forEach(function (o) {
+      div.appendChild(profilePill(o.profileId || o.profile_id, o.outcome));
+    });
+    return div;
+  }
+
+  /* ── Metric Bar ───────────────────────── */
+  function metricBar(label, value, type) {
+    var pct = Math.round((value || 0) * 100);
+    return el('div', { class: 'metric-bar' }, [
+      el('span', { class: 'metric-label' }, label),
+      el('div', { class: 'metric-track' }, [
+        el('div', { class: 'metric-fill metric-fill--' + type, style: 'width:' + pct + '%' }),
+      ]),
+      el('span', { class: 'metric-value' }, pct + '%'),
+    ]);
+  }
+
+  /* ── Claim Card ───────────────────────── */
+  function claimCard(mc) {
+    var card = el('a', { class: 'claim-card', href: '#/claim/' + mc.id });
+    var header = el('div', { class: 'claim-card-header' }, [
+      el('span', { class: 'status-dot status-dot--' + mc.status }),
+      el('h3', { class: 'claim-card-title' }, mc.humanTitle),
+    ]);
+    card.appendChild(header);
+    card.appendChild(el('p', { class: 'claim-card-statement' }, truncate(mc.statement, 140)));
+    if (mc.profileOutcomes && mc.profileOutcomes.length) {
+      card.appendChild(pillsRow(mc.profileOutcomes));
+    }
+    if (mc.metrics) {
+      var metrics = el('div', { class: 'claim-card-metrics' });
+      metrics.appendChild(metricBar('Stability', mc.metrics.stability, 'stability'));
+      metrics.appendChild(metricBar('Contestation', mc.metrics.contestation, 'contestation'));
+      card.appendChild(metrics);
+    }
+    return card;
+  }
+
+  /* ── Tree Node (recursive) ────────────── */
+  function treeNode(node) {
+    var type = node.node_type || 'unresolved';
+    var box = el('div', { class: 'tree-node tree-node--' + type });
+
+    /* bar: dot + badge + status */
+    var bar = el('div', { class: 'tree-node-bar' }, [
+      el('span', { class: 'tree-dot tree-dot--' + type }),
+      el('span', { class: 'tree-badge tree-badge--' + type }, (type.charAt(0).toUpperCase() + type.slice(1))),
+      el('span', { class: 'tree-status' }, '[' + (node.status || '') + ']'),
+    ]);
+    box.appendChild(bar);
+
+    /* summary */
+    box.appendChild(el('p', { class: 'tree-node-summary' }, node.summary || ''));
+
+    /* profile scope pills */
+    if (node.profiles_in_scope && node.profiles_in_scope.length) {
+      var pills = el('div', { class: 'pills' });
+      node.profiles_in_scope.forEach(function (pid) {
+        pills.appendChild(el('span', { class: 'pill pill--supports_claim' }, [
+          el('span', { class: 'pill-name' }, profileLabel(pid)),
+        ]));
+      });
+      box.appendChild(pills);
+    }
+
+    /* divergence point (highlighted) */
+    if (node.divergence_point && node.divergence_point.kind) {
+      var dp = node.divergence_point;
+      var divBox = el('div', { class: 'tree-divergence' }, [
+        el('div', { class: 'tree-divergence-icon' }, '\u26A1'),
+        el('div', {}, [
+          el('strong', {}, dp.label || ''),
+          text(' '),
+          el('span', { class: 'tree-divergence-kind' }, '(' + (dp.kind || '') + ')'),
+          dp.description ? el('p', {}, dp.description) : null,
+        ]),
+      ]);
+      box.appendChild(divBox);
+    }
+
+    /* depends on (compact) */
+    if (node.depends_on && node.depends_on.type) {
+      var refs = (node.depends_on.references || []).join(', ');
+      box.appendChild(el('div', { class: 'tree-depends' }, [
+        text('Depends on: '),
+        el('code', {}, node.depends_on.type),
+        refs ? text(' \u2014 ' + refs) : null,
+      ]));
+    }
+
+    /* evidence (collapsed) */
+    if (node.supporting_evidence && node.supporting_evidence.length) {
+      box.appendChild(evidenceDetails('Supporting evidence', node.supporting_evidence, false));
+    }
+    if (node.counter_evidence && node.counter_evidence.length) {
+      box.appendChild(evidenceDetails('Counter evidence', node.counter_evidence, true));
+    }
+
+    /* notes */
+    if (node.notes) {
+      box.appendChild(el('div', { class: 'tree-notes' }, node.notes));
+    }
+
+    /* children (recursive) */
+    if (node.children && node.children.length) {
+      var childBox = el('div', { class: 'tree-children' });
+      node.children.forEach(function (child) {
+        childBox.appendChild(treeNode(child));
+      });
+      box.appendChild(childBox);
+    }
+
+    return box;
+  }
+
+  function evidenceDetails(title, items, isCounter) {
+    var details = el('details', { class: isCounter ? 'tree-counter-section' : 'tree-evidence-section' });
+    details.appendChild(el('summary', {}, title + ' (' + items.length + ')'));
+    var ul = el('ul', { class: 'tree-evidence-list' });
+    items.forEach(function (ev) {
+      var li = el('li');
+      var line = (ev.source_type || 'unknown') + ': ';
+      li.appendChild(text(line));
+      li.appendChild(el('code', {}, ev.reference || '(no ref)'));
+      if (ev.weight) li.appendChild(text(' [' + ev.weight + ']'));
+      if (ev.text_quoted) {
+        li.appendChild(el('blockquote', { class: isCounter ? 'counter-quote' : 'evidence-quote' }, ev.text_quoted));
+      }
+      ul.appendChild(li);
+    });
+    details.appendChild(ul);
+    return details;
+  }
+
+  /* ── Full Tree Viz ────────────────────── */
+  function treeViz(tree, container) {
+    if (!tree || !tree.root) {
+      container.appendChild(el('div', { class: 'empty-state' }, [
+        el('div', { class: 'empty-state-icon' }, '\u23F3'),
+        el('p', {}, 'Resolution tree not yet available. Debate in progress.'),
+      ]));
+      return;
+    }
+
+    /* summary */
+    container.appendChild(el('div', { class: 'tree-summary' }, tree.resolution_summary || ''));
+
+    /* metrics */
+    if (tree.metrics) {
+      var m = tree.metrics;
+      var mp = el('div', { class: 'tree-metrics-panel' });
+      mp.appendChild(metricBar('Stability', m.stability_score, 'stability'));
+      mp.appendChild(metricBar('Contestation', m.contestation_score, 'contestation'));
+      mp.appendChild(metricBar('Consensus', m.depth_of_consensus, 'consensus'));
+      container.appendChild(mp);
+
+      if (m.prior_dependence && m.prior_dependence.length) {
+        container.appendChild(el('div', { class: 'tree-depends' }, [
+          text('Key prior dependencies: '),
+          el('code', {}, m.prior_dependence.join(', ')),
+        ]));
+      }
+    }
+
+    /* tree structure */
+    container.appendChild(treeNode(tree.root));
+
+    /* profile outcomes */
+    if (tree.profile_outcomes && tree.profile_outcomes.length) {
+      var outSection = el('div', { class: 'tree-profile-outcomes' });
+      outSection.appendChild(el('h3', { class: 'section-title', style: 'font-size:var(--text-lg)' }, 'Profile Outcomes'));
+      tree.profile_outcomes.forEach(function (o) {
+        var card = el('div', { class: 'profile-outcome-card' });
+        card.appendChild(el('div', { class: 'outcome-header' }, [
+          el('strong', {}, profileLabel(o.profile_id)),
+          profilePill(o.profile_id, o.outcome),
+        ]));
+        card.appendChild(el('p', { class: 'outcome-rationale' }, o.rationale_summary || ''));
+        outSection.appendChild(card);
+      });
+      container.appendChild(outSection);
+    }
+  }
+
+  /* ── Debate Transcript ────────────────── */
+  function debateTranscript(debate, container) {
+    if (!debate || !debate.rounds || !debate.rounds.length) {
+      container.appendChild(el('div', { class: 'empty-state' }, [
+        el('div', { class: 'empty-state-icon' }, '\u23F3'),
+        el('p', {}, 'Debate not yet started for this claim.'),
+      ]));
+      return;
+    }
+
+    /* meta */
+    var meta = el('div', { class: 'debate-meta' }, [
+      el('span', {}, 'Participants: ' + (debate.participants || []).map(function (p) { return p.charAt(0).toUpperCase() + p.slice(1); }).join(', ')),
+      el('span', {}, debate.rounds.length + ' round' + (debate.rounds.length !== 1 ? 's' : '')),
+    ]);
+    container.appendChild(meta);
+
+    /* rounds */
+    debate.rounds.forEach(function (round, ri) {
+      var details = el('details', { class: 'debate-round' });
+      if (ri === 0) details.setAttribute('open', '');
+      details.appendChild(el('summary', {}, 'Round ' + (round.round_number || ri + 1)));
+
+      var movesDiv = el('div', { class: 'debate-moves' });
+      (round.moves || []).forEach(function (move) {
+        var role = move.agent_role || 'unknown';
+        var moveBox = el('div', { class: 'debate-move debate-move--' + role });
+
+        var header = el('div', { class: 'debate-move-header' }, [
+          el('span', { class: 'debate-role-badge debate-role--' + role }, ROLE_LABELS[role] || role),
+          move.profile_id ? el('span', { class: 'debate-profile' }, profileLabel(move.profile_id)) : null,
+          move.intent ? el('span', { class: 'debate-intent' }, move.intent) : null,
+          move.author_model ? el('span', { class: 'debate-model' }, shortModel(move.author_model)) : null,
+        ]);
+        moveBox.appendChild(header);
+        moveBox.appendChild(el('div', { class: 'debate-move-content' }, move.content || ''));
+
+        if (move.citations && move.citations.length) {
+          var cBox = el('div', { class: 'debate-citations' });
+          cBox.appendChild(text('Citations:'));
+          var ul = el('ul');
+          move.citations.forEach(function (ci) {
+            var li = el('li');
+            li.appendChild(text((ci.source_type || 'unknown') + ': '));
+            li.appendChild(el('code', {}, ci.reference || '(no ref)'));
+            if (ci.text_quoted) li.appendChild(text(' \u2014 "' + truncate(ci.text_quoted, 100) + '"'));
+            ul.appendChild(li);
+          });
+          cBox.appendChild(ul);
+          moveBox.appendChild(cBox);
+        }
+
+        movesDiv.appendChild(moveBox);
+      });
+      details.appendChild(movesDiv);
+      container.appendChild(details);
+    });
+  }
+
+  /* ── Passages ─────────────────────────── */
+  function renderPassages(passages, container) {
+    if (!passages || !passages.length) return;
+    passages.forEach(function (p) {
+      var card = el('div', { class: 'passage-card' });
+      var ref = p.reference || p.ref || '';
+      var lang = p.original_language || p.language || '';
+      card.appendChild(el('div', { class: 'passage-ref' }, [
+        text(ref + ' '),
+        el('span', { class: 'lang' }, lang ? '(' + lang + ')' : ''),
+      ]));
+
+      var origText = p.original_text || p.text || '';
+      if (origText) {
+        card.appendChild(el('pre', { class: 'passage-original' }, origText));
+      }
+
+      var translations = p.translations || {};
+      var keys = Object.keys(translations);
+      keys.forEach(function (tk) {
+        card.appendChild(el('div', { class: 'passage-translation' }, [
+          el('span', { class: 't-label' }, tk),
+          text(' ' + translations[tk]),
+        ]));
+      });
+
+      container.appendChild(card);
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 5: VIEWS
+     ═══════════════════════════════════════════ */
+
+  /* ── Landing ──────────────────────────── */
+  function viewLanding(main) {
+    /* Hero */
+    var hero = el('div', { class: 'hero' });
+    hero.appendChild(el('h1', { class: 'hero-title' }, 'Mapping where Christian traditions agree and disagree'));
+    hero.appendChild(el('p', { class: 'hero-subtitle' }, 'An autonomous AI research system that runs structured adversarial debates between Reformed, Catholic, and Orthodox theological positions. Not to settle which tradition is right, but to build the first precise, auditable map of why they disagree.'));
+
+    /* live pills from first claim with outcomes */
+    var claims = allManifestClaims();
+    var firstWithOutcomes = claims.find(function (c) { return c.profileOutcomes && c.profileOutcomes.length; });
+    if (firstWithOutcomes) {
+      hero.appendChild(pillsRow(firstWithOutcomes.profileOutcomes, 'hero-pills'));
+    }
+
+    hero.appendChild(el('div', { class: 'hero-cta' }, [
+      el('a', { class: 'btn btn--primary', href: '#/explore' }, 'Explore the claims'),
+      el('a', { class: 'btn btn--secondary', href: '#/how-it-works' }, 'How it works'),
+    ]));
+    main.appendChild(hero);
+
+    /* How it works teaser */
+    main.appendChild(el('h2', { class: 'section-title', style: 'margin-top:32px' }, 'How it works'));
+    main.appendChild(el('p', { class: 'section-intro' }, 'The system defines narrow theological claims from scripture, then runs adversarial debates between traditions \u2014 each seeded with their strongest primary sources. A red team attacks premature consensus. Resolution trees map exactly where agreement holds and where it breaks, identifying the precise hermeneutical assumption behind each fork.'));
+    main.appendChild(el('p', {}, [el('a', { href: '#/how-it-works' }, 'Read the full pipeline \u2192')]));
+
+    /* Claim cards */
+    main.appendChild(el('h2', { class: 'section-title', style: 'margin-top:32px' }, 'Current claims'));
+    var grid = el('div', { class: 'claim-cards' });
+    var filtered = filterByLens(claims);
+    filtered.forEach(function (mc) { grid.appendChild(claimCard(mc)); });
+    main.appendChild(grid);
+  }
+
+  /* ── How It Works ─────────────────────── */
+  function viewHowItWorks(main) {
+    main.appendChild(el('h1', { class: 'section-title' }, 'How It Works'));
+    main.appendChild(el('p', { class: 'section-intro' }, 'The system advances autonomously, one step per iteration, running four times daily across multiple AI model families.'));
+
+    var steps = [
+      { n: '1', title: 'A claim is defined', desc: 'A narrow theological question is extracted from scripture. Not "what is justification?" but "does the Greek verb \u03B4\u03B9\u03BA\u03B1\u03B9\u03CC\u03C9 in Romans 3:24 carry a forensic or transformative sense?"' },
+      { n: '2', title: 'Three traditions debate it', desc: 'Reformed, Catholic, and Orthodox advocates each argue the claim, seeded with their strongest primary sources \u2014 Calvin\u2019s Institutes, the Council of Trent, the Church Fathers. Each operates under explicitly declared interpretive priors.' },
+      { n: '3', title: 'A red team attacks consensus', desc: 'An adversarial referee challenges premature agreement. If all three traditions agree in round one, the red team probes whether the agreement is genuine or whether the AI collapsed toward a comfortable center.' },
+      { n: '4', title: 'A resolution tree maps the fork', desc: 'The system produces a structured tree showing exactly where agreement holds and where it breaks. The root node captures shared ground. Branches localize the precise point of divergence.' },
+      { n: '5', title: 'The blocking prior is identified', desc: 'At each fork, the system identifies which hermeneutical assumption causes the split \u2014 is it a different authority model? A different method of reading Paul against James? A different canon? The prior is named, not hidden.' },
+      { n: '6', title: 'This runs autonomously', desc: 'Every day, the system advances by one step. It rotates across model providers (Anthropic, OpenAI, Google, Qwen, DeepSeek, xAI) so no single model\u2019s biases dominate. Everything is version-controlled and transparent.' },
+    ];
+
+    var grid = el('div', { class: 'pipeline' });
+    steps.forEach(function (s) {
+      var card = el('div', { class: 'pipeline-step' });
+      card.appendChild(el('div', { class: 'pipeline-step-number' }, s.n));
+      card.appendChild(el('h3', {}, s.title));
+      card.appendChild(el('p', {}, s.desc));
+      grid.appendChild(card);
+    });
+    main.appendChild(grid);
+
+    /* Anti-collapse safeguards */
+    main.appendChild(el('h2', { class: 'section-title', style: 'margin-top:32px' }, 'Anti-collapse safeguards'));
+    var safeguards = el('div', { class: 'panel' });
+    safeguards.appendChild(el('p', {}, 'The biggest risk in AI-generated theological analysis is centroid collapse \u2014 the tendency to converge on a comfortable middle position that no actual tradition holds. The system defends against this with:'));
+    var ul = el('ul');
+    ['Context-grounded reasoning \u2014 agents argue from supplied primary sources, not training data recall',
+      'Adversarial diversity \u2014 proponent and opponent seeded from genuinely different traditions\u2019 strongest historical arguments',
+      'Premature-agreement detection \u2014 unanimous Round 1 agreement triggers mandatory red-team attack',
+      'Smuggled-prior audits \u2014 referee logs every unstated assumption',
+      'Centroid-collapse tells \u2014 agents reject outputs containing "most scholars agree" or "mainstream view"',
+      'Model rotation across providers \u2014 no single model family dominates',
+    ].forEach(function (t) { ul.appendChild(el('li', {}, t)); });
+    safeguards.appendChild(ul);
+    main.appendChild(safeguards);
+  }
+
+  /* ── Explore ──────────────────────────── */
+  function viewExplore(main) {
+    main.appendChild(el('h1', { class: 'section-title' }, 'Explore Claims'));
+    var claims = filterByLens(allManifestClaims());
+    main.appendChild(el('p', { class: 'section-intro' }, claims.length + ' atomic claim' + (claims.length !== 1 ? 's' : '') + ' across ' + State.manifest.doctrines.length + ' doctrine' + (State.manifest.doctrines.length !== 1 ? 's' : '') + '.'));
+    var grid = el('div', { class: 'claim-cards' });
+    claims.forEach(function (mc) { grid.appendChild(claimCard(mc)); });
+    main.appendChild(grid);
+  }
+
+  /* ── Claim Detail ─────────────────────── */
+  function viewClaimDetail(main, params) {
+    var claimId = params.id;
+    var mc = findManifestClaim(claimId);
+
+    if (!mc) {
+      main.appendChild(el('div', { class: 'empty-state' }, [
+        el('p', {}, 'Claim not found: ' + claimId),
+      ]));
+      return;
+    }
+
+    /* breadcrumb */
+    main.appendChild(el('p', { class: 'tree-depends' }, [
+      el('a', { href: '#/explore' }, 'Claims'),
+      text(' / '),
+      text(mc.humanTitle),
     ]));
 
-    const translations = p.translations || {};
-    const keys = Object.keys(translations);
-    if (keys.length) {
-      const tBox = el("div", { class: "kv" });
-      for (const k of keys) {
-        tBox.appendChild(el("div", { class: "k", html: escapeHtml(k) }));
-        tBox.appendChild(el("div", { class: "v", html: `<pre class="block">${escapeHtml(translations[k])}</pre>` }));
-      }
-      wrap.appendChild(tBox);
+    /* title */
+    main.appendChild(el('h1', { class: 'section-title' }, mc.humanTitle));
+
+    /* profile outcomes bar */
+    if (mc.profileOutcomes && mc.profileOutcomes.length) {
+      main.appendChild(el('div', { class: 'outcomes-bar' }, mc.profileOutcomes.map(function (o) {
+        return profilePill(o.profileId, o.outcome);
+      })));
     }
 
-    passages.appendChild(wrap);
-  }
-}
+    /* claim statement */
+    main.appendChild(el('div', { class: 'claim-statement' }, mc.statement));
 
-function renderTreeNode(node, depth = 0) {
-  const nodeBox = el("div", { class: `tree-node tree-node-${node.node_type} tree-depth-${depth}` });
-  
-  const header = el("div", { class: "tree-node-header" });
-  header.appendChild(el("span", { class: `tree-node-type-badge ${node.node_type}`, html: node.node_type }));
-  header.appendChild(el("span", { class: "tree-node-status", html: `[${node.status}]` }));
-  header.appendChild(el("span", { class: "tree-node-id", html: `id=${escapeHtml(node.node_id)}` }));
-  nodeBox.appendChild(header);
-
-  nodeBox.appendChild(el("p", { class: "tree-node-summary", html: escapeHtml(node.summary || "") }));
-
-  // Profile scope
-  if (node.profiles_in_scope && node.profiles_in_scope.length) {
-    const scopeBox = el("div", { class: "tree-node-profiles" });
-    scopeBox.appendChild(el("strong", { html: "Profiles:" }));
-    node.profiles_in_scope.forEach(pid => {
-      scopeBox.appendChild(el("span", { class: "profile-tag", html: escapeHtml(pid) }));
-    });
-    nodeBox.appendChild(scopeBox);
-  }
-
-  // Depends on
-  if (node.depends_on) {
-    const depsBox = el("div", { class: "tree-depends-on" });
-    depsBox.appendChild(el("strong", { html: "Depends on:" }));
-    const depDiv = el("div", { class: "tree-depends-content" });
-    depDiv.appendChild(el("div", { html: `Type: <code>${escapeHtml(node.depends_on.type)}</code>` }));
-    if (node.depends_on.references && node.depends_on.references.length) {
-      const refList = el("div");
-      refList.appendChild(el("strong", { html: "References:" }));
-      const ul = el("ul");
-      node.depends_on.references.forEach(ref => {
-        ul.appendChild(el("li", { html: `<code>${escapeHtml(ref)}</code>` }));
-      });
-      refList.appendChild(ul);
-      depDiv.appendChild(refList);
+    /* metrics */
+    if (mc.metrics) {
+      var mp = el('div', { class: 'tree-metrics-panel', style: 'margin:16px 0' });
+      mp.appendChild(metricBar('Stability', mc.metrics.stability, 'stability'));
+      mp.appendChild(metricBar('Contestation', mc.metrics.contestation, 'contestation'));
+      mp.appendChild(metricBar('Consensus', mc.metrics.consensus, 'consensus'));
+      main.appendChild(mp);
     }
-    if (node.depends_on.notes) {
-      depDiv.appendChild(el("div", { class: "muted", html: escapeHtml(node.depends_on.notes) }));
-    }
-    depsBox.appendChild(depDiv);
-    nodeBox.appendChild(depsBox);
-  }
 
-  // Divergence point
-  if (node.divergence_point && node.divergence_point.kind) {
-    const divBox = el("div", { class: "tree-divergence" });
-    divBox.appendChild(el("strong", { html: "Divergence point:" }));
-    divBox.appendChild(el("div", { html: `<strong>${escapeHtml(node.divergence_point.label)}</strong> (${escapeHtml(node.divergence_point.kind)})` }));
-    divBox.appendChild(el("div", { class: "muted", html: escapeHtml(node.divergence_point.description || "") }));
-    nodeBox.appendChild(divBox);
-  }
+    /* loading indicator */
+    var loading = el('p', { class: 'tree-depends' }, 'Loading data...');
+    main.appendChild(loading);
 
-  // Supporting evidence
-  if (node.supporting_evidence && node.supporting_evidence.length) {
-    const evidBox = el("div", { class: "tree-evidence" });
-    evidBox.appendChild(el("strong", { html: "Supporting evidence:" }));
-    const list = el("ul");
-    node.supporting_evidence.forEach(ev => {
-      const item = el("li");
-      const typeStr = ev.source_type ? `<strong>${escapeHtml(ev.source_type)}</strong>` : "unknown";
-      const refStr = ev.reference ? `<code>${escapeHtml(ev.reference)}</code>` : "(no ref)";
-      const weightStr = ev.weight ? ` [${escapeHtml(ev.weight)}]` : "";
-      item.innerHTML = `${typeStr}: ${refStr}${weightStr}`;
-      if (ev.text_quoted) {
-        const q = el("blockquote", { class: "evidence-quote" });
-        q.textContent = ev.text_quoted;
-        item.appendChild(q);
+    /* load data */
+    var treeId = mc.treeId;
+    Promise.all([
+      loadClaim(claimId),
+      mc.hasTree && treeId ? loadTree(treeId) : Promise.resolve(null),
+      mc.hasDebate ? loadDebate(claimId) : Promise.resolve(null),
+    ]).then(function (results) {
+      var claim = results[0];
+      var tree = results[1];
+      var debate = results[2];
+
+      loading.remove();
+
+      /* passages (collapsible) */
+      var passages = claim.passages;
+      if (passages && passages.length) {
+        var pDetails = el('details', { class: 'section-details' });
+        pDetails.appendChild(el('summary', {}, 'Source passages (' + passages.length + ')'));
+        var pContent = el('div', { class: 'details-content' });
+        renderPassages(passages, pContent);
+        pDetails.appendChild(pContent);
+        main.appendChild(pDetails);
       }
-      list.appendChild(item);
-    });
-    evidBox.appendChild(list);
-    nodeBox.appendChild(evidBox);
-  }
 
-  // Counter evidence
-  if (node.counter_evidence && node.counter_evidence.length) {
-    const evidBox = el("div", { class: "tree-counter-evidence" });
-    evidBox.appendChild(el("strong", { html: "Counter evidence:" }));
-    const list = el("ul");
-    node.counter_evidence.forEach(ev => {
-      const item = el("li");
-      const typeStr = ev.source_type ? `<strong>${escapeHtml(ev.source_type)}</strong>` : "unknown";
-      const refStr = ev.reference ? `<code>${escapeHtml(ev.reference)}</code>` : "(no ref)";
-      const weightStr = ev.weight ? ` [${escapeHtml(ev.weight)}]` : "";
-      item.innerHTML = `${typeStr}: ${refStr}${weightStr}`;
-      if (ev.text_quoted) {
-        const q = el("blockquote", { class: "counter-quote" });
-        q.textContent = ev.text_quoted;
-        item.appendChild(q);
+      /* resolution tree */
+      main.appendChild(el('h2', { class: 'section-title', style: 'margin-top:24px' }, 'Resolution Tree'));
+      var treeContainer = el('div');
+      treeViz(tree, treeContainer);
+      main.appendChild(treeContainer);
+
+      /* debate (collapsible) */
+      var debateSection = el('details', { class: 'section-details', style: 'margin-top:24px' });
+      debateSection.appendChild(el('summary', {}, 'Debate Transcript'));
+      var debateContent = el('div', { class: 'details-content' });
+      debateTranscript(debate, debateContent);
+      debateSection.appendChild(debateContent);
+      main.appendChild(debateSection);
+
+      /* version history */
+      var vh = claim.version_history;
+      if (vh && vh.length) {
+        main.appendChild(el('h3', { class: 'section-title', style: 'margin-top:24px;font-size:var(--text-lg)' }, 'Version History'));
+        var table = el('table', { class: 'version-table' });
+        table.appendChild(el('thead', {}, [el('tr', {}, [
+          el('th', {}, 'Date'), el('th', {}, 'Model'), el('th', {}, 'Note'),
+        ])]));
+        var tbody = el('tbody');
+        vh.forEach(function (v) {
+          tbody.appendChild(el('tr', {}, [
+            el('td', {}, formatDate(v.timestamp)),
+            el('td', { html: '<code>' + escapeHtml(shortModel(v.author_model)) + '</code>' }),
+            el('td', {}, v.note || ''),
+          ]));
+        });
+        table.appendChild(tbody);
+        main.appendChild(table);
       }
-      list.appendChild(item);
+    }).catch(function (err) {
+      loading.textContent = 'Error loading data: ' + err.message;
     });
-    evidBox.appendChild(list);
-    nodeBox.appendChild(evidBox);
   }
 
-  // Notes
-  if (node.notes) {
-    const noteBox = el("div", { class: "tree-notes" });
-    noteBox.appendChild(el("strong", { html: "Notes:" }));
-    noteBox.appendChild(el("p", { class: "muted", html: escapeHtml(node.notes) }));
-    nodeBox.appendChild(noteBox);
-  }
+  /* ── Profile Detail ───────────────────── */
+  function viewProfileDetail(main, params) {
+    var pid = params.id;
+    main.appendChild(el('p', { class: 'tree-depends' }, [
+      el('a', { href: '#/' }, 'Home'),
+      text(' / Profiles / '),
+      text(profileLabel(pid)),
+    ]));
 
-  // Children
-  if (node.children && node.children.length) {
-    const childrenBox = el("div", { class: "tree-children" });
-    node.children.forEach(child => {
-      childrenBox.appendChild(renderTreeNode(child, depth + 1));
-    });
-    nodeBox.appendChild(childrenBox);
-  }
+    var loading = el('p', { class: 'tree-depends' }, 'Loading profile...');
+    main.appendChild(loading);
 
-  return nodeBox;
-}
+    loadProfile(pid).then(function (profile) {
+      loading.remove();
 
-function renderTree(tree) {
-  const root = document.getElementById("tree");
-  root.innerHTML = "";
+      /* header */
+      var header = el('div', { class: 'profile-header' });
+      header.appendChild(el('h1', {}, profile.name || profileLabel(pid)));
+      header.appendChild(el('div', { class: 'tradition-label' }, profile.tradition || ''));
+      if (profile.description) {
+        header.appendChild(el('p', { style: 'margin-top:8px;color:var(--text-secondary);font-size:var(--text-sm)' }, truncate(profile.description, 300)));
+      }
+      main.appendChild(header);
 
-  if (!tree || !tree.root) {
-    root.appendChild(el("p", { class: "muted", html: "No tree data." }));
-    return;
-  }
+      /* axes */
+      main.appendChild(el('h2', { class: 'section-title', style: 'margin-top:24px' }, 'Hermeneutical Axes'));
+      var grid = el('div', { class: 'axes-grid' });
 
-  // Summary
-  const sumBox = el("div", { class: "tree-summary-box" });
-  sumBox.appendChild(el("p", { html: escapeHtml(tree.resolution_summary || "") }));
-  root.appendChild(sumBox);
+      AXES_ORDER.forEach(function (axisKey) {
+        var axis = profile[axisKey];
+        if (!axis) return;
+        var card = el('div', { class: 'axis-card' });
+        card.appendChild(el('h3', {}, AXIS_LABELS[axisKey] || axisKey));
 
-  // Metrics
-  const metricsBox = el("div", { class: "tree-metrics" });
-  const m = tree.metrics || {};
-  metricsBox.appendChild(el("div", { html: `<strong>Stability:</strong> ${(m.stability_score * 100).toFixed(0)}%` }));
-  metricsBox.appendChild(el("div", { html: `<strong>Contestation:</strong> ${(m.contestation_score * 100).toFixed(0)}%` }));
-  metricsBox.appendChild(el("div", { html: `<strong>Consensus depth:</strong> ${(m.depth_of_consensus * 100).toFixed(0)}%` }));
-  if (m.prior_dependence && m.prior_dependence.length) {
-    const pd = el("div");
-    pd.appendChild(el("strong", { html: "Prior dependence:" }));
-    const ul = el("ul");
-    m.prior_dependence.forEach(p => ul.appendChild(el("li", { html: escapeHtml(p) })));
-    pd.appendChild(ul);
-    metricsBox.appendChild(pd);
-  }
-  root.appendChild(metricsBox);
-
-  // Tree structure
-  root.appendChild(renderTreeNode(tree.root, 0));
-
-  // Profile outcomes
-  if (tree.profile_outcomes && tree.profile_outcomes.length) {
-    const outBox = el("div", { class: "tree-profile-outcomes" });
-    outBox.appendChild(el("h3", { html: "Profile outcomes" }));
-    tree.profile_outcomes.forEach(outcome => {
-      const oBox = el("div", { class: "profile-outcome" });
-      oBox.appendChild(el("div", { class: "outcome-header" }, [
-        el("strong", { html: escapeHtml(outcome.profile_id) }),
-        el("span", { class: `outcome-badge ${outcome.outcome}`, html: escapeHtml(outcome.outcome.replace(/_/g, " ")) })
-      ]));
-      oBox.appendChild(el("p", { class: "outcome-rationale", html: escapeHtml(outcome.rationale_summary) }));
-      outBox.appendChild(oBox);
-    });
-    root.appendChild(outBox);
-  }
-}
-
-function renderDebate(debate) {
-  const root = document.getElementById("debate");
-  root.innerHTML = "";
-
-  const rounds = debate.rounds || [];
-  if (!rounds.length) {
-    root.appendChild(el("p", { class: "muted", html: "No rounds present in snapshot." }));
-    return;
-  }
-
-  for (const r of rounds) {
-    const roundBox = el("div", { class: "round" });
-    roundBox.appendChild(el("h3", { html: `Round ${escapeHtml(r.round_number ?? "?")}` }));
-
-    const moves = r.moves || [];
-    for (const m of moves) {
-      const moveBox = el("div", { class: "move" });
-      const head = el("div", { class: "head" });
-
-      head.appendChild(el("span", { class: "badge", html: `move_id=${escapeHtml(m.move_id || "")}` }));
-      head.appendChild(el("span", { class: "badge", html: `role=${escapeHtml(m.agent_role || "")}` }));
-      head.appendChild(el("span", { class: "badge", html: `profile=${escapeHtml(m.profile_id ?? "null")}` }));
-      head.appendChild(el("span", { class: "badge", html: `model=${escapeHtml(m.author_model || "")}` }));
-      head.appendChild(el("span", { class: "badge", html: `intent=${escapeHtml(m.intent || "")}` }));
-
-      moveBox.appendChild(head);
-      moveBox.appendChild(el("p", { class: "content", html: escapeHtml(m.content || "") }));
-
-      const citations = m.citations || [];
-      if (citations.length) {
-        const c = el("div", { class: "citations" });
-        c.appendChild(el("div", { html: "Citations (as recorded in snapshot):" }));
-        const ul = el("ul");
-        for (const ci of citations) {
-          const ref = ci.reference ? `<code>${escapeHtml(ci.reference)}</code>` : "<code>(missing reference)</code>";
-          const st = ci.source_type ? escapeHtml(ci.source_type) : "unknown";
-          const tq = ci.text_quoted ? ` — "${escapeHtml(ci.text_quoted)}"` : "";
-          ul.appendChild(el("li", { html: `${st}: ${ref}${tq}` }));
+        /* position */
+        var position = axis.position || axis.tradition || axis.primary || axis.general_principle || '';
+        if (position) {
+          card.appendChild(el('div', { class: 'axis-position' }, String(position).replace(/-/g, ' ')));
         }
-        c.appendChild(ul);
-        moveBox.appendChild(c);
-      }
 
-      roundBox.appendChild(moveBox);
+        /* notes (scrollable) */
+        if (axis.notes) {
+          card.appendChild(el('div', { class: 'axis-notes' }, truncate(axis.notes, 500)));
+        }
+
+        grid.appendChild(card);
+      });
+      main.appendChild(grid);
+
+      /* claims involving this profile */
+      var relevantClaims = allManifestClaims().filter(function (c) {
+        return (c.profileOutcomes || []).some(function (o) { return o.profileId === pid; });
+      });
+      if (relevantClaims.length) {
+        main.appendChild(el('h2', { class: 'section-title', style: 'margin-top:32px' }, 'Claims Involving This Profile'));
+        var claimGrid = el('div', { class: 'claim-cards' });
+        relevantClaims.forEach(function (mc) { claimGrid.appendChild(claimCard(mc)); });
+        main.appendChild(claimGrid);
+      }
+    }).catch(function (err) {
+      loading.textContent = 'Error loading profile: ' + err.message;
+    });
+  }
+
+  /* ── Transparency ─────────────────────── */
+  function viewTransparency(main) {
+    main.appendChild(el('h1', { class: 'section-title' }, 'Transparency'));
+    main.appendChild(el('p', { class: 'section-intro' }, 'Every output is tagged with the model, run, and commit that produced it. Nothing is hidden.'));
+
+    var sys = State.manifest.system || {};
+    var grid = el('div', { class: 'transparency-grid' });
+
+    /* stats */
+    var statsCard = el('div', { class: 'transparency-card' });
+    statsCard.appendChild(el('h3', {}, 'System Stats'));
+    statsCard.appendChild(el('div', { class: 'stat-number' }, String(sys.totalRuns || 0)));
+    statsCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs);margin:0' }, 'autonomous iterations completed'));
+    if (sys.lastRunAt) {
+      statsCard.appendChild(el('p', { style: 'color:var(--text-dim);font-size:var(--text-xs);margin:4px 0 0' }, 'Last run: ' + formatDate(sys.lastRunAt)));
+    }
+    grid.appendChild(statsCard);
+
+    /* models */
+    var modelsCard = el('div', { class: 'transparency-card' });
+    modelsCard.appendChild(el('h3', {}, 'Model Rotation'));
+    modelsCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs);margin-bottom:8px' }, 'Models rotate across providers to prevent single-model bias.'));
+    var ul = el('ul', { class: 'model-list' });
+    (sys.modelsUsed || []).forEach(function (m) { ul.appendChild(el('li', {}, m)); });
+    modelsCard.appendChild(ul);
+    grid.appendChild(modelsCard);
+
+    /* source code */
+    var sourceCard = el('div', { class: 'transparency-card' });
+    sourceCard.appendChild(el('h3', {}, 'Open Source'));
+    sourceCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs)' }, 'The entire project \u2014 schemas, debate transcripts, resolution trees, prompts, and the agent runner \u2014 is open source. Every artifact is diffable and reproducible from the repository alone.'));
+    if (sys.repoUrl) {
+      sourceCard.appendChild(el('a', { href: sys.repoUrl, target: '_blank', rel: 'noopener' }, 'View on GitHub \u2192'));
+    }
+    grid.appendChild(sourceCard);
+
+    /* safeguards */
+    var safeCard = el('div', { class: 'transparency-card' });
+    safeCard.appendChild(el('h3', {}, 'Anti-Collapse Safeguards'));
+    safeCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs)' }, 'Red team challenges premature consensus. Models rotate across providers. Stability scores track whether positions survive re-debating. Phrases like "most scholars agree" trigger automatic rejection.'));
+    grid.appendChild(safeCard);
+
+    main.appendChild(grid);
+  }
+
+  /* ── Activity Feed ────────────────────── */
+  function viewActivity(main) {
+    main.appendChild(el('h1', { class: 'section-title' }, 'Recent Activity'));
+    main.appendChild(el('p', { class: 'section-intro' }, 'This is a living system. Here is what happened recently.'));
+
+    var items = State.manifest.recentActivity || [];
+    if (!items.length) {
+      main.appendChild(el('div', { class: 'empty-state' }, [el('p', {}, 'No recent activity recorded.')]));
+      return;
     }
 
-    root.appendChild(roundBox);
-  }
-}
-
-async function loadAndRender(claimId) {
-  const claimPath = `./data/claims/${claimId}.json`;
-  const debatePath = `./data/debates/${claimId}.json`;
-  const treePath = `./data/trees/${claimId}-tree-0001.json`;
-
-  const [claim, debate, tree] = await Promise.all([
-    loadJson(claimPath),
-    loadJson(debatePath),
-    loadJson(treePath),
-  ]);
-
-  renderClaim(claim);
-  renderTree(tree);
-  renderDebate(debate);
-}
-
-(function main() {
-  const select = document.getElementById("claimSelect");
-  const claimId = select.value;
-
-  loadAndRender(claimId).catch(err => {
-    console.error(err);
-    const claimMeta = document.getElementById("claimMeta");
-    claimMeta.innerHTML = `<span class="warn">Error:</span> ${escapeHtml(err.message)}`;
-  });
-
-  select.addEventListener("change", () => {
-    loadAndRender(select.value).catch(err => {
-      console.error(err);
+    var feed = el('div', { class: 'activity-feed' });
+    items.forEach(function (item) {
+      var row = el('div', { class: 'activity-item' });
+      row.appendChild(el('div', {}, [
+        el('div', { class: 'activity-date' }, formatDate(item.timestamp)),
+        el('div', { class: 'activity-type' }, item.type || ''),
+      ]));
+      row.appendChild(el('div', {}, [
+        el('div', { class: 'activity-note' }, item.note || ''),
+        el('div', { class: 'activity-model' }, shortModel(item.model)),
+      ]));
+      feed.appendChild(row);
     });
-  });
+    main.appendChild(feed);
+  }
+
+  /* ── Not Found ────────────────────────── */
+  function viewNotFound(main) {
+    main.appendChild(el('div', { class: 'empty-state' }, [
+      el('div', { class: 'empty-state-icon' }, '?'),
+      el('p', {}, 'Page not found.'),
+      el('p', {}, [el('a', { href: '#/' }, 'Go home')]),
+    ]));
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 6: ROUTER
+     ═══════════════════════════════════════════ */
+
+  var ROUTES = [
+    { pattern: /^#?\/?$/, view: viewLanding },
+    { pattern: /^#\/how-it-works$/, view: viewHowItWorks },
+    { pattern: /^#\/explore$/, view: viewExplore },
+    { pattern: /^#\/claim\/(.+)$/, view: viewClaimDetail, param: 'id' },
+    { pattern: /^#\/profile\/(.+)$/, view: viewProfileDetail, param: 'id' },
+    { pattern: /^#\/transparency$/, view: viewTransparency },
+    { pattern: /^#\/activity$/, view: viewActivity },
+  ];
+
+  function navigate() {
+    var hash = location.hash || '#/';
+    var main = document.getElementById('main-content');
+    main.innerHTML = '';
+
+    for (var i = 0; i < ROUTES.length; i++) {
+      var route = ROUTES[i];
+      var match = hash.match(route.pattern);
+      if (match) {
+        var params = route.param ? {} : {};
+        if (route.param && match[1]) {
+          params[route.param] = decodeURIComponent(match[1]);
+        }
+        route.view(main, params);
+        updateSidebarActive(hash);
+        window.scrollTo(0, 0);
+        return;
+      }
+    }
+    viewNotFound(main);
+    updateSidebarActive(hash);
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 7: SIDEBAR
+     ═══════════════════════════════════════════ */
+
+  function renderSidebar() {
+    var doctrinesEl = document.getElementById('sidebar-doctrines');
+    doctrinesEl.innerHTML = '';
+
+    if (!State.manifest) return;
+
+    State.manifest.doctrines.forEach(function (doctrine) {
+      var details = el('details', { class: 'sidebar-doctrine', open: '' });
+      details.appendChild(el('summary', {}, doctrine.title));
+      var list = el('div', { class: 'sidebar-claim-list' });
+      doctrine.claims.forEach(function (mc) {
+        var dimmed = State.lens && !(mc.profileOutcomes || []).some(function (o) { return o.profileId === State.lens; });
+        var link = el('a', {
+          class: 'sidebar-link sidebar-claim-link' + (dimmed ? ' dimmed' : ''),
+          href: '#/claim/' + mc.id,
+          'data-route': '#/claim/' + mc.id,
+        }, [
+          el('span', { class: 'status-dot status-dot--' + mc.status }),
+          text(mc.humanTitle),
+        ]);
+        list.appendChild(link);
+      });
+      details.appendChild(list);
+      doctrinesEl.appendChild(details);
+    });
+
+    /* profiles */
+    var profilesEl = document.getElementById('sidebar-profiles');
+    profilesEl.innerHTML = '';
+    State.manifest.profiles.forEach(function (p) {
+      profilesEl.appendChild(el('a', {
+        class: 'sidebar-link',
+        href: '#/profile/' + p.id,
+        'data-route': '#/profile/' + p.id,
+      }, p.name));
+    });
+
+    updateSidebarActive(location.hash || '#/');
+  }
+
+  function updateSidebarActive(hash) {
+    var links = document.querySelectorAll('.sidebar-link');
+    links.forEach(function (link) {
+      var route = link.getAttribute('data-route') || link.getAttribute('href');
+      if (route === hash || (hash.startsWith(route) && route.length > 2)) {
+        link.classList.add('sidebar-link--active');
+      } else {
+        link.classList.remove('sidebar-link--active');
+      }
+    });
+  }
+
+  /* sidebar toggle (mobile) */
+  function initSidebarToggle() {
+    var toggle = document.getElementById('sidebar-toggle');
+    var overlay = document.getElementById('sidebar-overlay');
+    toggle.addEventListener('click', function () {
+      document.body.classList.toggle('sidebar-open');
+    });
+    overlay.addEventListener('click', function () {
+      document.body.classList.remove('sidebar-open');
+    });
+    /* close sidebar on nav */
+    window.addEventListener('hashchange', function () {
+      document.body.classList.remove('sidebar-open');
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 8: SEARCH
+     ═══════════════════════════════════════════ */
+
+  function buildSearchIndex() {
+    var entries = [];
+    allManifestClaims().forEach(function (mc) {
+      entries.push({
+        type: 'claim',
+        title: mc.humanTitle,
+        text: (mc.humanTitle + ' ' + mc.statement + ' ' + (mc.passages || []).join(' ')).toLowerCase(),
+        href: '#/claim/' + mc.id,
+      });
+    });
+    (State.manifest.profiles || []).forEach(function (p) {
+      entries.push({
+        type: 'profile',
+        title: p.name,
+        text: (p.name + ' ' + p.tradition + ' ' + p.id).toLowerCase(),
+        href: '#/profile/' + p.id,
+      });
+    });
+    State.searchIndex = entries;
+  }
+
+  function searchQuery(term) {
+    if (!term || term.length < 2 || !State.searchIndex) return [];
+    var t = term.toLowerCase();
+    return State.searchIndex.filter(function (e) { return e.text.indexOf(t) !== -1; }).slice(0, 10);
+  }
+
+  function initSearch() {
+    var input = document.getElementById('search-input');
+    var dropdown = document.getElementById('search-results');
+    var timer;
+    var activeIdx = -1;
+
+    function renderResults(results) {
+      dropdown.innerHTML = '';
+      if (!results.length) { dropdown.hidden = true; return; }
+      dropdown.hidden = false;
+      activeIdx = -1;
+      results.forEach(function (r, i) {
+        var item = el('a', { class: 'search-result', href: r.href, 'data-idx': String(i) }, [
+          el('span', { class: 'search-result-type' }, r.type),
+          text(r.title),
+        ]);
+        dropdown.appendChild(item);
+      });
+    }
+
+    function highlight(idx) {
+      var items = dropdown.querySelectorAll('.search-result');
+      items.forEach(function (it, i) {
+        it.classList.toggle('search-result--active', i === idx);
+      });
+    }
+
+    input.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        renderResults(searchQuery(input.value.trim()));
+      }, 200);
+    });
+
+    input.addEventListener('keydown', function (e) {
+      var items = dropdown.querySelectorAll('.search-result');
+      if (e.key === 'ArrowDown') { activeIdx = Math.min(activeIdx + 1, items.length - 1); highlight(activeIdx); e.preventDefault(); }
+      else if (e.key === 'ArrowUp') { activeIdx = Math.max(activeIdx - 1, 0); highlight(activeIdx); e.preventDefault(); }
+      else if (e.key === 'Enter' && activeIdx >= 0 && items[activeIdx]) {
+        location.hash = items[activeIdx].getAttribute('href');
+        dropdown.hidden = true;
+        input.value = '';
+        input.blur();
+        e.preventDefault();
+      } else if (e.key === 'Escape') { dropdown.hidden = true; input.blur(); }
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.topbar-search')) dropdown.hidden = true;
+    });
+
+    /* clicking a result */
+    dropdown.addEventListener('click', function (e) {
+      var result = e.target.closest('.search-result');
+      if (result) {
+        input.value = '';
+        dropdown.hidden = true;
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 9: LENS
+     ═══════════════════════════════════════════ */
+
+  function filterByLens(claims) {
+    if (!State.lens) return claims.slice();
+    /* sort: relevant first, dimmed last */
+    return claims.slice().sort(function (a, b) {
+      var aRel = (a.profileOutcomes || []).some(function (o) { return o.profileId === State.lens; });
+      var bRel = (b.profileOutcomes || []).some(function (o) { return o.profileId === State.lens; });
+      if (aRel && !bRel) return -1;
+      if (!aRel && bRel) return 1;
+      return 0;
+    });
+  }
+
+  function initLens() {
+    var select = document.getElementById('lens-select');
+    (State.manifest.profiles || []).forEach(function (p) {
+      select.appendChild(el('option', { value: p.id }, p.name));
+    });
+    /* restore */
+    var saved = sessionStorage.getItem('opus-lens');
+    if (saved) { select.value = saved; State.lens = saved; }
+
+    select.addEventListener('change', function () {
+      State.lens = select.value;
+      if (select.value) sessionStorage.setItem('opus-lens', select.value);
+      else sessionStorage.removeItem('opus-lens');
+      renderSidebar();
+      navigate();
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 10: BOOT
+     ═══════════════════════════════════════════ */
+
+  function boot() {
+    loadManifest().then(function () {
+      renderSidebar();
+      buildSearchIndex();
+      initLens();
+      initSearch();
+      initSidebarToggle();
+
+      window.addEventListener('hashchange', navigate);
+      navigate();
+    }).catch(function (err) {
+      var main = document.getElementById('main-content');
+      main.innerHTML = '';
+      main.appendChild(el('div', { class: 'empty-state' }, [
+        el('div', { class: 'empty-state-icon' }, '!'),
+        el('p', {}, 'Failed to load manifest: ' + err.message),
+      ]));
+    });
+  }
+
+  boot();
 })();

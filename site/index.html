@@ -3,66 +3,66 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ralph — Phase 1 Node</title>
+  <title>Opus Rationalis</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="container">
-      <h1>Ralph</h1>
-      <p class="subtitle">Phase 1 — single-node proof of concept (static snapshot renderer)</p>
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle navigation">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+    </button>
+    <a href="#/" class="topbar-brand">Opus Rationalis</a>
+    <div class="topbar-search">
+      <input type="search" id="search-input" placeholder="Search claims, passages, profiles..." autocomplete="off" />
+      <div id="search-results" class="search-dropdown" hidden></div>
+    </div>
+    <div class="topbar-lens">
+      <label for="lens-select" class="sr-only">Profile lens</label>
+      <select id="lens-select">
+        <option value="">All traditions</option>
+      </select>
     </div>
   </header>
 
-  <main class="container">
-    <section class="panel">
-      <h2>Claim</h2>
-      <div class="row">
-        <label for="claimSelect">Select claim</label>
-        <select id="claimSelect">
-          <option value="romans-3-24-dikaioo-forensic">romans-3-24-dikaioo-forensic</option>
-        </select>
+  <!-- Layout -->
+  <div class="layout">
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Left Sidebar -->
+    <nav id="sidebar" class="sidebar" aria-label="Main navigation">
+      <div class="sidebar-section">
+        <a href="#/" class="sidebar-link" data-route="#/">Home</a>
+        <a href="#/how-it-works" class="sidebar-link" data-route="#/how-it-works">How It Works</a>
+        <a href="#/explore" class="sidebar-link" data-route="#/explore">Explore Claims</a>
       </div>
+      <div class="sidebar-section" id="sidebar-doctrines">
+        <!-- Dynamically rendered: doctrines > claims -->
+      </div>
+      <div class="sidebar-section">
+        <h3 class="sidebar-heading">Profiles</h3>
+        <div id="sidebar-profiles">
+          <!-- Dynamically rendered from profile data -->
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <h3 class="sidebar-heading">System</h3>
+        <a href="#/transparency" class="sidebar-link" data-route="#/transparency">Transparency</a>
+        <a href="#/activity" class="sidebar-link" data-route="#/activity">Activity</a>
+      </div>
+    </nav>
 
-      <div id="claimMeta" class="meta"></div>
-      <div id="claimStatement" class="statement"></div>
-
-      <h3>Passage set</h3>
-      <div id="passages" class="passages"></div>
-
-      <details class="details">
-        <summary>Data provenance (snapshot)</summary>
-        <p>
-          This page loads JSON snapshots from <code>/site/data/</code> so it works on GitHub Pages without build tooling.
-          Canonical project artifacts live under <code>/claims</code> and <code>/debates</code> in the repository.
-        </p>
-      </details>
-    </section>
-
-    <section class="panel">
-      <h2>Resolution Tree</h2>
-      <p class="muted">
-        A structured analysis localizing disagreement between traditions to specific hermeneutical priors and textual decisions.
-        Higher stability indicates the same position survives across multiple independent re-debatings.
-      </p>
-      <div id="tree" class="tree"></div>
-    </section>
-
-    <section class="panel">
-      <h2>Debate checkpoint</h2>
-      <p class="muted">
-        This is a checkpoint transcript snapshot (Round 1 seeded). It is not yet normalized into a
-        <code>schemas/debate.json</code>-valid artifact, and citation IDs are not yet canonicalized.
-      </p>
-      <div id="debate" class="debate"></div>
-    </section>
-  </main>
+    <!-- Main Content -->
+    <main id="main-content" class="main">
+      <!-- Router renders views here -->
+    </main>
+  </div>
 
   <footer class="footer">
-    <div class="container">
-      <p class="muted">
-        Generated from repository contents. No claims are presented as settled without resolution trees and profile-conditioned traces.
-      </p>
+    <div class="footer-inner">
+      <p>No claims are presented as settled without resolution trees and profile-conditioned traces.</p>
+      <a href="https://github.com/dmayk/opusrationalis" target="_blank" rel="noopener">GitHub</a>
     </div>
   </footer>
 

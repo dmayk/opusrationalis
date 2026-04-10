@@ -1,0 +1,138 @@
+{
+  "id": "eastern-orthodox-chalcedonian",
+  "name": "Eastern Orthodox (Chalcedonian)",
+  "tradition": "Eastern Orthodox",
+  "description": "An Eastern Orthodox profile grounded in the seven ecumenical councils (Nicaea I through Nicaea II), the patristic consensus, and the liturgical-sacramental tradition of the Orthodox Church. Scripture is the highest written expression of Holy Tradition, not a separate source standing over against it. Interpretation is ecclesial: the Bible was written by the Church, within the Church, and for the Church, and can only be rightly understood within the living liturgical and ascetic life of the Church. The method of theoria — a spiritual vision that perceives the deeper divine reality within the historical text — supplements and transcends purely historical-grammatical analysis. The goal of all interpretation is theosis (deification): bringing the reader into communion with God. The Septuagint holds priority as the Old Testament of the Church, received and quoted by the Apostles and Fathers.",
+  "canon": {
+    "tradition": "eastern-orthodox",
+    "notes": "The Orthodox OT canon follows the Septuagint and is broader than both the Protestant (66 books) and Catholic (73 books) canons. It includes the deuterocanonical books recognized by Rome plus additional texts such as 1 Esdras, 3 Maccabees, the Prayer of Manasseh, and Psalm 151. The precise boundaries of the OT canon have not been defined by a single binding ecumenical council with the same precision as Trent; there is some variation among Orthodox national churches (e.g., the Greek, Russian, and Ethiopian traditions). The NT canon of 27 books is universally received. The Synod of Jerusalem (1672, Confession of Dositheus) affirmed the deuterocanonical books as canonical."
+  },
+  "text_base": {
+    "ot_primary": "septuagint-rahlfs",
+    "ot_secondary": ["masoretic-bhs", "dead-sea-scrolls"],
+    "nt_primary": "byzantine-majority",
+    "nt_secondary": ["na28", "textus-receptus", "peshitta"],
+    "variant_positions": [
+      {
+        "reference": "1 John 5:7-8",
+        "variant_name": "comma-johanneum",
+        "position": "interpolation",
+        "notes": "Not present in the Byzantine manuscript tradition and not part of the received Orthodox text. The Trinitarian doctrine is firmly established from the ecumenical councils and does not depend on this verse."
+      },
+      {
+        "reference": "Mark 16:9-20",
+        "variant_name": "longer-ending-mark",
+        "position": "authentic",
+        "notes": "The longer ending is present in the Byzantine text tradition, is read liturgically in the Orthodox Church, and is treated as canonical Scripture."
+      },
+      {
+        "reference": "John 7:53-8:11",
+        "variant_name": "pericope-adulterae",
+        "position": "authentic",
+        "notes": "Present in the Byzantine text tradition and received as canonical in Orthodox liturgical use. Included in the standard Orthodox NT."
+      }
+    ],
+    "notes": "The Septuagint holds a place of primacy as the OT of the early Church: it is the text quoted by the NT authors and the Fathers, and it is the basis of the Orthodox liturgical readings. The Masoretic Text is a secondary witness. For the NT, the Byzantine/Majority textform is the received text of the Orthodox Church, preserved in the liturgical tradition. Modern critical editions (NA28) are consulted as scholarly tools but do not override the received ecclesiastical text."
+  },
+  "authority_model": {
+    "position": "scripture-and-tradition",
+    "notes": "Scripture is the highest written expression of Holy Tradition, not a separate authority standing above or alongside Tradition. The Orthodox reject both sola scriptura (Scripture apart from the Church's living Tradition) and the Roman Catholic model of a juridical Magisterium with authority to define doctrine independently. Instead, truth is preserved in the consensus of the Church (consensus patrum and consensus ecclesiae), expressed through the ecumenical councils, the liturgy, the writings of the Fathers, the canons, and the lives of the saints. Georges Florovsky: 'The Church is the authentic interpreter of Scripture, not because it has been granted some special juridical authority, but because the Church is the pillar and ground of the truth (1 Tim 3:15) — the living Body of Christ in which the Holy Spirit dwells and operates.' The Confession of Dositheus (1672), Decree 2: 'We believe the Scriptures to be taught by God... but the authority of the Church is not less than that of the Scriptures, inasmuch as the same Holy Spirit is the source of both.'"
+  },
+  "interpretive_method": {
+    "primary": "theoria",
+    "secondary": ["typological", "historical-grammatical", "literary"],
+    "notes": "Theoria is the patristic method of spiritual contemplation whereby the interpreter, illumined by the Holy Spirit and purified through ascetic struggle, perceives the deeper divine meaning within and beyond the historical-literal sense. It is not allegory in the Alexandrian speculative sense (though elements of Alexandrian and Antiochene methods coexist in the patristic synthesis), but rather a spiritual vision that sees the eschatological and Christological reality to which the text points. John Breck describes theoria as the interpretive method that 'perceives within the historical events and literal expressions of Scripture the presence and activity of God, culminating in Christ.' The historical-grammatical sense is respected as the foundation but is never treated as exhaustive. As St. Athanasius wrote: 'One cannot possibly understand the teaching of the saints unless one has a pure mind and is trying to imitate their life.' Holiness is an epistemological prerequisite."
+  },
+  "rule_of_faith": {
+    "creeds": [
+      "nicene-constantinopolitan-381",
+      "chalcedonian-451",
+      "apostles",
+      "athanasian"
+    ],
+    "confessions": [
+      {
+        "name": "Confession of Dositheus (Synod of Jerusalem 1672)",
+        "authority_level": "normative"
+      },
+      {
+        "name": "Longer Catechism of Philaret of Moscow",
+        "authority_level": "instructive"
+      },
+      {
+        "name": "Encyclical of the Eastern Patriarchs (1848)",
+        "authority_level": "instructive"
+      }
+    ],
+    "councils": [
+      {
+        "name": "Nicaea I",
+        "authority_level": "binding"
+      },
+      {
+        "name": "Constantinople I",
+        "authority_level": "binding"
+      },
+      {
+        "name": "Ephesus",
+        "authority_level": "binding"
+      },
+      {
+        "name": "Chalcedon",
+        "authority_level": "binding"
+      },
+      {
+        "name": "Constantinople II",
+        "authority_level": "binding"
+      },
+      {
+        "name": "Constantinople III",
+        "authority_level": "binding"
+      },
+      {
+        "name": "Nicaea II",
+        "authority_level": "binding"
+      },
+      {
+        "name": "Quinisext (Trullo)",
+        "authority_level": "normative"
+      }
+    ],
+    "notes": "The seven ecumenical councils (Nicaea I, 325 through Nicaea II, 787) are universally binding. Their dogmatic definitions are irreformable expressions of the faith. Unlike the Catholic model, the Orthodox do not recognize a single juridical authority (pope or magisterium) that can define doctrine independently of an ecumenical council. The patristic consensus (consensus patrum) — not necessarily unanimity, but the broad agreement of the Fathers on matters of faith — functions as the interpretive framework. The Quinisext Council (692) is treated as normatively binding for its canonical and liturgical decisions, though it addressed no new dogmatic questions. Post-schism councils and confessions (Dositheus, Philaret) carry normative or instructive weight but are not equivalent to ecumenical councils."
+  },
+  "testament_relation": {
+    "position": "promise-fulfillment",
+    "notes": "The Orthodox view is broadly typological and Christocentric: the Old Testament is read as preparation for and prophecy of Christ, and the New Testament is its fulfillment. The OT patriarchs, prophets, events, and institutions are types of Christ and the Church. However, the Orthodox do not employ the specific Reformed covenant-of-works / covenant-of-grace schema, nor the dispensationalist framework. The continuity between the Testaments is understood through the single divine economy (oikonomia) of salvation. The Septuagint as the Church's OT ensures that the Greek theological vocabulary of the NT is continuous with the OT it cites."
+  },
+  "inspiration_model": {
+    "position": "dynamic",
+    "inerrancy": null,
+    "notes": "The Orthodox affirm that Scripture is divinely inspired ('God-breathed', theopneustos, 2 Tim 3:16) and that the Holy Spirit guided the human authors. However, Orthodox theology generally avoids the Protestant inerrancy/infallibility debate as a Western problematic framed in categories foreign to the Eastern tradition. The emphasis is on the Scripture's salvific truth and its role within the living Tradition of the Church, rather than on formal propositions about errorlessness. As Florovsky writes: 'Scripture is the Word of God, but it is not a book of oracles. It is the book of the Church.' The human authors' personalities, literary styles, and historical contexts are genuine, not overridden. Inspiration is understood within the broader context of the Church's life in the Spirit, not as a mechanical dictation."
+  },
+  "clarity_hierarchy": {
+    "general_principle": "Scripture is interpreted within the living Tradition of the Church, guided by the patristic consensus and the liturgical life. The rule of prayer is the rule of faith (lex orandi, lex credendi). When passages appear to conflict, the dogmatic definitions of the ecumenical councils and the consensus of the Fathers provide the authoritative framework for resolution. The Christological and eschatological dimensions perceived through theoria illuminate how texts relate to one another.",
+    "specific_priorities": [
+      {
+        "domain": "justification",
+        "controlling_passages": ["Rom 3:21-5:1", "Jas 2:14-26", "2 Pet 1:3-11", "2 Cor 3:18", "Rom 8:29-30"],
+        "subordinate_passages": [],
+        "rationale": "The Orthodox do not typically frame soteriology as a justification debate between Paul and James. Instead, salvation is understood as theosis — the progressive transformation of the whole person into the likeness of God by participation in the divine energies. Romans and James are complementary witnesses to different aspects of a single saving process that includes faith, repentance, baptism, the reception of the Holy Spirit, growth in virtue, and ongoing participation in the sacramental life of the Church. The forensic-transformative dichotomy is itself considered a Western problematic. 2 Peter 1:4 ('partakers of the divine nature') and 2 Cor 3:18 ('being transformed into the same image from one degree of glory to another') are central to the Orthodox soteriological vision."
+      },
+      {
+        "domain": "divine-sovereignty-and-human-agency",
+        "controlling_passages": ["Rom 8:28-39", "1 Tim 2:4", "2 Pet 3:9", "John 3:16", "Deut 30:19"],
+        "subordinate_passages": [],
+        "rationale": "The Orthodox affirm both God's sovereign providence and genuine human freedom (synergeia). The divine will is truly universal ('God desires all people to be saved', 1 Tim 2:4) and human beings possess genuine capacity to cooperate with or resist divine grace. Predestination is understood as God's foreknowledge of human response, not as unconditional unilateral election. The Greek Fathers (especially Chrysostom, John of Damascus) consistently maintained this synergistic position. No passage is subordinated; rather, the whole witness is read through the patristic lens of divine-human cooperation."
+      }
+    ],
+    "notes": "The Orthodox approach resists systematization into a single controlling-passage hierarchy. The liturgical lectionary — which determines which passages the Church reads together and in what seasons — is itself an interpretive act. The patristic homilies on these lectionary readings form the living commentary tradition. Where Western traditions may resolve tensions by subordinating one author to another, the Orthodox preference is to hold them in creative tension within the larger mystery (mysterion) of salvation."
+  },
+  "version_history": [
+    {
+      "commit_sha": "PENDING",
+      "timestamp": "2026-04-08T00:00:00Z",
+      "author_model": "anthropic/claude-opus-4.6",
+      "note": "Initial creation. Profile grounded in seven ecumenical councils, Confession of Dositheus (1672), patristic consensus, and Orthodox hermeneutical principles from Florovsky, Breck, and OrthodoxWiki synthesis."
+    }
+  ]
+}
