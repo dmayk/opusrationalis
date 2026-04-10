@@ -36,37 +36,30 @@
 
   function text(s) { return document.createTextNode(s); }
 
-  var PROFILE_LABELS = {
-    'reformed-westminster': 'Reformed',
-    'catholic-tridentine': 'Catholic',
-    'eastern-orthodox-chalcedonian': 'Orthodox',
-  };
-  var OUTCOME_LABELS = {
-    'supports_claim': 'Supports',
-    'rejects_claim': 'Rejects',
-    'conditionally_supports': 'Conditional',
-  };
-  var ROLE_LABELS = {
-    'proponent': 'Proponent',
-    'opponent': 'Opponent',
-    'red_team': 'Red Team',
-    'referee': 'Referee',
-  };
-  var AXIS_LABELS = {
-    'canon': 'Canon',
-    'text_base': 'Text Base',
-    'authority_model': 'Authority Model',
-    'interpretive_method': 'Interpretive Method',
-    'rule_of_faith': 'Rule of Faith',
-    'testament_relation': 'Testament Relation',
-    'inspiration_model': 'Inspiration Model',
-    'clarity_hierarchy': 'Clarity Hierarchy',
-  };
-  var AXES_ORDER = ['canon', 'text_base', 'authority_model', 'interpretive_method',
-    'rule_of_faith', 'testament_relation', 'inspiration_model', 'clarity_hierarchy'];
+  /* Humanize any ID: "reformed-westminster" → "Reformed Westminster",
+     "supports_claim" → "Supports Claim", "red_team" → "Red Team".
+     Works for profiles, outcomes, roles, axes — anything. */
+  function humanize(id) {
+    if (!id) return '';
+    return id
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
 
-  function profileLabel(id) { return PROFILE_LABELS[id] || id; }
-  function outcomeLabel(o) { return OUTCOME_LABELS[o] || o; }
+  /* Profile label: use the name from the manifest if loaded, else humanize the ID */
+  function profileLabel(id) {
+    if (State.manifest && State.manifest.profiles) {
+      var match = State.manifest.profiles.find(function (p) { return p.id === id; });
+      if (match && match.name) return match.name;
+    }
+    /* Short fallback: strip common suffixes for compactness */
+    return humanize(id.replace(/-westminster|-tridentine|-chalcedonian|-augsburg/g, ''));
+  }
+
+  function outcomeLabel(o) {
+    /* Strip the _claim suffix for cleaner display */
+    return humanize((o || '').replace(/_claim$/, ''));
+  }
   function shortModel(m) { return m ? m.replace(/^[^/]+\//, '') : ''; }
   function formatDate(iso) {
     if (!iso) return '';
@@ -231,11 +224,11 @@
     /* summary */
     box.appendChild(el('p', { class: 'tree-node-summary' }, node.summary || ''));
 
-    /* profile scope pills */
+    /* profile scope pills (neutral style — these show which profiles are in scope, not outcomes) */
     if (node.profiles_in_scope && node.profiles_in_scope.length) {
       var pills = el('div', { class: 'pills' });
       node.profiles_in_scope.forEach(function (pid) {
-        pills.appendChild(el('span', { class: 'pill pill--supports_claim' }, [
+        pills.appendChild(el('span', { class: 'pill pill--scope' }, [
           el('span', { class: 'pill-name' }, profileLabel(pid)),
         ]));
       });
@@ -672,11 +665,20 @@
       main.appendChild(el('h2', { class: 'section-title', style: 'margin-top:24px' }, 'Hermeneutical Axes'));
       var grid = el('div', { class: 'axes-grid' });
 
-      AXES_ORDER.forEach(function (axisKey) {
+      /* Dynamically discover axes: any key in the profile that is an object
+         with a 'position', 'notes', 'tradition', or 'primary' field */
+      var skipKeys = { id:1, name:1, tradition:1, description:1, version_history:1 };
+      var axisKeys = Object.keys(profile).filter(function (k) {
+        if (skipKeys[k]) return false;
+        var v = profile[k];
+        return v && typeof v === 'object' && !Array.isArray(v);
+      });
+
+      axisKeys.forEach(function (axisKey) {
         var axis = profile[axisKey];
         if (!axis) return;
         var card = el('div', { class: 'axis-card' });
-        card.appendChild(el('h3', {}, AXIS_LABELS[axisKey] || axisKey));
+        card.appendChild(el('h3', {}, humanize(axisKey)));
 
         /* position */
         var position = axis.position || axis.tradition || axis.primary || axis.general_principle || '';

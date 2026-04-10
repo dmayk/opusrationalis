@@ -15,6 +15,24 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE_DATA = os.path.join(REPO_ROOT, "site", "data")
 
 
+def get_repo_url():
+    """Derive the GitHub repo URL from git remote, fallback to empty string."""
+    import subprocess
+    try:
+        url = subprocess.check_output(
+            ["git", "config", "--get", "remote.origin.url"],
+            cwd=REPO_ROOT, text=True
+        ).strip()
+        # Convert SSH URLs to HTTPS
+        if url.startswith("git@github.com:"):
+            url = "https://github.com/" + url[len("git@github.com:"):].removesuffix(".git")
+        elif url.endswith(".git"):
+            url = url.removesuffix(".git")
+        return url
+    except Exception:
+        return ""
+
+
 def load_json(path):
     with open(path) as f:
         return json.load(f)
@@ -75,34 +93,58 @@ def load_doctrines():
 
 
 def find_debate_for_claim(claim_id):
-    """Find the best debate file for a claim, handling inconsistent directory naming."""
+    """Find the best debate file for a claim, handling inconsistent directory and file naming."""
     debates_dir = os.path.join(REPO_ROOT, "debates")
     if not os.path.isdir(debates_dir):
         return None
 
-    # Try exact match first
-    exact = os.path.join(debates_dir, claim_id, "debate-0001.json")
-    if os.path.exists(exact):
-        return load_json(exact)
+    def normalize(s):
+        return s.replace("_", "-").replace(":", "-").lower()
 
-    # Search all debate directories for a file whose claim_id matches
-    for ddir in sorted(os.listdir(debates_dir)):
-        dpath = os.path.join(debates_dir, ddir, "debate-0001.json")
-        if os.path.exists(dpath):
-            d = load_json(dpath)
-            cid = d.get("claim_id", "")
-            # Normalize for comparison (handle hyphens vs underscores)
-            if cid.replace("_", "-").replace(":", "-") == claim_id.replace("_", "-").replace(":", "-"):
-                return d
+    def find_debate_json_in(dirpath):
+        """Find any debate JSON in a directory (not manifests)."""
+        candidates = sorted(glob.glob(os.path.join(dirpath, "*.json")))
+        for c in candidates:
+            fname = os.path.basename(c)
+            if "manifest" in fname:
+                continue
+            try:
+                d = load_json(c)
+                # Must look like a debate (has rounds or arguments)
+                if d.get("rounds") or d.get("arguments") or d.get("claim_id"):
+                    return d
+            except Exception:
+                continue
+        return None
 
-    # Fallback: directory name contains the claim id (partial match)
+    # Strategy 1: exact directory name match
+    exact_dir = os.path.join(debates_dir, claim_id)
+    if os.path.isdir(exact_dir):
+        result = find_debate_json_in(exact_dir)
+        if result:
+            return result
+
+    # Strategy 2: search all directories — match on claim_id field in the JSON
+    norm_claim = normalize(claim_id)
     for ddir in sorted(os.listdir(debates_dir)):
-        normalized_dir = ddir.replace("_", "-")
-        normalized_claim = claim_id.replace("_", "-")
-        if normalized_claim in normalized_dir or normalized_dir in normalized_claim:
-            dpath = os.path.join(debates_dir, ddir, "debate-0001.json")
-            if os.path.exists(dpath):
-                return load_json(dpath)
+        dirpath = os.path.join(debates_dir, ddir)
+        if not os.path.isdir(dirpath):
+            continue
+        # Check if any debate file in this dir references our claim
+        result = find_debate_json_in(dirpath)
+        if result and normalize(result.get("claim_id", "")) == norm_claim:
+            return result
+
+    # Strategy 3: fuzzy directory name match
+    for ddir in sorted(os.listdir(debates_dir)):
+        dirpath = os.path.join(debates_dir, ddir)
+        if not os.path.isdir(dirpath):
+            continue
+        norm_dir = normalize(ddir)
+        if norm_claim in norm_dir or norm_dir in norm_claim:
+            result = find_debate_json_in(dirpath)
+            if result:
+                return result
 
     return None
 
@@ -281,7 +323,7 @@ def build_bundle():
             "doctrines": manifest_doctrines,
             "profiles": profile_summaries,
             "system": {
-                "repoUrl": "https://github.com/dmayk/opusrationalis",
+                "repoUrl": get_repo_url(),
             },
         },
         "claims": claims,
