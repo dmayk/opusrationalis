@@ -1,0 +1,33 @@
+{
+  "claim_id": "james-2-24_rom-3-28_dikaioo-compatibility",
+  "profiles": ["reformed", "catholic", "eastern-orthodox"],
+  "rounds": [
+    {
+      "phase": "proponent-opening",
+      "arguments": [
+        {
+          "role": "reformed-proponent",
+          "statement": "James 2:24 and Romans 3:28 use δικαιόω in complementary forensic senses when harmonized through Calvin's doctrine of synergistic justification.",
+          "citations": [
+            {
+              "source": "Calvin.Institutes.3.11.6",
+              "text": "...we are justified, not by the infusion of righteousness, but by pardon... works follow in the course of justification...",
+              "corpus_ref": "corpora/historical/Calvin/Institutes-of-the-Christian-Religion-III.xi.6.md"
+            },
+            {
+              "source": "KJV",
+              "text": "Ye see then how that by works a man is justified, and not by faith only.",
+              "verses": ["James 2:24"]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "resolution_status": "active",
+  "metadata": {
+    "created": "2026-04-17",
+    "model": "amazon/nova-premier-v1",
+    "schema_ref": "schemas/debate.json#v1.2"
+  }
+}
