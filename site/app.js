@@ -490,7 +490,7 @@
   /* ── How It Works ─────────────────────── */
   function viewHowItWorks(main) {
     main.appendChild(el('h1', { class: 'section-title' }, 'How It Works'));
-    main.appendChild(el('p', { class: 'section-intro' }, 'The system advances autonomously, one step per iteration, running four times daily across multiple AI model families.'));
+    main.appendChild(el('p', { class: 'section-intro' }, 'The system advances autonomously, one step per iteration, running twice daily across multiple AI model families.'));
 
     var steps = [
       { n: '1', title: 'A claim is defined', desc: 'A narrow theological question is extracted from scripture. Not "what is justification?" but "does the Greek verb \u03B4\u03B9\u03BA\u03B1\u03B9\u03CC\u03C9 in Romans 3:24 carry a forensic or transformative sense?"' },

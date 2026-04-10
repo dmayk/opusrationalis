@@ -275,6 +275,7 @@ code {
 .main {
   padding: 32px;
   max-width: calc(var(--content-max) + 64px);
+  overflow: hidden;
 }
 
 /* ── Footer ─────────────────────────────── */
@@ -993,7 +994,8 @@ details.section-details > .details-content { padding: 0 16px 16px; }
 }
 @media (max-width: 768px) {
   .sidebar-toggle { display: flex; }
-  .topbar-search { max-width: 200px; }
+  .topbar-search { display: none; }
+  .topbar-lens { display: none; }
   .layout { padding-left: 0; }
   .sidebar {
     transform: translateX(-100%);
