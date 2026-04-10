@@ -917,6 +917,7 @@ code {
   border-radius: var(--radius-sm);
   font-size: var(--text-xs);
 }
+.activity-item--noop { opacity: 0.5; }
 .activity-date {
   font-family: var(--font-mono);
   color: var(--text-dim);

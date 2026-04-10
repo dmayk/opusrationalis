@@ -85,6 +85,7 @@
     trees: {},
     debates: {},
     profiles: {},
+    runsIndex: null,
     lens: '',
     searchIndex: null,
   };
@@ -136,6 +137,16 @@
     return loadJson('./data/profiles/' + id + '.json').then(function (d) {
       State.profiles[id] = d;
       return d;
+    });
+  }
+
+  function loadRunsIndex() {
+    if (State.runsIndex) return Promise.resolve(State.runsIndex);
+    return loadJson('./data/runs/index.json').then(function (d) {
+      State.runsIndex = d.sort(function (a, b) {
+        return b.timestamp.localeCompare(a.timestamp);
+      });
+      return State.runsIndex;
     });
   }
 
@@ -714,70 +725,149 @@
     main.appendChild(el('p', { class: 'section-intro' }, 'Every output is tagged with the model, run, and commit that produced it. Nothing is hidden.'));
 
     var sys = State.manifest.system || {};
-    var grid = el('div', { class: 'transparency-grid' });
+    var loading = el('p', { class: 'tree-depends' }, 'Loading run data...');
+    main.appendChild(loading);
 
-    /* stats */
-    var statsCard = el('div', { class: 'transparency-card' });
-    statsCard.appendChild(el('h3', {}, 'System Stats'));
-    statsCard.appendChild(el('div', { class: 'stat-number' }, String(sys.totalRuns || 0)));
-    statsCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs);margin:0' }, 'autonomous iterations completed'));
-    if (sys.lastRunAt) {
-      statsCard.appendChild(el('p', { style: 'color:var(--text-dim);font-size:var(--text-xs);margin:4px 0 0' }, 'Last run: ' + formatDate(sys.lastRunAt)));
-    }
-    grid.appendChild(statsCard);
+    loadRunsIndex().then(function (runs) {
+      loading.remove();
 
-    /* models */
-    var modelsCard = el('div', { class: 'transparency-card' });
-    modelsCard.appendChild(el('h3', {}, 'Model Rotation'));
-    modelsCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs);margin-bottom:8px' }, 'Models rotate across providers to prevent single-model bias.'));
-    var ul = el('ul', { class: 'model-list' });
-    (sys.modelsUsed || []).forEach(function (m) { ul.appendChild(el('li', {}, m)); });
-    modelsCard.appendChild(ul);
-    grid.appendChild(modelsCard);
+      /* derive stats from runs */
+      var totalRuns = runs.length;
+      var lastRun = runs.length ? runs[0] : null;
+      var productiveRuns = runs.filter(function (r) { return r.filesChanged > 0; }).length;
 
-    /* source code */
-    var sourceCard = el('div', { class: 'transparency-card' });
-    sourceCard.appendChild(el('h3', {}, 'Open Source'));
-    sourceCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs)' }, 'The entire project \u2014 schemas, debate transcripts, resolution trees, prompts, and the agent runner \u2014 is open source. Every artifact is diffable and reproducible from the repository alone.'));
-    if (sys.repoUrl) {
-      sourceCard.appendChild(el('a', { href: sys.repoUrl, target: '_blank', rel: 'noopener' }, 'View on GitHub \u2192'));
-    }
-    grid.appendChild(sourceCard);
+      /* derive unique models with counts, grouped by provider */
+      var modelCounts = {};
+      var providerModels = {};
+      runs.forEach(function (r) {
+        if (!r.model) return;
+        modelCounts[r.model] = (modelCounts[r.model] || 0) + 1;
+        var provider = r.model.split('/')[0];
+        if (!providerModels[provider]) providerModels[provider] = {};
+        providerModels[provider][r.model] = (providerModels[provider][r.model] || 0) + 1;
+      });
+      var uniqueModels = Object.keys(modelCounts).sort();
+      var providers = Object.keys(providerModels).sort();
 
-    /* safeguards */
-    var safeCard = el('div', { class: 'transparency-card' });
-    safeCard.appendChild(el('h3', {}, 'Anti-Collapse Safeguards'));
-    safeCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs)' }, 'Red team challenges premature consensus. Models rotate across providers. Stability scores track whether positions survive re-debating. Phrases like "most scholars agree" trigger automatic rejection.'));
-    grid.appendChild(safeCard);
+      var grid = el('div', { class: 'transparency-grid' });
 
-    main.appendChild(grid);
+      /* stats card */
+      var statsCard = el('div', { class: 'transparency-card' });
+      statsCard.appendChild(el('h3', {}, 'System Stats'));
+      statsCard.appendChild(el('div', { class: 'stat-number' }, String(totalRuns)));
+      statsCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs);margin:0' }, 'autonomous iterations completed'));
+      statsCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs);margin:4px 0 0' }, productiveRuns + ' productive runs (' + Math.round(productiveRuns / totalRuns * 100) + '% commit rate)'));
+      if (lastRun) {
+        statsCard.appendChild(el('p', { style: 'color:var(--text-dim);font-size:var(--text-xs);margin:4px 0 0' }, 'Last run: ' + formatDate(lastRun.timestamp)));
+      }
+      statsCard.appendChild(el('p', { style: 'color:var(--text-dim);font-size:var(--text-xs);margin:4px 0 0' }, uniqueModels.length + ' unique models from ' + providers.length + ' providers'));
+      grid.appendChild(statsCard);
+
+      /* source code card */
+      var sourceCard = el('div', { class: 'transparency-card' });
+      sourceCard.appendChild(el('h3', {}, 'Open Source'));
+      sourceCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs)' }, 'The entire project \u2014 schemas, debate transcripts, resolution trees, prompts, and the agent runner \u2014 is open source. Every artifact is diffable and reproducible from the repository alone.'));
+      if (sys.repoUrl) {
+        sourceCard.appendChild(el('a', { href: sys.repoUrl, target: '_blank', rel: 'noopener' }, 'View on GitHub \u2192'));
+      }
+      grid.appendChild(sourceCard);
+
+      /* safeguards card */
+      var safeCard = el('div', { class: 'transparency-card' });
+      safeCard.appendChild(el('h3', {}, 'Anti-Collapse Safeguards'));
+      safeCard.appendChild(el('p', { style: 'color:var(--text-secondary);font-size:var(--text-xs)' }, 'Red team challenges premature consensus. Models rotate across providers. Stability scores track whether positions survive re-debating. Phrases like "most scholars agree" trigger automatic rejection.'));
+      grid.appendChild(safeCard);
+
+      main.appendChild(grid);
+
+      /* full model roster — grouped by provider */
+      main.appendChild(el('h2', { class: 'section-title', style: 'margin-top:32px' }, 'All Models'));
+      main.appendChild(el('p', { class: 'section-intro' }, 'Every model that has ever participated in Opus Rationalis, grouped by provider. Run counts reflect total iterations, not just productive commits.'));
+
+      var modelsGrid = el('div', { class: 'transparency-grid' });
+      providers.forEach(function (provider) {
+        var card = el('div', { class: 'transparency-card' });
+        card.appendChild(el('h3', { style: 'text-transform:capitalize' }, provider));
+        var models = providerModels[provider];
+        var sortedModels = Object.keys(models).sort(function (a, b) { return models[b] - models[a]; });
+        var ul = el('ul', { class: 'model-list' });
+        sortedModels.forEach(function (m) {
+          var li = el('li');
+          li.appendChild(el('span', {}, shortModel(m)));
+          li.appendChild(text(' '));
+          li.appendChild(el('span', { style: 'color:var(--text-dim)' }, '\u00D7' + models[m]));
+          ul.appendChild(li);
+        });
+        card.appendChild(ul);
+        modelsGrid.appendChild(card);
+      });
+      main.appendChild(modelsGrid);
+    });
   }
 
-  /* ── Activity Feed ────────────────────── */
-  function viewActivity(main) {
-    main.appendChild(el('h1', { class: 'section-title' }, 'Recent Activity'));
-    main.appendChild(el('p', { class: 'section-intro' }, 'This is a living system. Here is what happened recently.'));
+  /* ── Activity Feed (paginated, from runs) ─ */
+  var ACTIVITY_PAGE_SIZE = 15;
 
-    var items = State.manifest.recentActivity || [];
-    if (!items.length) {
-      main.appendChild(el('div', { class: 'empty-state' }, [el('p', {}, 'No recent activity recorded.')]));
-      return;
-    }
+  function viewActivity(main, params) {
+    var page = parseInt((params && params.page) || '1', 10) || 1;
 
-    var feed = el('div', { class: 'activity-feed' });
-    items.forEach(function (item) {
-      var row = el('div', { class: 'activity-item' });
-      row.appendChild(el('div', {}, [
-        el('div', { class: 'activity-date' }, formatDate(item.timestamp)),
-        el('div', { class: 'activity-type' }, item.type || ''),
-      ]));
-      row.appendChild(el('div', {}, [
-        el('div', { class: 'activity-note' }, item.note || ''),
-        el('div', { class: 'activity-model' }, shortModel(item.model)),
-      ]));
-      feed.appendChild(row);
+    main.appendChild(el('h1', { class: 'section-title' }, 'Activity Log'));
+    main.appendChild(el('p', { class: 'section-intro' }, 'Every autonomous iteration, sourced directly from the run logs. This is a living system.'));
+
+    var loading = el('p', { class: 'tree-depends' }, 'Loading runs...');
+    main.appendChild(loading);
+
+    loadRunsIndex().then(function (runs) {
+      loading.remove();
+
+      var totalPages = Math.ceil(runs.length / ACTIVITY_PAGE_SIZE);
+      if (page > totalPages) page = totalPages;
+      if (page < 1) page = 1;
+      var start = (page - 1) * ACTIVITY_PAGE_SIZE;
+      var pageRuns = runs.slice(start, start + ACTIVITY_PAGE_SIZE);
+
+      /* summary bar */
+      var summary = el('div', { style: 'display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:var(--text-xs);color:var(--text-secondary)' });
+      summary.appendChild(el('span', {}, runs.length + ' total runs \u2022 Page ' + page + ' of ' + totalPages));
+      main.appendChild(summary);
+
+      /* run list */
+      var feed = el('div', { class: 'activity-feed' });
+      pageRuns.forEach(function (run) {
+        var productive = run.filesChanged > 0;
+        var row = el('div', { class: 'activity-item' + (productive ? '' : ' activity-item--noop') });
+        row.appendChild(el('div', {}, [
+          el('div', { class: 'activity-date' }, formatDate(run.timestamp)),
+          el('div', { class: 'activity-type' }, productive ? run.filesChanged + ' file' + (run.filesChanged !== 1 ? 's' : '') : 'no-op'),
+        ]));
+        row.appendChild(el('div', {}, [
+          el('div', { class: 'activity-model' }, run.model || 'unknown'),
+          run.toolCalls > 0 ? el('div', { style: 'font-size:var(--text-xs);color:var(--text-dim)' }, run.toolCalls + ' tool calls') : null,
+        ]));
+        feed.appendChild(row);
+      });
+      main.appendChild(feed);
+
+      /* pagination controls */
+      if (totalPages > 1) {
+        var nav = el('div', { style: 'display:flex;gap:8px;justify-content:center;margin-top:20px' });
+        if (page > 1) {
+          nav.appendChild(el('a', { class: 'btn btn--secondary', href: '#/activity/' + (page - 1), style: 'font-size:var(--text-xs);padding:4px 14px' }, '\u2190 Previous'));
+        }
+        for (var i = 1; i <= totalPages; i++) {
+          var pgBtn = el('a', {
+            class: 'btn ' + (i === page ? 'btn--primary' : 'btn--secondary'),
+            href: '#/activity/' + i,
+            style: 'font-size:var(--text-xs);padding:4px 10px;min-width:32px;text-align:center'
+          }, String(i));
+          nav.appendChild(pgBtn);
+        }
+        if (page < totalPages) {
+          nav.appendChild(el('a', { class: 'btn btn--secondary', href: '#/activity/' + (page + 1), style: 'font-size:var(--text-xs);padding:4px 14px' }, 'Next \u2192'));
+        }
+        main.appendChild(nav);
+      }
     });
-    main.appendChild(feed);
   }
 
   /* ── Not Found ────────────────────────── */
@@ -800,6 +890,7 @@
     { pattern: /^#\/claim\/(.+)$/, view: viewClaimDetail, param: 'id' },
     { pattern: /^#\/profile\/(.+)$/, view: viewProfileDetail, param: 'id' },
     { pattern: /^#\/transparency$/, view: viewTransparency },
+    { pattern: /^#\/activity\/(\d+)$/, view: viewActivity, param: 'page' },
     { pattern: /^#\/activity$/, view: viewActivity },
   ];
 

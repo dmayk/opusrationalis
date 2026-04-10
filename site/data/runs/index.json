@@ -1,0 +1,261 @@
+[
+  {
+    "file": "2026-04-05-170109.json",
+    "timestamp": "2026-04-05T17:01:09.109065+00:00",
+    "model": "anthropic/claude-sonnet-4.6",
+    "filesChanged": 0,
+    "toolCalls": 0
+  },
+  {
+    "file": "2026-04-05-171459.json",
+    "timestamp": "2026-04-05T17:14:59.608411+00:00",
+    "model": "google/gemini-3.1-pro-preview",
+    "filesChanged": 2,
+    "toolCalls": 0
+  },
+  {
+    "file": "2026-04-05-172944.json",
+    "timestamp": "2026-04-05T17:29:44.283466+00:00",
+    "model": "anthropic/claude-opus-4.6",
+    "filesChanged": 2,
+    "toolCalls": 11
+  },
+  {
+    "file": "2026-04-05-180041.json",
+    "timestamp": "2026-04-05T18:00:41.301670+00:00",
+    "model": "google/gemini-3.1-pro-preview",
+    "filesChanged": 2,
+    "toolCalls": 4
+  },
+  {
+    "file": "2026-04-05-183821.json",
+    "timestamp": "2026-04-05T18:38:21.008662+00:00",
+    "model": "openai/gpt-5.4",
+    "filesChanged": 2,
+    "toolCalls": 7
+  },
+  {
+    "file": "2026-04-06-031718.json",
+    "timestamp": "2026-04-06T03:17:18.320071+00:00",
+    "model": "anthropic/claude-sonnet-4.6",
+    "filesChanged": 0,
+    "toolCalls": 20
+  },
+  {
+    "file": "2026-04-06-033959.json",
+    "timestamp": "2026-04-06T03:39:59.399080+00:00",
+    "model": "qwen/qwen3-coder",
+    "filesChanged": 8,
+    "toolCalls": 11
+  },
+  {
+    "file": "2026-04-06-034803.json",
+    "timestamp": "2026-04-06T03:48:03.657608+00:00",
+    "model": "anthropic/claude-3.7-sonnet",
+    "filesChanged": 0,
+    "toolCalls": 9
+  },
+  {
+    "file": "2026-04-06-035825.json",
+    "timestamp": "2026-04-06T03:58:25.525100+00:00",
+    "model": "google/gemini-3.1-pro-preview",
+    "filesChanged": 0,
+    "toolCalls": 13
+  },
+  {
+    "file": "2026-04-06-040400.json",
+    "timestamp": "2026-04-06T04:04:00.277795+00:00",
+    "model": "anthropic/claude-opus-4.5",
+    "filesChanged": 0,
+    "toolCalls": 11
+  },
+  {
+    "file": "2026-04-06-040653.json",
+    "timestamp": "2026-04-06T04:06:53.292580+00:00",
+    "model": "openai/gpt-5.2-chat",
+    "filesChanged": 2,
+    "toolCalls": 0
+  },
+  {
+    "file": "2026-04-06-040935.json",
+    "timestamp": "2026-04-06T04:09:35.011405+00:00",
+    "model": "anthropic/claude-opus-4.6",
+    "filesChanged": 0,
+    "toolCalls": 10
+  },
+  {
+    "file": "2026-04-06-042111.json",
+    "timestamp": "2026-04-06T04:21:11.925893+00:00",
+    "model": "google/gemini-3.1-pro-preview",
+    "filesChanged": 4,
+    "toolCalls": 17
+  },
+  {
+    "file": "2026-04-06-043320.json",
+    "timestamp": "2026-04-06T04:33:20.599655+00:00",
+    "model": "openai/gpt-5.2-chat",
+    "filesChanged": 1,
+    "toolCalls": 0
+  },
+  {
+    "file": "2026-04-06-043605.json",
+    "timestamp": "2026-04-06T04:36:05.498521+00:00",
+    "model": "anthropic/claude-opus-4.6",
+    "filesChanged": 4,
+    "toolCalls": 27
+  },
+  {
+    "file": "2026-04-06-044717.json",
+    "timestamp": "2026-04-06T04:47:17.215324+00:00",
+    "model": "openai/gpt-5.1",
+    "filesChanged": 3,
+    "toolCalls": 10
+  },
+  {
+    "file": "2026-04-06-045125.json",
+    "timestamp": "2026-04-06T04:51:25.930521+00:00",
+    "model": "qwen/qwen3-vl-8b-thinking",
+    "filesChanged": 1,
+    "toolCalls": 4
+  },
+  {
+    "file": "2026-04-06-045401.json",
+    "timestamp": "2026-04-06T04:54:01.251996+00:00",
+    "model": "mistralai/ministral-3b-2512",
+    "filesChanged": 0,
+    "toolCalls": 15
+  },
+  {
+    "file": "2026-04-06-050013.json",
+    "timestamp": "2026-04-06T05:00:13.727102+00:00",
+    "model": "x-ai/grok-4.20",
+    "filesChanged": 2,
+    "toolCalls": 10
+  },
+  {
+    "file": "2026-04-06-050142.json",
+    "timestamp": "2026-04-06T05:01:42.456694+00:00",
+    "model": "amazon/nova-2-lite-v1",
+    "filesChanged": 2,
+    "toolCalls": 0
+  },
+  {
+    "file": "2026-04-06-050259.json",
+    "timestamp": "2026-04-06T05:02:59.979751+00:00",
+    "model": "deepseek/deepseek-v3.2",
+    "filesChanged": 0,
+    "toolCalls": 25
+  },
+  {
+    "file": "2026-04-06-051216.json",
+    "timestamp": "2026-04-06T05:12:16.327785+00:00",
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "filesChanged": 0,
+    "toolCalls": 30
+  },
+  {
+    "file": "2026-04-06-051441.json",
+    "timestamp": "2026-04-06T05:14:41.332307+00:00",
+    "model": "anthropic/claude-haiku-4.5",
+    "filesChanged": 1,
+    "toolCalls": 19
+  },
+  {
+    "file": "2026-04-06-053113.json",
+    "timestamp": "2026-04-06T05:31:13.877935+00:00",
+    "model": "openai/gpt-5.2",
+    "filesChanged": 6,
+    "toolCalls": 27
+  },
+  {
+    "file": "2026-04-06-095956.json",
+    "timestamp": "2026-04-06T09:59:56.298656+00:00",
+    "model": "anthropic/claude-haiku-4.5",
+    "filesChanged": 1,
+    "toolCalls": 11
+  },
+  {
+    "file": "2026-04-06-112954.json",
+    "timestamp": "2026-04-06T11:29:54.937862+00:00",
+    "model": "qwen/qwen3-max-thinking",
+    "filesChanged": 2,
+    "toolCalls": 6
+  },
+  {
+    "file": "2026-04-06-153717.json",
+    "timestamp": "2026-04-06T15:37:17.374288+00:00",
+    "model": "anthropic/claude-haiku-4.5",
+    "filesChanged": 4,
+    "toolCalls": 17
+  },
+  {
+    "file": "2026-04-06-212927.json",
+    "timestamp": "2026-04-06T21:29:27.493805+00:00",
+    "model": "x-ai/grok-4.20",
+    "filesChanged": 2,
+    "toolCalls": 5
+  },
+  {
+    "file": "2026-04-07-050253.json",
+    "timestamp": "2026-04-07T05:02:53.554558+00:00",
+    "model": "amazon/nova-premier-v1",
+    "filesChanged": 0,
+    "toolCalls": 0
+  },
+  {
+    "file": "2026-04-07-091516.json",
+    "timestamp": "2026-04-07T09:15:16.166438+00:00",
+    "model": "google/gemini-3.1-pro-preview",
+    "filesChanged": 3,
+    "toolCalls": 15
+  },
+  {
+    "file": "2026-04-07-103423.json",
+    "timestamp": "2026-04-07T10:34:23.113122+00:00",
+    "model": "amazon/nova-premier-v1",
+    "filesChanged": 1,
+    "toolCalls": 0
+  },
+  {
+    "file": "2026-04-07-134413.json",
+    "timestamp": "2026-04-07T13:44:13.312423+00:00",
+    "model": "openai/gpt-5.1",
+    "filesChanged": 4,
+    "toolCalls": 5
+  },
+  {
+    "file": "2026-04-07-160428.json",
+    "timestamp": "2026-04-07T16:04:28.886475+00:00",
+    "model": "amazon/nova-premier-v1",
+    "filesChanged": 2,
+    "toolCalls": 0
+  },
+  {
+    "file": "2026-04-07-213440.json",
+    "timestamp": "2026-04-07T21:34:40.784293+00:00",
+    "model": "qwen/qwen3-max-thinking",
+    "filesChanged": 1,
+    "toolCalls": 13
+  },
+  {
+    "file": "2026-04-08-050526.json",
+    "timestamp": "2026-04-08T05:05:26.517187+00:00",
+    "model": "amazon/nova-premier-v1",
+    "filesChanged": 1,
+    "toolCalls": 2
+  },
+  {
+    "file": "2026-04-10-151811.json",
+    "timestamp": "2026-04-10T15:18:11.207266+00:00",
+    "model": "mistralai/mistral-large-2512",
+    "filesChanged": 0,
+    "toolCalls": 15
+  },
+  {
+    "file": "2026-04-10-171925.json",
+    "timestamp": "2026-04-10T17:19:25.031623+00:00",
+    "model": "amazon/nova-premier-v1",
+    "filesChanged": 1,
+    "toolCalls": 0
+  }
+]

@@ -62,63 +62,6 @@
     }
   ],
   "system": {
-    "totalRuns": 35,
-    "modelsUsed": [
-      "anthropic/claude-haiku-4.5",
-      "openai/gpt-5.1",
-      "openai/gpt-5.2",
-      "qwen/qwen3-max-thinking",
-      "google/gemini-3.1-pro-preview",
-      "google/gemini-3.1-flash-lite-preview",
-      "x-ai/grok-4.20",
-      "deepseek/deepseek-v3.2",
-      "amazon/nova-2-lite-v1"
-    ],
-    "lastRunAt": "2026-04-16T00:00:00Z",
     "repoUrl": "https://github.com/dmayk/opusrationalis"
-  },
-  "recentActivity": [
-    {
-      "timestamp": "2026-04-16T00:00:00Z",
-      "type": "debate",
-      "claimId": "james-2-24-rom-3-28-dikaioo-compatibility",
-      "note": "Create first debate round with Reformed proponent argument from Calvin's commentary",
-      "model": "qwen/qwen3-max-thinking"
-    },
-    {
-      "timestamp": "2026-04-15T00:00:00Z",
-      "type": "claim",
-      "claimId": "james-2-24-rom-3-28-dikaioo-compatibility",
-      "note": "Add James 2:24 vs Romans 3:28 compatibility claim and wire into justification doctrine",
-      "model": "openai/gpt-5.1"
-    },
-    {
-      "timestamp": "2026-04-14T00:00:00Z",
-      "type": "doctrine",
-      "claimId": "justification-doctrine",
-      "note": "Establish foundational doctrine node structure for Justification",
-      "model": "openai/gpt-5.2"
-    },
-    {
-      "timestamp": "2026-04-12T00:00:00Z",
-      "type": "tree",
-      "claimId": "romans-3-24-dikaioo-forensic",
-      "note": "Synthesize resolution tree from Round 1 debate — localizes disagreement to hermeneutical method axis",
-      "model": "google/gemini-3.1-pro-preview"
-    },
-    {
-      "timestamp": "2026-04-11T00:00:00Z",
-      "type": "tree",
-      "claimId": "romans-3-24-dikaioo-forensic",
-      "note": "Initial resolution tree synthesizing Round 1 debate moves",
-      "model": "qwen/qwen3-max-thinking"
-    },
-    {
-      "timestamp": "2026-04-10T00:00:00Z",
-      "type": "debate",
-      "claimId": "romans-3-24-dikaioo-forensic",
-      "note": "Complete Round 1 with Reformed proponent, Catholic opponent, Orthodox referee",
-      "model": "anthropic/claude-haiku-4.5"
-    }
-  ]
+  }
 }
