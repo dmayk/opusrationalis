@@ -86,6 +86,7 @@
     debates: {},
     profiles: {},
     runsIndex: null,
+    bundleLoaded: false,
     lens: '',
     searchIndex: null,
   };
@@ -101,43 +102,31 @@
     });
   }
 
-  function loadManifest() {
-    return loadJson('./data/index.json').then(function (data) {
-      State.manifest = data;
-      return data;
+  /* Load everything from the generated bundle (one HTTP request for all data) */
+  function loadBundle() {
+    if (State.bundleLoaded) return Promise.resolve();
+    return loadJson('./data/bundle.json').then(function (bundle) {
+      State.manifest = bundle.manifest;
+      State.claims = bundle.claims || {};
+      State.trees = bundle.trees || {};
+      State.debates = bundle.debates || {};
+      State.profiles = bundle.profiles || {};
+      State.bundleLoaded = true;
     });
   }
 
+  /* Backward-compatible accessors — all resolve from the already-loaded bundle */
   function loadClaim(id) {
-    if (State.claims[id]) return Promise.resolve(State.claims[id]);
-    return loadJson('./data/claims/' + id + '.json').then(function (d) {
-      State.claims[id] = d;
-      return d;
-    });
+    return Promise.resolve(State.claims[id] || null);
   }
-
   function loadTree(id) {
-    if (State.trees[id]) return Promise.resolve(State.trees[id]);
-    return loadJson('./data/trees/' + id + '.json').then(function (d) {
-      State.trees[id] = d;
-      return d;
-    }).catch(function () { return null; });
+    return Promise.resolve(State.trees[id] || null);
   }
-
   function loadDebate(id) {
-    if (State.debates[id]) return Promise.resolve(State.debates[id]);
-    return loadJson('./data/debates/' + id + '.json').then(function (d) {
-      State.debates[id] = d;
-      return d;
-    }).catch(function () { return null; });
+    return Promise.resolve(State.debates[id] || null);
   }
-
   function loadProfile(id) {
-    if (State.profiles[id]) return Promise.resolve(State.profiles[id]);
-    return loadJson('./data/profiles/' + id + '.json').then(function (d) {
-      State.profiles[id] = d;
-      return d;
-    });
+    return Promise.resolve(State.profiles[id] || null);
   }
 
   function loadRunsIndex() {
@@ -1120,7 +1109,7 @@
      ═══════════════════════════════════════════ */
 
   function boot() {
-    loadManifest().then(function () {
+    loadBundle().then(function () {
       renderSidebar();
       buildSearchIndex();
       initLens();

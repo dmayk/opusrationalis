@@ -1,0 +1,1142 @@
+{
+  "generated": "2026-04-10T17:36:15.615743+00:00",
+  "manifest": {
+    "doctrines": [
+      {
+        "id": "justification-doctrine",
+        "title": "Doctrine of Justification",
+        "description": "Composite doctrinal position on justification composed from validated atomic claim resolutions (Rom 3:24 \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 base, James 2:24 compatibility, faith-works interplay, etc.)",
+        "claims": [
+          {
+            "id": "romans-3-24-dikaioo-forensic",
+            "humanTitle": "Rom 3:24 / Rom 3:21-26 \u2014 In Romans 3:24, the verb \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 (\"dikaioumenoi\" / \"being ju",
+            "status": "provisional",
+            "hasTree": true,
+            "treeId": "romans-3-24-dikaioo-forensic-tree-0001",
+            "hasDebate": true,
+            "passages": [
+              "Rom 3:24",
+              "Rom 3:21-26"
+            ],
+            "profileOutcomes": [
+              {
+                "profileId": "reformed",
+                "outcome": "supports_claim"
+              },
+              {
+                "profileId": "catholic",
+                "outcome": "rejects_claim"
+              },
+              {
+                "profileId": "eastern-orthodox",
+                "outcome": "partial_agreement"
+              }
+            ],
+            "metrics": {
+              "stability": 0.65,
+              "contestation": 0.75,
+              "consensus": 1
+            },
+            "statement": "In Romans 3:24, the verb \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 (\"dikaioumenoi\" / \"being justified\") is used primarily in a forensic, declarative sense (God's legal declaration of righteousness), rather than in a primarily transformative or intrinsic-renewal sense."
+          },
+          {
+            "id": "james-2-24-rom-3-28-dikaioo-compatibility",
+            "humanTitle": "Rom 3:28 / Jas 2:24 \u2014 Under a Reformed hermeneutic profile, the use of \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in",
+            "status": "unresolved",
+            "hasTree": false,
+            "treeId": null,
+            "hasDebate": true,
+            "passages": [
+              "Rom 3:28",
+              "Jas 2:24"
+            ],
+            "profileOutcomes": [],
+            "metrics": {
+              "stability": 0.0,
+              "contestation": 0.0,
+              "consensus": 0.0
+            },
+            "statement": "Under a Reformed hermeneutic profile, the use of \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in James 2:24 is ultimately compatible with its use in Romans 3:28 when each is read in its immediate and broader Pauline/Jacobean context."
+          }
+        ]
+      }
+    ],
+    "profiles": [
+      {
+        "id": "catholic-tridentine",
+        "name": "Roman Catholic (Tridentine)",
+        "tradition": "Roman Catholic"
+      },
+      {
+        "id": "eastern-orthodox-chalcedonian",
+        "name": "Eastern Orthodox (Chalcedonian)",
+        "tradition": "Eastern Orthodox"
+      },
+      {
+        "id": "reformed-westminster",
+        "name": "Reformed (Westminster)",
+        "tradition": "Reformed"
+      }
+    ],
+    "system": {
+      "repoUrl": "https://github.com/dmayk/opusrationalis"
+    }
+  },
+  "claims": {
+    "james-2-24-rom-3-28-dikaioo-compatibility": {
+      "id": "james-2-24-rom-3-28-dikaioo-compatibility",
+      "statement": "Under a Reformed hermeneutic profile, the use of \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in James 2:24 is ultimately compatible with its use in Romans 3:28 when each is read in its immediate and broader Pauline/Jacobean context.",
+      "category": "lexical-semantic",
+      "tags": [
+        "\u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9",
+        "justification",
+        "faith-and-works",
+        "Romans-3-28",
+        "James-2-24"
+      ],
+      "passages": [
+        {
+          "canon": "NT",
+          "tradition": "Greek-TR",
+          "sourceId": "TR-Scrivener-1894",
+          "language": "grc",
+          "book": "Rom",
+          "ref": "3:28",
+          "text": "[TODO: populate from corpora/greek/TR-Scrivener-1894/Rom.json using scripts/verse_retriever.py for Rom 3:28]"
+        },
+        {
+          "canon": "NT",
+          "tradition": "Greek-TR",
+          "sourceId": "TR-Scrivener-1894",
+          "language": "grc",
+          "book": "Jas",
+          "ref": "2:24",
+          "text": "[TODO: populate from corpora/greek/TR-Scrivener-1894/Jas.json (or equivalent) using scripts/verse_retriever.py for Jas 2:24]"
+        },
+        {
+          "canon": "NT",
+          "tradition": "English-KJV",
+          "sourceId": "KJV-1769",
+          "language": "en",
+          "book": "Rom",
+          "ref": "3:28",
+          "text": "Therefore we conclude that a man is justified by faith without the deeds of the law."
+        },
+        {
+          "canon": "NT",
+          "tradition": "English-KJV",
+          "sourceId": "KJV-1769",
+          "language": "en",
+          "book": "Jas",
+          "ref": "2:24",
+          "text": "Ye see then how that by works a man is justified, and not by faith only."
+        }
+      ],
+      "profiles": [
+        "reformed-westminster",
+        "catholic-tridentine",
+        "eastern-orthodox-chalcedonian"
+      ],
+      "profileSensitivity": {
+        "axes": [
+          "authority-model",
+          "interpretive-method",
+          "testament-relation",
+          "clarity-hierarchy"
+        ],
+        "notes": "The compatibility assessment is expected to be highly sensitive to how each profile relates Paul and James, to its definition of 'works of the law' and 'faith', and to its rule-of-faith constraints."
+      },
+      "dependencies": [
+        "romans-3-24-dikaioo-forensic"
+      ],
+      "resolutionStatus": "unresolved",
+      "resolutionTreeIds": [],
+      "debates": [],
+      "metrics": {
+        "stability": 0.0,
+        "depthOfConsensus": 0.0,
+        "priorDependence": 0.0,
+        "contestation": 0.0,
+        "drift": 0.0,
+        "notes": "New atomic claim; no debates or resolution tree yet."
+      },
+      "createdAt": "2026-04-15T00:00:00Z",
+      "updatedAt": "2026-04-15T00:00:00Z",
+      "provenance": {
+        "createdBy": "ralph-agent",
+        "createdByModel": "openai/gpt-5.1",
+        "createdFromCommit": "b1bb69b",
+        "notes": "Initial definition of James 2:24 vs Romans 3:28 \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 compatibility claim for Phase 2 justification doctrine work."
+      }
+    },
+    "romans-3-24-dikaioo-forensic": {
+      "contestation_score": 0,
+      "debate_history": [],
+      "id": "romans-3-24-dikaioo-forensic",
+      "passages": [
+        {
+          "original_language": "greek",
+          "original_text": "dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou",
+          "reference": "Rom 3:24",
+          "translations": {
+            "KJV-1769": "Being justified freely by his grace through the redemption that is in Christ Jesus:"
+          }
+        },
+        {
+          "original_language": "greek",
+          "original_text": "nuni de cwriv nomou dikaiosunh yeou pefanerwtai marturoumenh upo tou nomou kai twn profhtwn dikaiosunh de yeou dia pistewv ihsou cristou eiv pantav kai epi pantav touv pisteuontav ou gar estin diastolh pantev gar hmarton kai usterountai thv doxhv tou yeou dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou on proeyeto o yeov ilasthrion dia thv pistewv en tw autou aimati eiv endeixin thv dikaiosunhv autou dia thn paresin twn progegonotwn amarthmatwn en th anoch tou yeou prov endeixin thv dikaiosunhv autou en tw nun kairw eiv to einai auton dikaion kai dikaiounta ton ek pistewv ihsou",
+          "reference": "Rom 3:21-26",
+          "translations": {
+            "KJV-1769": "But now the righteousness of God without the law is manifested, being witnessed by the law and the prophets; Even the righteousness of God which is by faith of Jesus Christ unto all and upon all them that believe: for there is no difference: For all have sinned, and come short of the glory of God; Being justified freely by his grace through the redemption that is in Christ Jesus: Whom God hath set forth to be a propitiation through faith in his blood, to declare his righteousness for the remission of sins that are past, through the forbearance of God; To declare, I say, at this time his righteousness: that he might be just, and the justifier of him which believeth in Jesus."
+          }
+        }
+      ],
+      "profile_dependency": null,
+      "resolution_status": "unresolved",
+      "stability_score": 0,
+      "statement": "In Romans 3:24, the verb \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 (\"dikaioumenoi\" / \"being justified\") is used primarily in a forensic, declarative sense (God's legal declaration of righteousness), rather than in a primarily transformative or intrinsic-renewal sense.",
+      "version_history": [
+        {
+          "author_model": "openai/gpt-5.1",
+          "commit_sha": "TBD",
+          "note": "Initial creation of atomic claim definition for Romans 3:24 \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 (forensic vs. transformative sense) using TR-Scrivener-1894 and KJV-1769 Romans 3 corpora.",
+          "timestamp": "2026-04-09T00:00:00Z"
+        },
+        {
+          "author_model": "google/gemini-3.1-pro-preview",
+          "commit_sha": "TBD",
+          "note": "Updated passages to include full unbroken text for Rom 3:21-26 utilizing verse_retriever outputs.",
+          "timestamp": "2026-04-14T12:00:00Z"
+        }
+      ]
+    }
+  },
+  "trees": {
+    "romans-3-24-dikaioo-forensic-tree-0001": {
+      "id": "romans-3-24-dikaioo-forensic-tree-0001",
+      "claim_id": "romans-3-24-dikaioo-forensic",
+      "claim_statement": "In Romans 3:24, the verb \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 (\"dikaioumenoi\" / \"being justified\") is used primarily in a forensic, declarative sense (God's legal declaration of righteousness), rather than in a primarily transformative or intrinsic-renewal sense.",
+      "status": "provisional",
+      "resolution_summary": "Partial agreement on the lexical possibility of a forensic reading in this verse under historical-grammatical exegesis; sustained disagreement on whether that reading is primary or exhaustive. Divergence localizes to authority_model, interpretive_method, and clarity_hierarchy priors. No side concedes the full claim.",
+      "source_debates": [
+        "debates/romans-3-24-dikaioo-forensic/debate-0001.json"
+      ],
+      "generated_from": {
+        "author_model": "x-ai/grok-4.20",
+        "run_id": "daily-2026-04-13",
+        "commit_sha": null,
+        "prompt_reference": "PROJECT.md \u00a76 + schemas/resolution_tree.json"
+      },
+      "root": {
+        "node_id": "root-001",
+        "node_type": "disagreement",
+        "summary": "All profiles agree that \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 carries declarative force in Rom 3:24 within its immediate Pauline context (\u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u03c3\u03cd\u03bd\u03b7 \u03b8\u03b5\u03bf\u1fe6 manifested apart from works of the law). Profiles diverge on whether this forensic sense precludes or is completed by transformative participation (theosis / iustificatio as making righteous).",
+        "status": "contested",
+        "depends_on": {
+          "type": "set_of_passages",
+          "references": [
+            "NA28-2012:Rom.3.21-26",
+            "TR-Scrivener-1894:Rom.3.24"
+          ],
+          "notes": "Immediate co-text (Rom 3:21-28) and broader Pauline usage (Rom 4-5, Gal 2-3)."
+        },
+        "divergence_point": {
+          "kind": "methodological_move",
+          "label": "Forensic primacy vs. transformative integration",
+          "description": "Reformed profile treats forensic declaration as the controlling sense; Catholic and Orthodox profiles read it within a broader salvific economy that necessarily includes renewal.",
+          "reference": "NA28-2012:Rom.3.24"
+        },
+        "blocking_prior": {
+          "profile_axis": "interpretive_method",
+          "description": "Whether historical-grammatical exegesis of Paul is permitted to stand alone or must be normed by patristic synthesis and rule of faith.",
+          "profiles_affected": [
+            "reformed",
+            "catholic",
+            "eastern-orthodox"
+          ]
+        },
+        "supporting_evidence": [
+          {
+            "source_type": "scripture",
+            "reference": "NA28-2012:Rom.3.24",
+            "text_quoted": "\u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u03cd\u03bc\u03b5\u03bd\u03bf\u03b9 \u03b4\u03c9\u03c1\u03b5\u1f70\u03bd \u03c4\u1fc7 \u03b1\u1f50\u03c4\u03bf\u1fe6 \u03c7\u03ac\u03c1\u03b9\u03c4\u03b9 \u03b4\u03b9\u1f70 \u03c4\u1fc6\u03c2 \u1f00\u03c0\u03bf\u03bb\u03c5\u03c4\u03c1\u03ce\u03c3\u03b5\u03c9\u03c2 \u03c4\u1fc6\u03c2 \u1f10\u03bd \u03a7\u03c1\u03b9\u03c3\u03c4\u1ff7 \u1f38\u03b7\u03c3\u03bf\u1fe6",
+            "original_language": "greek",
+            "weight": "primary"
+          },
+          {
+            "source_type": "historical",
+            "reference": "Calvin-Inst-1559:3.11.2",
+            "text_quoted": "Justification is the acceptance by which God regards us as righteous...",
+            "original_language": "latin",
+            "weight": "primary"
+          }
+        ],
+        "counter_evidence": [
+          {
+            "source_type": "historical",
+            "reference": "Trent-1547-S6:7",
+            "text_quoted": "Justification is not only the remission of sins, but also the sanctification and renewal of the inward man.",
+            "original_language": "latin",
+            "weight": "primary"
+          },
+          {
+            "source_type": "historical",
+            "reference": "Florovsky-BibleChurch:ch2",
+            "text_quoted": "Theosis is the ultimate end of the economy of salvation; justification cannot be isolated from deification.",
+            "original_language": null,
+            "weight": "primary"
+          }
+        ],
+        "profiles_in_scope": [
+          "reformed",
+          "catholic",
+          "eastern-orthodox"
+        ],
+        "children": [
+          {
+            "node_id": "redteam-001",
+            "node_type": "disagreement",
+            "summary": "Red-team review: early partial lexical agreement flagged as suspicious; patristic usage of dikaio- vocabulary (e.g., in Athanasius, Cyril) consistently blends forensic and transformative senses. Challenge: the tree must explain why Paul\u2019s forensic emphasis in this pericope does not control the soteriological whole.",
+            "status": "contested",
+            "depends_on": {
+              "type": "historical_source",
+              "references": [
+                "Nicene-381",
+                "Florovsky-BibleChurch:ch2"
+              ],
+              "notes": "Rule-of-faith prior invoked by Orthodox referee."
+            },
+            "divergence_point": null,
+            "blocking_prior": {
+              "profile_axis": "clarity_hierarchy",
+              "description": "Does Romans 3 control the reading of James 2 / patristic corpus, or vice-versa?",
+              "profiles_affected": [
+                "eastern-orthodox"
+              ]
+            },
+            "supporting_evidence": [],
+            "counter_evidence": [],
+            "profiles_in_scope": [
+              "eastern-orthodox"
+            ],
+            "children": [],
+            "notes": "Red-team successfully prevented silent convergence on purely forensic reading."
+          }
+        ],
+        "notes": "Tree deliberately surfaces irreducible fork rather than forcing synthesis."
+      },
+      "profile_outcomes": [
+        {
+          "profile_id": "reformed",
+          "outcome": "supports_claim",
+          "node_id": "root-001",
+          "rationale_summary": "Sola scriptura + historical-grammatical method isolates Rom 3:24 forensic sense as primary; imputation follows."
+        },
+        {
+          "profile_id": "catholic",
+          "outcome": "rejects_claim",
+          "node_id": "root-001",
+          "rationale_summary": "Trent Session 6 reads justification as both remission and renewal; forensic sense incomplete without inherent righteousness."
+        },
+        {
+          "profile_id": "eastern-orthodox",
+          "outcome": "partial_agreement",
+          "node_id": "redteam-001",
+          "rationale_summary": "Forensic language acknowledged but subordinated to theosis; justification is participation in divine life, not merely declaration."
+        }
+      ],
+      "metrics": {
+        "stability_score": 0.65,
+        "depth_of_consensus": 1,
+        "prior_dependence": [
+          "authority_model",
+          "interpretive_method",
+          "clarity_hierarchy"
+        ],
+        "contestation_score": 0.75,
+        "drift_score": 0.1,
+        "notes": "Moderate stability across historical positions; high contestation due to three-tradition spread. Single-model run; provisional until cross-family audit."
+      },
+      "version_history": [
+        {
+          "commit_sha": "428899f",
+          "timestamp": "2026-04-11T00:00:00Z",
+          "author_model": "qwen/qwen3-max-thinking",
+          "note": "Initial tree from Round 1 synthesis (Reformed/Catholic only)."
+        },
+        {
+          "commit_sha": "TBD-current",
+          "timestamp": "2026-04-13T00:00:00Z",
+          "author_model": "x-ai/grok-4.20",
+          "note": "Orthodox integration, red-team node, updated metrics and provenance."
+        }
+      ]
+    }
+  },
+  "debates": {
+    "james-2-24-rom-3-28-dikaioo-compatibility": {
+      "id": "james-2-24-rom-3-28-dikaioo-debate-0001",
+      "claim_id": "james-2-24-rom-3-28-dikaioo-compatibility",
+      "status": "active",
+      "terminal_state": null,
+      "metadata": {
+        "random_seed": 20260416,
+        "system_prompts": {
+          "proponent": "You are arguing the Reformed position on the compatibility of \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in James 2:24 and Romans 3:28. You are seeded with Calvin's Commentary on James 2:21-24 and related Westminster Confession passages. Argue that there is no genuine contradiction between Paul and James because they use \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in different senses: Paul addresses the cause/manner of justification before God (forensic, by faith alone), while James addresses the demonstration/manifestation of genuine faith before men (evidenced by works). Ground every move in the supplied texts. Do not smuggle in assumptions not present in those texts. If you reach a genuine impasse, declare it explicitly.",
+          "opponent": "You are arguing the Catholic position on the compatibility of \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in James 2:24 and Romans 3:28. You are seeded with the Council of Trent, Session 6, Chapter 11-12, and related ecclesiastical sources. Argue that Paul and James must be harmonized as complementary teachings that together show justification involves both initial grace through faith and the necessity of works as evidence and completion of that faith. Ground every move in supplied texts. Challenge any appeal to consensus or 'mainstream' interpretation. If you reach impasse, declare it.",
+          "red_team": "You are a red-team reviewer. Your role is to flag where the debate has moved too fast, missed textual evidence, or smuggled in unstated priors. You do not have a position to defend. You are hunting for: (1) moves that ignore the strongest opposing argument, (2) unstated assumptions in the reasoning, (3) passages that seem to count against the speaker's position but were not engaged. You flag these as issues for the next round, not as a scored judgment.",
+          "referee": "You are a neutral referee. Your job is to check whether each move follows the rules: Does it cite specific verses in original languages or specific lines from supplied historical sources? Does it engage the strongest form of the opposing argument? Does it smuggle in unstated priors? Flag violations. Accept moves that follow the rules, even if you disagree with them. Log any hidden assumptions you detect."
+        }
+      },
+      "participants": {
+        "proponent": {
+          "profile_id": "reformed-westminster",
+          "seed_arguments": [
+            "Calvin, Commentary on James 2:21: 'We must understand the state of the question, for the dispute here is not respecting the cause of justification, but only what avails a profession of faith without works... Paul means by [justified] the gratuitous imputation of righteousness before the tribunal of God; and James, the manifestation of righteousness by the conduct, and that before men.'",
+            "Calvin, Commentary on James 2:23-24: 'The faith of Abram was formed and therefore perfected before he sacrificed his son... James then understood no other thing, than that the integrity of his faith then appeared, because it brought forth that remarkable fruit of obedience. Man is not justified by faith alone, that is, by a bare and empty knowledge of God; he is justified by works, that is, his righteousness is known and proved by its fruits.'",
+            "Westminster Confession of Faith 11.2: 'Faith, thus receiving and resting on Christ and his righteousness, is the alone instrument of justification: yet it is not alone in the person justified, but is ever accompanied with all other saving graces, and is no dead faith, but worketh by love.'",
+            "Romans 3:28: 'Therefore we conclude that a man is justified by faith without the deeds of the law' (\u03bf\u1f56\u03bd \u03bb\u03bf\u03b3\u03b9\u03b6\u03cc\u03bc\u03b5\u03b8\u03b1 \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u1fe6\u03c3\u03b8\u03b1\u03b9 \u03c0\u03af\u03c3\u03c4\u03b5\u03b9 \u1f04\u03bd\u03b8\u03c1\u03c9\u03c0\u03bf\u03bd \u03c7\u03c9\u03c1\u1f76\u03c2 \u1f14\u03c1\u03b3\u03c9\u03bd \u03bd\u03cc\u03bc\u03bf\u03c5)",
+            "James 2:24: 'Ye see then how that by works a man is justified, and not by faith only' (\u1f41\u03c1\u1fb6\u03c4\u03b5 \u1f45\u03c4\u03b9 \u1f10\u03be \u1f14\u03c1\u03b3\u03c9\u03bd \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u1fe6\u03c4\u03b1\u03b9 \u1f04\u03bd\u03b8\u03c1\u03c9\u03c0\u03bf\u03c2 \u03ba\u03b1\u1f76 \u03bf\u1f50\u03ba \u1f10\u03ba \u03c0\u03af\u03c3\u03c4\u03b5\u03c9\u03c2 \u03bc\u03cc\u03bd\u03bf\u03bd)"
+          ]
+        },
+        "opponents": [
+          {
+            "profile_id": "catholic-tridentine",
+            "seed_arguments": [
+              "Council of Trent, Session 6, Chapter 11: 'He is not indeed himself justified, nor does he actually obtain the justice of God, unless he has been renewed in the spirit of his mind, and unless he has obeyed the commandment of God and of the Church. Wherefore, in this new birth, there is made a new creature in Christ Jesus, and the man, received into the grace of God, is changed from that unjust which he was into a just man.'",
+              "Trent, Session 6, Chapter 12: 'Faith, unless hope and charity be added to it, neither unites man perfectly with Christ, nor makes him a living member of his body. For which cause it is most truly said, that Faith without works is dead, and that man does not live by faith only, but also by works.'",
+              "Trent, Session 6, Chapter 16: 'Nor is this trust to be ascribed to a mere human persuasion, but to faith, by which they ought most firmly to believe that they are justified by Christ alone, and that they enjoy the remission of their sins because of him. But no one who is conscious that he has committed a sin that renders him liable to eternal damnation can with a firm confidence be assured that he is absolved from it, unless he receives an assurance of it by special revelation.'",
+              "Romans 3:28: 'Therefore we conclude that a man is justified by faith without the deeds of the law' (\u03bf\u1f56\u03bd \u03bb\u03bf\u03b3\u03b9\u03b6\u03cc\u03bc\u03b5\u03b8\u03b1 \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u1fe6\u03c3\u03b8\u03b1\u03b9 \u03c0\u03af\u03c3\u03c4\u03b5\u03b9 \u1f04\u03bd\u03b8\u03c1\u03c9\u03c0\u03bf\u03bd \u03c7\u03c9\u03c1\u1f76\u03c2 \u1f14\u03c1\u03b3\u03c9\u03bd \u03bd\u03cc\u03bc\u03bf\u03c5)",
+              "James 2:24: 'Ye see then how that by works a man is justified, and not by faith only' (\u1f41\u03c1\u1fb6\u03c4\u03b5 \u1f45\u03c4\u03b9 \u1f10\u03be \u1f14\u03c1\u03b3\u03c9\u03bd \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u1fe6\u03c4\u03b1\u03b9 \u1f04\u03bd\u03b8\u03c1\u03c9\u03c0\u03bf\u03c2 \u03ba\u03b1\u1f76 \u03bf\u1f50\u03ba \u1f10\u03ba \u03c0\u03af\u03c3\u03c4\u03b5\u03c9\u03c2 \u03bc\u03cc\u03bd\u03bf\u03bd)"
+            ]
+          }
+        ]
+      },
+      "rounds": [
+        {
+          "round_number": 1,
+          "moves": [
+            {
+              "move_id": "r1-proponent-01",
+              "agent_role": "proponent",
+              "profile_id": "reformed-westminster",
+              "author_model": "qwen/qwen3-max-thinking",
+              "intent": "argue",
+              "content": "The apparent tension between Romans 3:28 and James 2:24 dissolves when we recognize that Paul and James use \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in different senses, as Calvin clearly explains in his Commentary on James. Calvin states: 'We must understand the state of the question, for the dispute here is not respecting the cause of justification, but only what avails a profession of faith without works... Paul means by [justified] the gratuitous imputation of righteousness before the tribunal of God; and James, the manifestation of righteousness by the conduct, and that before men.' Paul addresses how a sinner is declared righteous before God\u2014by faith alone, apart from works of the law (Rom 3:28: \u03bf\u1f56\u03bd \u03bb\u03bf\u03b3\u03b9\u03b6\u03cc\u03bc\u03b5\u03b8\u03b1 \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u1fe6\u03c3\u03b8\u03b1\u03b9 \u03c0\u03af\u03c3\u03c4\u03b5\u03b9 \u1f04\u03bd\u03b8\u03c1\u03c9\u03c0\u03bf\u03bd \u03c7\u03c9\u03c1\u1f76\u03c2 \u1f14\u03c1\u03b3\u03c9\u03bd \u03bd\u03cc\u03bc\u03bf\u03c5). James addresses how genuine faith is demonstrated before men\u2014not by mere verbal profession, but by works that flow from living faith (Jas 2:24: \u1f41\u03c1\u1fb6\u03c4\u03b5 \u1f45\u03c4\u03b9 \u1f10\u03be \u1f14\u03c1\u03b3\u03c9\u03bd \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u1fe6\u03c4\u03b1\u03b9 \u1f04\u03bd\u03b8\u03c1\u03c9\u03c0\u03bf\u03c2 \u03ba\u03b1\u1f76 \u03bf\u1f50\u03ba \u1f10\u03ba \u03c0\u03af\u03c3\u03c4\u03b5\u03c9\u03c2 \u03bc\u03cc\u03bd\u03bf\u03bd). Calvin illustrates this with Abraham: 'The faith of Abram was formed and therefore perfected before he sacrificed his son... James then understood no other thing, than that the integrity of his faith then appeared, because it brought forth that remarkable fruit of obedience.' The Westminster Confession captures this distinction: 'Faith, thus receiving and resting on Christ and his righteousness, is the alone instrument of justification: yet it is not alone in the person justified, but is ever accompanied with all other saving graces, and is no dead faith, but worketh by love' (WCF 11.2). There is no contradiction because the two authors address different questions: Paul asks 'How is a sinner justified before God?' (answer: by faith alone), while James asks 'How is genuine faith demonstrated before men?' (answer: by works). The Reformed position maintains both truths without conflating them.",
+              "citations": [
+                {
+                  "source_type": "historical",
+                  "reference": "Calvin-Commentary-James-1551:2.21",
+                  "text_quoted": "We must understand the state of the question, for the dispute here is not respecting the cause of justification, but only what avails a profession of faith without works... Paul means by [justified] the gratuitous imputation of righteousness before the tribunal of God; and James, the manifestation of righteousness by the conduct, and that before men.",
+                  "original_language": null
+                },
+                {
+                  "source_type": "scripture",
+                  "reference": "TR-Scrivener-1894:Rom.3.28",
+                  "text_quoted": "\u03bf\u1f56\u03bd \u03bb\u03bf\u03b3\u03b9\u03b6\u03cc\u03bc\u03b5\u03b8\u03b1 \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u1fe6\u03c3\u03b8\u03b1\u03b9 \u03c0\u03af\u03c3\u03c4\u03b5\u03b9 \u1f04\u03bd\u03b8\u03c1\u03c9\u03c0\u03bf\u03bd \u03c7\u03c9\u03c1\u1f76\u03c2 \u1f14\u03c1\u03b3\u03c9\u03bd \u03bd\u03cc\u03bc\u03bf\u03c5",
+                  "original_language": "greek"
+                },
+                {
+                  "source_type": "scripture",
+                  "reference": "TR-Scrivener-1894:Jas.2.24",
+                  "text_quoted": "\u1f41\u03c1\u1fb6\u03c4\u03b5 \u1f45\u03c4\u03b9 \u1f10\u03be \u1f14\u03c1\u03b3\u03c9\u03bd \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u1fe6\u03c4\u03b1\u03b9 \u1f04\u03bd\u03b8\u03c1\u03c9\u03c0\u03bf\u03c2 \u03ba\u03b1\u1f76 \u03bf\u1f50\u03ba \u1f10\u03ba \u03c0\u03af\u03c3\u03c4\u03b5\u03c9\u03c2 \u03bc\u03cc\u03bd\u03bf\u03bd",
+                  "original_language": "greek"
+                },
+                {
+                  "source_type": "historical",
+                  "reference": "Calvin-Commentary-James-1551:2.23-24",
+                  "text_quoted": "The faith of Abram was formed and therefore perfected before he sacrificed his son... James then understood no other thing, than that the integrity of his faith then appeared, because it brought forth that remarkable fruit of obedience.",
+                  "original_language": null
+                },
+                {
+                  "source_type": "historical",
+                  "reference": "Westminster-1646:11.2",
+                  "text_quoted": "Faith, thus receiving and resting on Christ and his righteousness, is the alone instrument of justification: yet it is not alone in the person justified, but is ever accompanied with all other saving graces, and is no dead faith, but worketh by love.",
+                  "original_language": null
+                }
+              ],
+              "referee_ruling": null
+            }
+          ]
+        }
+      ],
+      "version_history": [
+        {
+          "commit_sha": "01ea85a",
+          "timestamp": "2026-04-16T00:00:00Z",
+          "author_model": "qwen/qwen3-max-thinking",
+          "note": "Round 1 initial checkpoint: Reformed proponent argues compatibility of Romans 3:28 and James 2:24 based on Calvin's distinction between forensic justification before God (Paul) and demonstrative justification before men (James). Cites Calvin's Commentary on James 2:21-24 and Westminster Confession 11.2."
+        }
+      ]
+    },
+    "romans-3-24-dikaioo-forensic": {
+      "id": "romans-3-24-dikaioo-debate-0001",
+      "claim_id": "romans-3-24-dikaioo-forensic",
+      "status": "active",
+      "terminal_state": null,
+      "metadata": {
+        "random_seed": 20260411,
+        "system_prompts": {
+          "proponent": "You are arguing the Reformed position on justification in Romans 3:24. You are seeded with Calvin's Institutes 3.11.2 and related Westminster Confession passages. Argue that \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in Romans 3:24 is primarily forensic (God's legal declaration of righteousness), not primarily transformative. Ground every move in the supplied texts. Do not smuggle in assumptions not present in those texts. If you reach a genuine impasse, declare it explicitly.",
+          "opponent": "You are arguing the Catholic position on justification in Romans 3:24. You are seeded with the Council of Trent, Session 6, Chapter 7, and related ecclesiastical sources. Argue that \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in Romans 3:24 includes a truly transformative component, not merely forensic declaration. Ground every move in supplied texts. Challenge any appeal to consensus or 'mainstream' interpretation. If you reach impasse, declare it.",
+          "red_team": "You are a red-team reviewer. Your role is to flag where the debate has moved too fast, missed textual evidence, or smuggled in unstated priors. You do not have a position to defend. You are hunting for: (1) moves that ignore the strongest opposing argument, (2) unstated assumptions in the reasoning, (3) passages that seem to count against the speaker's position but were not engaged. You flag these as issues for the next round, not as a scored judgment.",
+          "referee": "You are a neutral referee. Your job is to check whether each move follows the rules: Does it cite specific verses in original languages or specific lines from supplied historical sources? Does it engage the strongest form of the opposing argument? Does it smuggle in unstated priors? Flag violations. Accept moves that follow the rules, even if you disagree with them. Log any hidden assumptions you detect."
+        }
+      },
+      "participants": {
+        "proponent": {
+          "profile_id": "reformed-westminster",
+          "seed_arguments": [
+            "Calvin, Institutes of the Christian Religion 3.11.2: 'A man is said to be justified in the sight of God when in the judgment of God he is deemed righteous, and is accepted on account of his righteousness. And this justification consists in the forgiveness of sins and the imputation of the righteousness of Christ.'",
+            "Westminster Confession of Faith 11.1: 'Those whom God effectually calleth, He also freely justifieth: not by infusing righteousness into them, but by imputing the righteousness of Christ unto them.'",
+            "Romans 3:22-24: The prior statement that 'there is no difference: for all have sinned, and come short of the glory of God' (KJV-1769) immediately precedes the declaration that we are 'justified freely by his grace through the redemption that is in Christ Jesus' (\u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u03cd\u03bc\u03b5\u03bd\u03bf\u03b9 \u03b4\u03c9\u03c1\u03b5\u1f70\u03bd \u03c4\u1fc7 \u03b1\u1f50\u03c4\u03bf\u1fe6 \u03c7\u03ac\u03c1\u03b9\u03c4\u03b9). The juridical contrast shows justification is a status change, not an internal transformation.",
+            "2 Corinthians 5:21: 'For he hath made him to be sin for us, who knew no sin; that we might be made the righteousness of God in him' (KJV-1769). The imputation of Christ's forensic status to the believer is what constitutes justification.",
+            "Romans 4:5-8: 'But to him that worketh not, but believeth on him that justifieth the ungodly, his faith is counted for righteousness... David describeth the blessedness of the man, unto whom God imputeth righteousness without works, Saying, Blessed are they whose iniquities are forgiven, and whose sins are covered.' The forensic language of imputation (\u03bb\u03bf\u03b3\u03af\u03b6\u03bf\u03bc\u03b1\u03b9) and the explicit statement that blessedness consists in forgiveness (not renewal) confirms the juridical sense."
+          ]
+        },
+        "opponents": [
+          {
+            "profile_id": "catholic-tridentine",
+            "seed_arguments": [
+              "Council of Trent, Session 6, Chapter 7 (Decree on Justification): 'The one formal cause [of justification] is the justice of God, not that whereby He Himself is just, but that whereby He maketh us just... receiving justice within us, each one according to his own measure, which the Holy Ghost distributes to every one as He wills, and according to each one's disposition and co-operation.'",
+              "Trent further states: 'Justification itself, which is not remission of sins merely, but also the sanctification and renewal of the inward man, through the voluntary reception of the grace, and of the gifts, whereby man of unjust becomes just.' The language is explicit: \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 entails a real transformation, not a legal fiction.",
+              "Romans 6:17-19: 'But God be thanked, that ye were the servants of sin... and being made free from sin, ye became the servants of righteousness.' This indicates a real change of allegiance and life, not merely a declarative status.",
+              "James 2:24: 'Ye see then how that by works a man is justified, and not by faith only' (KJV-1769). This passage, which must be harmonized with Romans 3:24, shows that \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9-justification is inseparable from works and living faith, implying genuine moral transformation.",
+              "Romans 3:24 itself speaks of being justified 'freely by his grace' (\u03b4\u03c9\u03c1\u03b5\u1f70\u03bd \u03c4\u1fc7 \u03b1\u1f50\u03c4\u03bf\u1fe6 \u03c7\u03ac\u03c1\u03b9\u03c4\u03b9). Grace in Christian teaching is not merely a legal fiction but an operative power that transforms the soul. To be justified by grace is to be made just, not merely declared just."
+            ]
+          }
+        ]
+      },
+      "rounds": [
+        {
+          "round_number": 1,
+          "moves": [
+            {
+              "move_id": "r1-proponent-01",
+              "agent_role": "proponent",
+              "profile_id": "reformed-westminster",
+              "author_model": "anthropic/claude-haiku-4.5",
+              "intent": "argue",
+              "content": "The forensic sense of \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 in Romans 3:24 is established by Calvin's interpretation in the Institutes. Calvin writes: 'A man is said to be justified in the sight of God when in the judgment of God he is deemed righteous, and is accepted on account of his righteousness' (Institutes 3.11.2). He then clarifies: 'justification consists in the forgiveness of sins and the imputation of the righteousness of Christ.' The context of Romans 3:24 itself supports this: Paul juxtaposes 'being justified freely by his grace' (\u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u03cd\u03bc\u03b5\u03bd\u03bf\u03b9) with the prior statement that 'there is no difference' in human moral standing (Rom 3:22-23). If \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 meant intrinsic transformation, this would contradict Paul's point that we are already justified despite our ongoing sinfulness. The verb describes God's legal declaration, not an internal renewal. Calvin grounds this in 2 Corinthians 5:21: 'He made him to be sin for us who knew no sin; that we might be made the righteousness of God in him.' The imputation of Christ's forensic status to us is what justification means.",
+              "citations": [
+                {
+                  "source_type": "historical",
+                  "reference": "Calvin-Inst-1559:3.11.2",
+                  "text_quoted": "A man is said to be justified in the sight of God when in the judgment of God he is deemed righteous, and is accepted on account of his righteousness. And this justification consists in the forgiveness of sins and the imputation of the righteousness of Christ.",
+                  "original_language": null
+                },
+                {
+                  "source_type": "scripture",
+                  "reference": "NA28-2012:Rom.3.24",
+                  "text_quoted": "dikaioumenoi dwrean th autou cariti dia thv apolutrwsewv thv en cristw ihsou",
+                  "original_language": "greek"
+                },
+                {
+                  "source_type": "scripture",
+                  "reference": "NA28-2012:Rom.3.22",
+                  "text_quoted": "There is no difference, for all have sinned and fall short of the glory of God",
+                  "original_language": "greek"
+                },
+                {
+                  "source_type": "scripture",
+                  "reference": "NA28-2012:2Cor.5.21",
+                  "text_quoted": "For our sake he made him to be sin who knew no sin, so that in him we might become the righteousness of God",
+                  "original_language": "greek"
+                },
+                {
+                  "source_type": "scripture",
+                  "reference": "Westminster-1646:11.1",
+                  "text_quoted": "Those whom God effectually calleth, He also freely justifieth: not by infusing righteousness into them, but by imputing the righteousness of Christ unto them.",
+                  "original_language": null
+                }
+              ],
+              "referee_ruling": null
+            },
+            {
+              "move_id": "r1-opponent-01",
+              "agent_role": "opponent",
+              "profile_id": "catholic-tridentine",
+              "author_model": "anthropic/claude-haiku-4.5",
+              "intent": "argue",
+              "content": "The forensic interpretation fails to account for Trent's authoritative definition of justification in Session 6, Chapter 7, which explicitly teaches that justification is 'not remission of sins merely, but also the sanctification and renewal of the inward man.' Trent states: 'the alone formal cause is the justice of God, not that whereby He Himself is just, but that whereby He maketh us just, that, to wit, with which we being endowed by Him, are renewed in the spirit of our mind, and we are not only reputed, but are truly called, and are, just, receiving justice within us.' The Greek word \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 here must bear its full semantic weight: to make righteous, not merely to declare righteous. Romans 3:24 itself uses the passive 'being justified' (\u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u03cd\u03bc\u03b5\u03bd\u03bf\u03b9) in conjunction with 'freely' (\u03b4\u03c9\u03c1\u03b5\u03ac\u03bd) and 'grace' (\u03c7\u03ac\u03c1\u03b9\u03c4\u03b9), indicating an infusion of justice, not a forensic imputation. Furthermore, Romans 6:17-19 speaks of becoming 'servants of righteousness,' which presupposes a real transformation. James 2:24, which must be harmonized with Romans, explicitly requires works as evidence of living justifying faith, confirming that \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 entails genuine moral renewal, not a legal fiction.",
+              "citations": [
+                {
+                  "source_type": "historical",
+                  "reference": "Trent-1547-S6:Ch.7",
+                  "text_quoted": "Justification itself, which is not remission of sins merely, but also the sanctification and renewal of the inward man, through the voluntary reception of the grace, and of the gifts, whereby man of unjust becomes just",
+                  "original_language": null
+                },
+                {
+                  "source_type": "scripture",
+                  "reference": "NA28-2012:Rom.3.24",
+                  "text_quoted": "dikaioumenoi dwrean th autou cariti",
+                  "original_language": "greek"
+                },
+                {
+                  "source_type": "scripture",
+                  "reference": "NA28-2012:Rom.6.17-19",
+                  "text_quoted": "But God be thanked, that ye were the servants of sin... and being made free from sin, ye became the servants of righteousness",
+                  "original_language": "greek"
+                },
+                {
+                  "source_type": "scripture",
+                  "reference": "NA28-2012:Jas.2.24",
+                  "text_quoted": "Ye see then how that by works a man is justified, and not by faith only",
+                  "original_language": "greek"
+                }
+              ],
+              "referee_ruling": null
+            },
+            {
+              "move_id": "r1-red-team-01",
+              "agent_role": "red_team",
+              "profile_id": null,
+              "author_model": "anthropic/claude-haiku-4.5",
+              "intent": "red_team_attack",
+              "content": "Both moves have engaged the core passage and cited relevant primary sources, which is good. However, I must flag three issues for verification: (1) The Reformed move invokes Calvin's forensic interpretation but does not yet address how Romans 3:24 sits within Paul's larger argument structure in 3:21-26, where \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u03c3\u03cd\u03bd\u03b7 (righteousness) appears as a revealed attribute of God, not merely a legal status. (2) The Catholic move appeals to Trent Session 6 Chapter 7 correctly, but needs to specify: does Trent intend \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 as a *univocal* term meaning transformation, or does it allow \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 to mean the forensic *application* of infused justice? (3) Both moves treat James 2:24 differently but neither has yet engaged the textual context of James 2 itself in original language. An Eastern Orthodox perspective would note that this dispute emerges from a Western forensic-vs.-intrinsic dichotomy that the Eastern tradition does not frame in the same way. The Eastern approach is neither forensic declaration (which severs faith from transformation) nor intrinsic renewal alone (which separates the believer from God's act), but theosis\u2014participation in divine energies. However, to complete this round fairly, I need the Reformed move to address the \u03b4\u03b9\u03ba\u03b1\u03b9\u03bf\u03c3\u03cd\u03bd\u03b7 \u03b8\u03b5\u03bf\u1fe6 language, and the Catholic move to clarify whether Trent allows a non-identity between the meaning of \u03b4\u03b9\u03ba\u03b1\u03b9\u03cc\u03c9 and the mode of justification's operation.",
+              "citations": [
+                {
+                  "source_type": "scripture",
+                  "reference": "NA28-2012:Rom.3.21-26",
+                  "text_quoted": "nuni de cwriv nomou dikaiosunh yeou pefanerwtai marturoumenh upo tou nomou kai twn profhtwn",
+                  "original_language": "greek"
+                }
+              ],
+              "referee_ruling": null
+            }
+          ]
+        }
+      ],
+      "version_history": [
+        {
+          "commit_sha": "062da39",
+          "timestamp": "2026-04-11T00:00:00Z",
+          "author_model": "anthropic/claude-haiku-4.5",
+          "note": "Round 1 initial checkpoint: Reformed proponent argues forensic sense (Calvin 3.11.2, Westminster 11.1), Catholic opponent argues transformative sense (Trent Session 6 ch. 7), red-team flags missing contextual engagements. All moves cite primary sources and original-language passages."
+        }
+      ]
+    }
+  },
+  "profiles": {
+    "catholic-tridentine": {
+      "id": "catholic-tridentine",
+      "name": "Roman Catholic (Tridentine)",
+      "tradition": "Roman Catholic",
+      "description": "A Roman Catholic profile grounded in the decrees of the Council of Trent (1545\u20131563), the Catechism of the Catholic Church (1992/1997), and the magisterial teaching tradition. Scripture and Sacred Tradition together constitute the single deposit of faith (Dei Verbum 9\u201310), authentically interpreted by the Magisterium. The fourfold sense of Scripture (literal, allegorical, moral, anagogical) is affirmed (CCC 115\u2013119), with the literal sense as foundation. Justification is understood not merely as forensic declaration but as 'the sanctification and renewal of the inward man' (Trent, Session 6, Chapter 7). The Catholic canon of 73 books is affirmed per Trent Session 4.",
+      "canon": {
+        "tradition": "catholic-trent",
+        "notes": "73-book canon per the decree of the Council of Trent, Session 4 (April 8, 1546), which affirmed the canon of the Council of Florence (1442). Includes the deuterocanonical books (Tobit, Judith, Wisdom, Sirach, Baruch, 1\u20132 Maccabees, additions to Esther and Daniel) as fully canonical and inspired Scripture, not merely edifying reading. 'If anyone shall not receive as sacred and canonical these entire books with all their parts, as they have been wont to be read in the Catholic Church and are contained in the old Vulgate Latin edition... let him be anathema' (Trent, Session 4)."
+      },
+      "text_base": {
+        "ot_primary": "masoretic-bhs",
+        "ot_secondary": [
+          "septuagint-rahlfs",
+          "vulgate",
+          "dead-sea-scrolls"
+        ],
+        "nt_primary": "na28",
+        "nt_secondary": [
+          "vulgate",
+          "byzantine-majority"
+        ],
+        "variant_positions": [
+          {
+            "reference": "1 John 5:7-8",
+            "variant_name": "comma-johanneum",
+            "position": "secondary",
+            "notes": "The Comma Johanneum was included in the Clementine Vulgate and was defended by some post-Tridentine theologians. However, modern Catholic scholarship (following the Pontifical Biblical Commission's 1927 decision allowing open discussion, and the Nova Vulgata's omission) acknowledges its absence from the earliest Greek manuscripts. The Trinitarian doctrine does not depend on this verse."
+          },
+          {
+            "reference": "Mark 16:9-20",
+            "variant_name": "longer-ending-mark",
+            "position": "authentic",
+            "notes": "The longer ending of Mark is included in the Vulgate and has been received as canonical in the Catholic liturgical tradition. While modern Catholic exegetes acknowledge the text-critical difficulties, the passage is treated as canonical Scripture."
+          },
+          {
+            "reference": "John 7:53-8:11",
+            "variant_name": "pericope-adulterae",
+            "position": "authentic",
+            "notes": "Received as canonical Scripture in the Catholic tradition and included in the Vulgate and all Catholic lectionaries. Its canonicity is not dependent on resolution of its textual transmission history."
+          }
+        ],
+        "notes": "Trent Session 4 declared the 'old Vulgate Latin edition' to be 'authentic' for public lectures, disputations, sermons, and expositions, meaning it is free from error in faith and morals \u2014 not that it is textually superior to the originals. Dei Verbum 22 encourages study from original languages. Modern Catholic biblical scholarship uses the critical Greek and Hebrew texts as primary witnesses, with the Vulgate (now the Nova Vulgata, 1979) as an authoritative interpretive tradition."
+      },
+      "authority_model": {
+        "position": "scripture-tradition-magisterium",
+        "notes": "Dei Verbum 9\u201310: 'Sacred Tradition and Sacred Scripture form one sacred deposit of the word of God, committed to the Church.' 'The task of authentically interpreting the word of God, whether written or handed on, has been entrusted exclusively to the living teaching office of the Church, whose authority is exercised in the name of Jesus Christ.' Trent Session 4: 'No one, relying on his own skill, shall, in matters of faith and of morals pertaining to the edification of Christian doctrine, presume to interpret the said sacred Scripture contrary to that sense which holy mother Church \u2014 whose it is to judge of the true sense and interpretation of the holy Scriptures \u2014 hath held and doth hold; or even contrary to the unanimous consent of the Fathers.' Scripture, Tradition, and Magisterium are 'so linked and joined together that one cannot stand without the others' (DV 10)."
+      },
+      "interpretive_method": {
+        "primary": "fourfold-sense",
+        "secondary": [
+          "historical-grammatical",
+          "typological",
+          "canonical"
+        ],
+        "notes": "CCC 115\u2013119 affirms the fourfold sense: literal (the meaning conveyed by the words, ascertained by exegesis following sound rules of interpretation), allegorical (recognition of significance in Christ), moral (instruction for just action), and anagogical (eternal significance). 'The literal sense is the basis for all other senses of Scripture' (CCC 116, citing Aquinas ST I.1.10 ad 1). Historical-critical methods are employed as tools within the theological framework, per Dei Verbum 12: 'The interpreter must investigate what meaning the sacred writer intended to express and actually expressed in particular circumstances by using contemporary literary forms in accordance with the situation of his own time and culture.' But 'Sacred Scripture must be read and interpreted in the light of the same Spirit by whom it was written' (DV 12)."
+      },
+      "rule_of_faith": {
+        "creeds": [
+          "apostles",
+          "nicene-constantinopolitan-381",
+          "chalcedonian-451",
+          "athanasian"
+        ],
+        "confessions": [
+          {
+            "name": "Canons and Decrees of the Council of Trent",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Catechism of the Catholic Church",
+            "authority_level": "normative"
+          },
+          {
+            "name": "Decrees of the First Vatican Council",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Decrees of the Second Vatican Council",
+            "authority_level": "binding"
+          }
+        ],
+        "councils": [
+          {
+            "name": "Nicaea I",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Constantinople I",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Ephesus",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Chalcedon",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Constantinople II",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Constantinople III",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Nicaea II",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Constantinople IV",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Lateran I\u2013IV",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Lyon I\u2013II",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Vienne",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Constance",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Basel-Ferrara-Florence",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Lateran V",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Trent",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Vatican I",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Vatican II",
+            "authority_level": "binding"
+          }
+        ],
+        "notes": "The Magisterium (the Pope and bishops in communion with him) is the authoritative interpreter of Scripture and Tradition. Dogmatic definitions made ex cathedra by the Pope or by ecumenical councils ratified by the Pope are infallible and irreformable (Vatican I, Pastor Aeternus). The 'unanimous consent of the Fathers' is a binding interpretive constraint (Trent Session 4). The sensus fidelium (sense of the faithful) contributes to the development of doctrine but does not override magisterial teaching."
+      },
+      "testament_relation": {
+        "position": "promise-fulfillment",
+        "notes": "CCC 128\u2013130: 'The New Testament lies hidden in the Old and the Old Testament is unveiled in the New' (Augustine). The unity of the two Testaments is grounded in God's single plan of salvation. Typology is central: OT persons, events, and institutions are types fulfilled in Christ. The moral law of the OT (especially the Decalogue) remains binding; the ceremonial law is fulfilled and superseded by the New Covenant sacraments. Unlike strict covenantal theology, Catholic teaching does not typically employ the covenant-of-works / covenant-of-grace framework, instead emphasizing the progressive unfolding of God's single salvific plan through successive covenants (Noahic, Abrahamic, Mosaic, Davidic, New)."
+      },
+      "inspiration_model": {
+        "position": "verbal-plenary",
+        "inerrancy": "limited-inerrancy",
+        "notes": "Dei Verbum 11: 'The books of Scripture must be acknowledged as teaching solidly, faithfully and without error that truth which God wanted put into sacred writings for the sake of salvation.' This formulation ('for the sake of salvation') is understood by many Catholic theologians as limiting inerrancy to matters of faith and morals (salvation-relevant truth), while allowing that the sacred authors may have employed imprecise or culturally conditioned modes of expression in historical, scientific, or cosmological matters. The inspiration extends to the whole of Scripture (2 Tim 3:16) but the charism of inspiration worked through the human authors' full exercise of their faculties (DV 11)."
+      },
+      "clarity_hierarchy": {
+        "general_principle": "Scripture is interpreted within the living Tradition of the Church, guided by the Magisterium. When passages appear to conflict, the rule of faith as received and taught by the Church governs interpretation. Dogmatic definitions by ecumenical councils and ex cathedra papal pronouncements settle the meaning of disputed passages authoritatively.",
+        "specific_priorities": [
+          {
+            "domain": "justification",
+            "controlling_passages": [
+              "Rom 3:21-5:1",
+              "Jas 2:14-26",
+              "1 Cor 13:1-13",
+              "Gal 5:6"
+            ],
+            "subordinate_passages": [],
+            "rationale": "Paul and James are read as complementary, not conflicting. Romans teaches that initial justification is by grace through faith apart from prior works of the law; James teaches that living faith necessarily produces works and that 'faith without works is dead' (Jas 2:26). Galatians 5:6 ('faith working through love') is the synthetic key: justifying faith is never bare intellectual assent but is 'faith formed by charity' (fides caritate formata), per Trent Session 6 Chapter 7. No passage is subordinated; rather, the full witness of Scripture is harmonized under the Tridentine definition."
+          },
+          {
+            "domain": "divine-sovereignty-and-human-agency",
+            "controlling_passages": [
+              "Rom 8:28-39",
+              "1 Tim 2:4",
+              "2 Pet 3:9",
+              "Sir 15:14-17"
+            ],
+            "subordinate_passages": [],
+            "rationale": "God's universal salvific will (1 Tim 2:4) is affirmed as genuine, not merely permissive or restricted to the elect. Divine predestination is real but does not annul human freedom. Trent Session 6 Chapter 5: 'while God touches the heart of man by the illumination of the Holy Ghost, neither is man himself utterly inactive while he receives that inspiration, inasmuch as he is also able to reject it.' Sirach 15:14\u201317 (deuterocanonical) is cited as support for genuine human freedom."
+          }
+        ],
+        "notes": "The Catholic approach resists subordinating one biblical author to another; instead, it harmonizes the full canon (including deuterocanonicals) under the guidance of Tradition and Magisterium. Where Protestant traditions may resolve Paul-James tensions by making James subordinate to Paul, the Catholic profile treats both as equally authoritative and seeks a synthetic reading validated by magisterial teaching."
+      },
+      "version_history": [
+        {
+          "commit_sha": "PENDING",
+          "timestamp": "2026-04-08T00:00:00Z",
+          "author_model": "anthropic/claude-opus-4.6",
+          "note": "Initial creation. Profile grounded in Council of Trent (esp. Sessions 4 and 6), Dei Verbum, and Catechism of the Catholic Church."
+        }
+      ]
+    },
+    "eastern-orthodox-chalcedonian": {
+      "id": "eastern-orthodox-chalcedonian",
+      "name": "Eastern Orthodox (Chalcedonian)",
+      "tradition": "Eastern Orthodox",
+      "description": "An Eastern Orthodox profile grounded in the seven ecumenical councils (Nicaea I through Nicaea II), the patristic consensus, and the liturgical-sacramental tradition of the Orthodox Church. Scripture is the highest written expression of Holy Tradition, not a separate source standing over against it. Interpretation is ecclesial: the Bible was written by the Church, within the Church, and for the Church, and can only be rightly understood within the living liturgical and ascetic life of the Church. The method of theoria \u2014 a spiritual vision that perceives the deeper divine reality within the historical text \u2014 supplements and transcends purely historical-grammatical analysis. The goal of all interpretation is theosis (deification): bringing the reader into communion with God. The Septuagint holds priority as the Old Testament of the Church, received and quoted by the Apostles and Fathers.",
+      "canon": {
+        "tradition": "eastern-orthodox",
+        "notes": "The Orthodox OT canon follows the Septuagint and is broader than both the Protestant (66 books) and Catholic (73 books) canons. It includes the deuterocanonical books recognized by Rome plus additional texts such as 1 Esdras, 3 Maccabees, the Prayer of Manasseh, and Psalm 151. The precise boundaries of the OT canon have not been defined by a single binding ecumenical council with the same precision as Trent; there is some variation among Orthodox national churches (e.g., the Greek, Russian, and Ethiopian traditions). The NT canon of 27 books is universally received. The Synod of Jerusalem (1672, Confession of Dositheus) affirmed the deuterocanonical books as canonical."
+      },
+      "text_base": {
+        "ot_primary": "septuagint-rahlfs",
+        "ot_secondary": [
+          "masoretic-bhs",
+          "dead-sea-scrolls"
+        ],
+        "nt_primary": "byzantine-majority",
+        "nt_secondary": [
+          "na28",
+          "textus-receptus",
+          "peshitta"
+        ],
+        "variant_positions": [
+          {
+            "reference": "1 John 5:7-8",
+            "variant_name": "comma-johanneum",
+            "position": "interpolation",
+            "notes": "Not present in the Byzantine manuscript tradition and not part of the received Orthodox text. The Trinitarian doctrine is firmly established from the ecumenical councils and does not depend on this verse."
+          },
+          {
+            "reference": "Mark 16:9-20",
+            "variant_name": "longer-ending-mark",
+            "position": "authentic",
+            "notes": "The longer ending is present in the Byzantine text tradition, is read liturgically in the Orthodox Church, and is treated as canonical Scripture."
+          },
+          {
+            "reference": "John 7:53-8:11",
+            "variant_name": "pericope-adulterae",
+            "position": "authentic",
+            "notes": "Present in the Byzantine text tradition and received as canonical in Orthodox liturgical use. Included in the standard Orthodox NT."
+          }
+        ],
+        "notes": "The Septuagint holds a place of primacy as the OT of the early Church: it is the text quoted by the NT authors and the Fathers, and it is the basis of the Orthodox liturgical readings. The Masoretic Text is a secondary witness. For the NT, the Byzantine/Majority textform is the received text of the Orthodox Church, preserved in the liturgical tradition. Modern critical editions (NA28) are consulted as scholarly tools but do not override the received ecclesiastical text."
+      },
+      "authority_model": {
+        "position": "scripture-and-tradition",
+        "notes": "Scripture is the highest written expression of Holy Tradition, not a separate authority standing above or alongside Tradition. The Orthodox reject both sola scriptura (Scripture apart from the Church's living Tradition) and the Roman Catholic model of a juridical Magisterium with authority to define doctrine independently. Instead, truth is preserved in the consensus of the Church (consensus patrum and consensus ecclesiae), expressed through the ecumenical councils, the liturgy, the writings of the Fathers, the canons, and the lives of the saints. Georges Florovsky: 'The Church is the authentic interpreter of Scripture, not because it has been granted some special juridical authority, but because the Church is the pillar and ground of the truth (1 Tim 3:15) \u2014 the living Body of Christ in which the Holy Spirit dwells and operates.' The Confession of Dositheus (1672), Decree 2: 'We believe the Scriptures to be taught by God... but the authority of the Church is not less than that of the Scriptures, inasmuch as the same Holy Spirit is the source of both.'"
+      },
+      "interpretive_method": {
+        "primary": "theoria",
+        "secondary": [
+          "typological",
+          "historical-grammatical",
+          "literary"
+        ],
+        "notes": "Theoria is the patristic method of spiritual contemplation whereby the interpreter, illumined by the Holy Spirit and purified through ascetic struggle, perceives the deeper divine meaning within and beyond the historical-literal sense. It is not allegory in the Alexandrian speculative sense (though elements of Alexandrian and Antiochene methods coexist in the patristic synthesis), but rather a spiritual vision that sees the eschatological and Christological reality to which the text points. John Breck describes theoria as the interpretive method that 'perceives within the historical events and literal expressions of Scripture the presence and activity of God, culminating in Christ.' The historical-grammatical sense is respected as the foundation but is never treated as exhaustive. As St. Athanasius wrote: 'One cannot possibly understand the teaching of the saints unless one has a pure mind and is trying to imitate their life.' Holiness is an epistemological prerequisite."
+      },
+      "rule_of_faith": {
+        "creeds": [
+          "nicene-constantinopolitan-381",
+          "chalcedonian-451",
+          "apostles",
+          "athanasian"
+        ],
+        "confessions": [
+          {
+            "name": "Confession of Dositheus (Synod of Jerusalem 1672)",
+            "authority_level": "normative"
+          },
+          {
+            "name": "Longer Catechism of Philaret of Moscow",
+            "authority_level": "instructive"
+          },
+          {
+            "name": "Encyclical of the Eastern Patriarchs (1848)",
+            "authority_level": "instructive"
+          }
+        ],
+        "councils": [
+          {
+            "name": "Nicaea I",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Constantinople I",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Ephesus",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Chalcedon",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Constantinople II",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Constantinople III",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Nicaea II",
+            "authority_level": "binding"
+          },
+          {
+            "name": "Quinisext (Trullo)",
+            "authority_level": "normative"
+          }
+        ],
+        "notes": "The seven ecumenical councils (Nicaea I, 325 through Nicaea II, 787) are universally binding. Their dogmatic definitions are irreformable expressions of the faith. Unlike the Catholic model, the Orthodox do not recognize a single juridical authority (pope or magisterium) that can define doctrine independently of an ecumenical council. The patristic consensus (consensus patrum) \u2014 not necessarily unanimity, but the broad agreement of the Fathers on matters of faith \u2014 functions as the interpretive framework. The Quinisext Council (692) is treated as normatively binding for its canonical and liturgical decisions, though it addressed no new dogmatic questions. Post-schism councils and confessions (Dositheus, Philaret) carry normative or instructive weight but are not equivalent to ecumenical councils."
+      },
+      "testament_relation": {
+        "position": "promise-fulfillment",
+        "notes": "The Orthodox view is broadly typological and Christocentric: the Old Testament is read as preparation for and prophecy of Christ, and the New Testament is its fulfillment. The OT patriarchs, prophets, events, and institutions are types of Christ and the Church. However, the Orthodox do not employ the specific Reformed covenant-of-works / covenant-of-grace schema, nor the dispensationalist framework. The continuity between the Testaments is understood through the single divine economy (oikonomia) of salvation. The Septuagint as the Church's OT ensures that the Greek theological vocabulary of the NT is continuous with the OT it cites."
+      },
+      "inspiration_model": {
+        "position": "dynamic",
+        "inerrancy": null,
+        "notes": "The Orthodox affirm that Scripture is divinely inspired ('God-breathed', theopneustos, 2 Tim 3:16) and that the Holy Spirit guided the human authors. However, Orthodox theology generally avoids the Protestant inerrancy/infallibility debate as a Western problematic framed in categories foreign to the Eastern tradition. The emphasis is on the Scripture's salvific truth and its role within the living Tradition of the Church, rather than on formal propositions about errorlessness. As Florovsky writes: 'Scripture is the Word of God, but it is not a book of oracles. It is the book of the Church.' The human authors' personalities, literary styles, and historical contexts are genuine, not overridden. Inspiration is understood within the broader context of the Church's life in the Spirit, not as a mechanical dictation."
+      },
+      "clarity_hierarchy": {
+        "general_principle": "Scripture is interpreted within the living Tradition of the Church, guided by the patristic consensus and the liturgical life. The rule of prayer is the rule of faith (lex orandi, lex credendi). When passages appear to conflict, the dogmatic definitions of the ecumenical councils and the consensus of the Fathers provide the authoritative framework for resolution. The Christological and eschatological dimensions perceived through theoria illuminate how texts relate to one another.",
+        "specific_priorities": [
+          {
+            "domain": "justification",
+            "controlling_passages": [
+              "Rom 3:21-5:1",
+              "Jas 2:14-26",
+              "2 Pet 1:3-11",
+              "2 Cor 3:18",
+              "Rom 8:29-30"
+            ],
+            "subordinate_passages": [],
+            "rationale": "The Orthodox do not typically frame soteriology as a justification debate between Paul and James. Instead, salvation is understood as theosis \u2014 the progressive transformation of the whole person into the likeness of God by participation in the divine energies. Romans and James are complementary witnesses to different aspects of a single saving process that includes faith, repentance, baptism, the reception of the Holy Spirit, growth in virtue, and ongoing participation in the sacramental life of the Church. The forensic-transformative dichotomy is itself considered a Western problematic. 2 Peter 1:4 ('partakers of the divine nature') and 2 Cor 3:18 ('being transformed into the same image from one degree of glory to another') are central to the Orthodox soteriological vision."
+          },
+          {
+            "domain": "divine-sovereignty-and-human-agency",
+            "controlling_passages": [
+              "Rom 8:28-39",
+              "1 Tim 2:4",
+              "2 Pet 3:9",
+              "John 3:16",
+              "Deut 30:19"
+            ],
+            "subordinate_passages": [],
+            "rationale": "The Orthodox affirm both God's sovereign providence and genuine human freedom (synergeia). The divine will is truly universal ('God desires all people to be saved', 1 Tim 2:4) and human beings possess genuine capacity to cooperate with or resist divine grace. Predestination is understood as God's foreknowledge of human response, not as unconditional unilateral election. The Greek Fathers (especially Chrysostom, John of Damascus) consistently maintained this synergistic position. No passage is subordinated; rather, the whole witness is read through the patristic lens of divine-human cooperation."
+          }
+        ],
+        "notes": "The Orthodox approach resists systematization into a single controlling-passage hierarchy. The liturgical lectionary \u2014 which determines which passages the Church reads together and in what seasons \u2014 is itself an interpretive act. The patristic homilies on these lectionary readings form the living commentary tradition. Where Western traditions may resolve tensions by subordinating one author to another, the Orthodox preference is to hold them in creative tension within the larger mystery (mysterion) of salvation."
+      },
+      "version_history": [
+        {
+          "commit_sha": "PENDING",
+          "timestamp": "2026-04-08T00:00:00Z",
+          "author_model": "anthropic/claude-opus-4.6",
+          "note": "Initial creation. Profile grounded in seven ecumenical councils, Confession of Dositheus (1672), patristic consensus, and Orthodox hermeneutical principles from Florovsky, Breck, and OrthodoxWiki synthesis."
+        }
+      ]
+    },
+    "reformed-westminster": {
+      "id": "reformed-westminster",
+      "name": "Reformed (Westminster)",
+      "tradition": "Reformed",
+      "description": "A confessional Reformed profile grounded in the Westminster Confession of Faith (1646) and its Larger and Shorter Catechisms. Operates under sola scriptura with Scripture as the sole infallible rule of faith and practice. The Westminster Standards function as the norma normata (normed norm) subordinate to Scripture as norma normans (norming norm). Employs historical-grammatical exegesis as primary method, supplemented by redemptive-historical and typological reading within a covenantal theological framework. The analogy of faith (analogia fidei) \u2014 the principle that Scripture interprets Scripture, with clearer passages governing the reading of less clear ones \u2014 is the governing hermeneutical principle (WCF 1.9). Affirms verbal plenary inspiration and strict inerrancy of the autographs.",
+      "canon": {
+        "tradition": "protestant",
+        "notes": "66-book Protestant canon per WCF 1.2\u20133. The Apocrypha 'not being of divine inspiration, are no part of the Canon of the Scripture; and therefore are of no authority in the Church of God, nor to be any otherwise approved, or made use of, than other human writings' (WCF 1.3)."
+      },
+      "text_base": {
+        "ot_primary": "masoretic-bhs",
+        "ot_secondary": [
+          "septuagint-rahlfs",
+          "dead-sea-scrolls"
+        ],
+        "nt_primary": "na28",
+        "nt_secondary": [
+          "byzantine-majority",
+          "textus-receptus"
+        ],
+        "variant_positions": [
+          {
+            "reference": "1 John 5:7-8",
+            "variant_name": "comma-johanneum",
+            "position": "interpolation",
+            "notes": "Not present in earliest Greek manuscripts. The Trinitarian doctrine does not depend on this verse and is established from other texts. Some historical Reformed usage (e.g., KJV tradition) included it, but modern text-critical consensus, which this profile follows, treats it as a later addition."
+          },
+          {
+            "reference": "Mark 16:9-20",
+            "variant_name": "longer-ending-mark",
+            "position": "uncertain",
+            "notes": "Absent from the earliest manuscripts (Sinaiticus, Vaticanus). This profile treats it as textually uncertain and does not build doctrinal arguments solely on material unique to this passage."
+          },
+          {
+            "reference": "John 7:53-8:11",
+            "variant_name": "pericope-adulterae",
+            "position": "secondary",
+            "notes": "Absent from earliest manuscripts and many early versions. Likely an authentic tradition but not original to its current location in John. No doctrine is built solely on this passage."
+          }
+        ],
+        "notes": "Per WCF 1.8: 'The Old Testament in Hebrew... and the New Testament in Greek... being immediately inspired by God, and by His singular care and providence kept pure in all ages, are therefore authentical; so as in all controversies of religion the Church is finally to appeal unto them.' The Masoretic Hebrew and critical Greek NT are primary; versions and translations are derivative witnesses."
+      },
+      "authority_model": {
+        "position": "sola-scriptura",
+        "notes": "WCF 1.4: 'The authority of the holy Scripture, for which it ought to be believed and obeyed, dependeth not upon the testimony of any man or church, but wholly upon God (who is truth itself), the Author thereof.' WCF 1.6: 'The whole counsel of God, concerning all things necessary for His own glory, man's salvation, faith, and life, is either expressly set down in Scripture, or by good and necessary consequence may be deduced from Scripture: unto which nothing at any time is to be added, whether by new revelations of the Spirit, or traditions of men.' WCF 1.10: 'The Supreme Judge, by which all controversies of religion are to be determined... can be no other but the Holy Spirit speaking in the Scripture.' Confessions and creeds carry subordinate authority as faithful summaries of Scripture's teaching."
+      },
+      "interpretive_method": {
+        "primary": "historical-grammatical",
+        "secondary": [
+          "redemptive-historical",
+          "typological",
+          "canonical"
+        ],
+        "notes": "WCF 1.9: 'The infallible rule of interpretation of Scripture is the Scripture itself; and therefore, when there is a question about the true and full sense of any scripture (which is not manifold, but one), it must be searched and known by other places that speak more clearly.' The single intended sense (sensus literalis) is the governing principle, though typological readings are permitted when grounded in explicit NT usage. Redemptive-historical reading locates each text within the unfolding history of redemption across the covenantal structure of Scripture."
+      },
+      "rule_of_faith": {
+        "creeds": [
+          "apostles",
+          "nicene-constantinopolitan-381",
+          "chalcedonian-451",
+          "athanasian"
+        ],
+        "confessions": [
+          {
+            "name": "Westminster Confession of Faith",
+            "authority_level": "normative"
+          },
+          {
+            "name": "Westminster Larger Catechism",
+            "authority_level": "normative"
+          },
+          {
+            "name": "Westminster Shorter Catechism",
+            "authority_level": "normative"
+          },
+          {
+            "name": "Canons of Dort",
+            "authority_level": "instructive"
+          },
+          {
+            "name": "Belgic Confession",
+            "authority_level": "instructive"
+          },
+          {
+            "name": "Heidelberg Catechism",
+            "authority_level": "instructive"
+          }
+        ],
+        "councils": [
+          {
+            "name": "Nicaea I",
+            "authority_level": "normative"
+          },
+          {
+            "name": "Constantinople I",
+            "authority_level": "normative"
+          },
+          {
+            "name": "Ephesus",
+            "authority_level": "normative"
+          },
+          {
+            "name": "Chalcedon",
+            "authority_level": "normative"
+          }
+        ],
+        "notes": "Scripture is norma normans; confessions and creeds are norma normata. The Westminster Standards are received 'because of' (quia), not merely 'insofar as' (quatenus), they agree with Scripture \u2014 but they remain subordinate to Scripture and reformable by it. The first four ecumenical councils are affirmed as faithful expressions of biblical teaching on the Trinity and Christology; later councils are evaluated on a case-by-case basis against Scripture."
+      },
+      "testament_relation": {
+        "position": "covenantal",
+        "notes": "The covenant of works (with Adam) and the covenant of grace (from the protoevangelium onward, administered differently in successive dispensations but one in substance) structure the relationship between the Testaments (WCF 7.1\u20136). The Mosaic covenant is an administration of the covenant of grace, not a republication of the covenant of works (though the latter position has minority Reformed support). The moral law remains binding; the ceremonial and judicial laws are fulfilled in Christ. OT types and shadows find their substance in the NT."
+      },
+      "inspiration_model": {
+        "position": "verbal-plenary",
+        "inerrancy": "strict-inerrancy",
+        "notes": "WCF 1.4 and 1.8 ground the authority of Scripture in its divine authorship. The Chicago Statement on Biblical Inerrancy (1978), while not part of the Westminster Standards, articulates the inerrancy position most Westminster-tradition churches hold: inerrancy extends to all that Scripture affirms, in the autographic text. Copies and translations are authoritative insofar as they faithfully represent the originals."
+      },
+      "clarity_hierarchy": {
+        "general_principle": "Analogia fidei (analogy of faith): Scripture interprets Scripture. Clearer passages govern the reading of less clear passages. Didactic/expository passages (especially the epistles) have interpretive priority over narrative and poetic passages for doctrinal formulation. The NT interprets the OT, not vice versa.",
+        "specific_priorities": [
+          {
+            "domain": "justification",
+            "controlling_passages": [
+              "Rom 3:21-5:1",
+              "Gal 2:15-3:29",
+              "Eph 2:1-10",
+              "Phil 3:7-9"
+            ],
+            "subordinate_passages": [
+              "Jas 2:14-26"
+            ],
+            "rationale": "Paul's extended, systematic treatment of justification in Romans and Galatians is the controlling corpus. James 2 is read as addressing a different question (the evidence of faith, not the ground of justification) in light of Paul's clear teaching that justification is by faith apart from works of the law (Rom 3:28)."
+          },
+          {
+            "domain": "divine-sovereignty-and-human-agency",
+            "controlling_passages": [
+              "Rom 8:28-39",
+              "Rom 9:1-29",
+              "Eph 1:3-14",
+              "John 6:37-44"
+            ],
+            "subordinate_passages": [
+              "2 Pet 3:9",
+              "1 Tim 2:4",
+              "Ezek 18:23"
+            ],
+            "rationale": "Paul's sustained argument in Romans 9 and Ephesians 1 for unconditional divine election governs the reading of passages that appear to express universal salvific will. The latter are read as referring to classes of people (elect from every nation) rather than to every individual without exception."
+          }
+        ],
+        "notes": "WCF 1.7: 'All things in Scripture are not alike plain in themselves, nor alike clear unto all; yet those things which are necessary to be known, believed, and observed, for salvation, are so clearly propounded and opened in some place of Scripture or other, that not only the learned, but the unlearned, in a due use of the ordinary means, may attain unto a sufficient understanding of them.' This perspicuity applies to matters necessary for salvation; not all passages are equally clear."
+      },
+      "version_history": [
+        {
+          "commit_sha": "PENDING",
+          "timestamp": "2026-04-08T00:00:00Z",
+          "author_model": "anthropic/claude-opus-4.6",
+          "note": "Initial creation. Profile grounded in Westminster Confession of Faith (1646) and standard Reformed hermeneutical practice."
+        }
+      ]
+    }
+  }
+}
