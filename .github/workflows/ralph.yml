@@ -49,6 +49,41 @@ jobs:
             git push
           fi
 
+      - name: Sync site data
+        run: |
+          # Copy run logs
+          mkdir -p site/data/runs
+          cp runs/*.json site/data/runs/
+          # Generate runs index
+          python3 -c "
+          import json, os, glob
+          runs = sorted(glob.glob('runs/*.json'))
+          entries = []
+          for r in runs:
+              with open(r) as f:
+                  d = json.load(f)
+              entries.append({
+                  'file': os.path.basename(r),
+                  'timestamp': d.get('timestamp',''),
+                  'model': d.get('model',''),
+                  'filesChanged': len(d.get('files_changed',[])),
+                  'toolCalls': len(d.get('tool_calls',[])),
+              })
+          with open('site/data/runs/index.json','w') as f:
+              json.dump(entries, f, indent=2)
+          print(f'Synced {len(entries)} runs to site/data/runs/')
+          "
+          # Copy profiles
+          mkdir -p site/data/profiles
+          cp profiles/*.json site/data/profiles/ 2>/dev/null || true
+          # Copy claims and debates
+          mkdir -p site/data/claims site/data/debates site/data/trees
+          cp claims/*.json site/data/claims/ 2>/dev/null || true
+          for d in debates/*/; do
+            [ -d "$d" ] && cp "$d"*.json site/data/debates/ 2>/dev/null || true
+          done
+          cp graph/resolution_trees/*.json site/data/trees/ 2>/dev/null || true
+
       - name: Deploy to GitHub Pages
         if: success()
         uses: actions/upload-pages-artifact@v3
