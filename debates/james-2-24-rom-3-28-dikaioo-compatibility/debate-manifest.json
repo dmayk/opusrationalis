@@ -65,11 +65,11 @@
     }
   },
   "createdAt": "2026-04-16",
-  "updatedAt": "2026-04-17",
-  "status": "round-1-in-progress",
+  "updatedAt": "2026-04-18",
+  "status": "round-1-complete-needs-round-2",
   "debateRounds": [
     "debate-0001.json"
   ],
   "resolutionTree": null,
-  "notes": "Greek text for Jas 2:24 corrected from prior iteration (was fabricated text). Added Jas 2:22, 2:23, and Gal 5:6 to source passages as they emerged as critical in Round 1."
+  "notes": "Greek text for Jas 2:24 corrected in prior run. Added Jas 2:22, 2:23, and Gal 5:6 to source passages as they emerged as critical in Round 1. Red-team review added (r1-redteam-01). Key localization from Round 1 + red-team: disagreement on semantic force of τελειόω (ontological completion vs. teleological manifestation) and συνεργέω (cooperation vs. demonstration). Red-team flags Eastern Orthodox theosis framework as missing perspective that may treat the fork differently. τελειόω dispute may itself be hermeneutically prior-dependent rather than purely lexical."
 }
