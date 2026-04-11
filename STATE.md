@@ -84,4 +84,4 @@ The disagreement centers on whether τελειόω in Jas 2:22 means ontological
 - Profile alignment: ✅ (Catholic opponent argues from catholic-tridentine profile sources)
 - Agent transparency: ✅ (model tagged on all moves and rulings)
 
-next_model: amazon/nova-premier-v1
+next_model: x-ai/grok-4.20
